@@ -481,7 +481,10 @@ such as Handlebars or Jade, along with Meteor's live page update
 technology. Just write your template as you normally would, and Meteor
 will take care of making it update in realtime.
 
-Meteor에서는 원하는 HTML 템플릿 엔진을 골라 사용하기 쉽다. Handlebar도 Jade도 Meteor의 라이브 페이지 기술과 함께 사용할 수 있다. 다른 HTML 템플릿 엔진 패키지를 직접 만들어도 실시간으로 페이지를 업데이트된다.
+Meteor에서는 원하는 HTML 템플릿 엔진을 골라 사용하기 쉽다.
+Handlebar도 Jade도 Meteor의 라이브 페이지 기술과 함께 사용할 수 있다.
+다른 HTML 템플릿 엔진 패키지를 직접 만들어도 Meteor가 실시간으로
+페이지를 업데이트시킨다.
 
 To use this feature, create a file in your project with the `.html`
 extension. In the file, make a `<template>` tag and give it a
@@ -489,7 +492,12 @@ extension. In the file, make a `<template>` tag and give it a
 will precompile the template, ship it down to the client, and make it
 available as a function on the global `Template` object.
 
-이 기능을 사용하려면 `.html` 파일을 만든다. `.html` 파일을 만들고 `<template>` 태그 추가한다. 이 태그의 `name` 속성에 템플릿 이름을 입력한다. 그리고 이 태그 바디에 템플릿 내용을 넣는다. Meteor는 템플릿을 컴파일해서 클라이언트에 보낸다. 이 템플릿 함수는 `Template` 객체를 통해서 사용할 수 있다.
+이 기능을 사용하려면 `.html` 파일을 만든다.
+`.html` 파일을 만들고 `<template>` 태그 추가한다.
+이 태그의 `name` 속성에 템플릿 이름을 입력한다. 그리고 이 `<template>`
+태그 바디에 템플릿 내용을 넣는다. Meteor는 템플릿을 컴파일해서
+클라이언트로 보낸다. 이 템플릿 함수는 `Template` 객체를 통해
+사용할 수 있다.
 
 {{#note}}
 Today, the only templating system that has been packaged for Meteor is
@@ -501,13 +509,18 @@ Handlebars extensions</a>.
 {{/note}}
 
 {{#note}}
-현재 Meteor에 패키징된 템플릿 엔진은 Handlerbars 뿐이다. Meteor에서 사용하고 싶은 템플릿 엔진이 있으면 알려 줘라. Handlerbar는 <a href="http://www.handlebarsjs.com/">Handlebars 문서</a>와 <a href="https://github.com/meteor/meteor/wiki/Handlebars">Meteor Handlebars extensions</a>에서 설명한다.
+현재 Meteor에 패키징된 템플릿 엔진은 Handlerbars 뿐이다. Meteor에서
+사용하고 싶은 템플릿 엔진이 있으면 알려 줘라. Handlerbar는
+<a href="http://www.handlebarsjs.com/">Handlebars 문서</a>와
+<a href="https://github.com/meteor/meteor/wiki/Handlebars">Meteor
+Handlebars extensions</a>에서 설명한다.
 {{/note}}
 
 A template with a `name` of `hello` is rendered by calling the
 function `Template.hello`, passing any data for template the:
 
-이름이 `hello`인 템플릿은 `Template.hello` 함수를 호출하여 랜더링한다. 템플릿 데이터는 호출할 때 넘긴다:
+이름이 `hello`인 템플릿은 `Template.hello` 함수를 호출하여
+렌더링한다. 템플릿 데이터는 호출할 때 넘긴다:
 
     <!-- in myapp.html -->
     <template name="hello">
@@ -522,7 +535,9 @@ This returns a string. To use the template along with the [`Live
 HTML`](#livehtml) system, and get DOM elements that update
 automatically in place, use [`Meteor.ui.render`](#meteor_ui_render):
 
-템플릿 함수는 스트링으로 리턴하니까 [`Live HTML`](#livehtml) 시스템과 함께 사용할 수 있다. [`Meteor.ui.render`](#meteor_ui_render)에서 이 템플릿 함수를 사용하면 템플릿 데이터가 변경될 때 자동으로 업데이트된다:
+템플릿 함수는 문자열을 반환하므로 [`Live HTML`](#livehtml) 시스템과
+함께 사용할 수 있다. [`Meteor.ui.render`](#meteor_ui_render)에서
+이 템플릿 함수를 사용하면 템플릿 데이터가 변경될 때 자동으로 업데이트된다:
 
     Meteor.ui.render(function () {
       return Template.hello({first: "Alyssa", last: "Hacker"});
@@ -533,7 +548,9 @@ The easiest way to get data into templates is by defining helper
 functions in JavaScript. Just add the helper functions directly on the
 `Template.[template name]` object. For example, in this template:
 
-템플릿에서 사용할 데이터를 가장 쉽게 가져오는 방법은 JavaScript helper 함수를 정의하는 것이다. `Template.[template name] 객체에 helper 함수를 바로 추가한다. 다음과 같은 템플릿이 있다고 하고:
+템플릿에서 사용할 데이터를 가장 쉽게 가져오는 방법은 JavaScript
+helper 함수를 정의하는 것이다. `Template.[template name] 객체에
+helper 함수를 바로 추가한다. 다음과 같은 템플릿이 있다고 하고:
 
     <template name="players">
       {{dstache}}#each top_scorers}}
@@ -544,7 +561,8 @@ functions in JavaScript. Just add the helper functions directly on the
 instead of passing in `top_scorers` as data when we call the
 template function, we could define a function on `Template.players`:
 
-`top_scorers`를 템플릿 함수를 호출할 때 템플릿 데이터로 넘기지 않고 `Template.players`의 함수로 정의해도 된다:
+템플릿 함수를 호출할 때 `top_scorers`를 파라미터처럼 전달하지
+않고 `Template.players`의 함수로 정의한다:
 
     Template.players.top_scorers = function () {
       return Users.find({score: {$gt: 100}}, {sort: {score: -1}});
@@ -555,19 +573,23 @@ database cursor is passed to `#each`, it will wire up all of the
 machinery to efficiently add and move DOM nodes as new results enter
 the query.
 
-이 경우에 데이터는 데이터베이스 쿼리에서 온다. 데이터베이스 커서가 `#each` 함수로 넘겨진다. ????
+이렇게 함수로 정의한 `top_scorers` 데이터는 데이터베이스에서 가져오게
+된다. 쿼리에 대한 데이터베이스 커서는 `#each`로 전달되고, Meteor는
+기계적으로 데이버베이스의 데이터를 DOM 노드로 추가하고 업데이트 하는
+과정을 수행하게 된다.
 
 Helpers can take arguments, and they receive the current template data
 in `this`:
 
-야규먼트가 있는 Helper 함수도 가능하다. Helper 함수는 `this`로 템플릿 데이터를 받는다.
+아규먼트가 있는 Helper 함수도 가능하다.
+Helper 함수에서 `this`는 템플릿 데이터를 가리킨다:
 
-    // in a JavaScript file
+    // JavaScript 파일
     Template.players.league_is = function (league) {
       return this.league === league;
     };
 
-    <!-- in a HTML file -->
+    <!-- HTML 파일 -->
     <template name="players">
       {{dstache}}#each top_scorers}}
         {{dstache}}#if league_is "junior"}}
@@ -588,14 +610,17 @@ technically helpers, and stock Handlebars would not invoke
 {{/note}}
 
 {{#note}}
-`if`와 `league_is`는 기술적으로 헬퍼이고 기존의 Handlebar 로는 `league_is`를 실행하지 못한다. `{{dstache}}#if league_is "junior"}}`이란 표현은 Meteor에서 Hanldebar를 확장한 것이다.  그래서 helper 블럭 안에서 helper를 사용할 수 있다. 
+`if`와 `league_is`는 기술적으로 헬퍼이며 기존의 Handlebar 로는
+`league_is`를 실행하지 못한다. `{{dstache}}#if league_is "junior"}}`란
+표현은 Meteor에서 Hanldebar를 확장한 것이다.
+그 결과로 helper 블럭 안에서 helper를 사용할 수 있다.
 {{/note}}
 
 Helpers can also be used to pass in constant data.
 
-Helper 함수에 상수도 넘길 수 있다:
+Helper 함수로 상수를 넘길 수 있다:
 
-    // Works fine with {{dstache}}#each sections}}
+    // {{dstache}}#each sections}} 코드와도 잘 동작함
     Template.report.sections = ["Situation", "Complication", "Resolution"];
 
 Finally, you can set the `events` property of a template function to a
@@ -603,7 +628,9 @@ table of event handlers. The format is documented at [Event
 Maps](#eventmaps). The `this` argument to the event handler will be
 the data context of the element that triggered the event.
 
-마지막으로 템플릿 함수의 `events` 프로퍼티에 이벤트 핸들러를 등록할 수 있다. 정확한 형식은 [Event Maps](#eventmaps)에 나와있다. 이벤트 핸들러의 `this`는 엘리먼트의 데이터 컨텍스트를 가리킨다.
+마지막으로 템플릿 함수의 `events` 프로퍼티에 이벤트 핸들러를 등록할
+수 있다. 정확한 형식은 [Event Maps](#eventmaps)에 나와있다.
+이벤트 핸들러의 `this`는 엘리먼트의 데이터 컨텍스트를 가리킨다.
 
     <!-- myapp.html -->
     <template name="scores">
@@ -630,7 +657,9 @@ arbitrary data into your templates, and have them update automatically
 whenever that data changes. See [Live HTML](#livehtml) for further
 discussion.
 
-지금까지 설명한 것을 복습해보자. 다음은 템플릿에 임의 데이터를 넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트 된다. 자동으로 업데이트 하는 부분은 [Live HTML](#livehtml)에서 다룬다.
+지금까지 설명한 것을 복습해보자. 다음은 템플릿에 임의 데이터를
+넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트 된다.
+자동으로 업데이트 하는 부분은 [Live HTML](#livehtml)에서 다룬다.
 
     <!-- in myapp.html -->
     <template name="forecast">
@@ -663,21 +692,26 @@ Meteor has an unusually powerful package system. All of the
 functionality you've read about so far is implemented as standard
 Meteor packages.
 
-Meteor 패키징 시스템은 매우 강력하다. 지금까지 읽은 기능이 모두 Meteor 패키지로 구현된다.
+Meteor 패키징 시스템은 매우 강력하다.
+지금까지 읽은 기능이 모두 표준 Meteor 패키지로 구현된다.
 
 Meteor packages are intelligent: the packages are themselves
 JavaScript programs. They can inject code into the client or the
 server, or hook new functions into the bundler, so they can extend the
 Meteor environment in arbitrary ways. Some examples of packages are:
 
-Meteor 패키지는 그 자체로도 JavaScript 프로그램이다. 그리고 클라이언트나 서버에 코드를 주입할 수도 있고 Bundler를 확장해서 필요한대로 확장할 수 있다. 다음과 같은 패키지를 보면:
+Meteor 패키지는 그 자체로도 JavaScript 프로그램이다.
+그리고 클라이언트나 서버에 코드를 주입할 수도 있고 Bundler를 확장해서
+필요한대로 확장할 수 있다. 다음과 같은 패키지를 보면:
 
 * The <a href="#coffeescript">coffeescript</a> package extends the
   bundler, automatically compiling any <code>.coffee</code> files in
   your tree.  Once added, you can write your application in CoffeeScript
   instead of JavaScript.
 
-* The <a href="#coffeescript">coffeescript</a> 패키지는 Bundler를 확장했다. <code>.coffee</code> 파일이 있으면 자동으로 컴파일한다. 이 패키지를 추가하면 JavaScript가 아니라 CoffeeScript로도 개발할 수 있다.
+* The <a href="#coffeescript">coffeescript</a> 패키지는 Bundler를 확장했다.
+  <code>.coffee</code> 파일이 있으면 자동으로 컴파일한다.
+  이 패키지를 추가하면 JavaScript가 아니라 CoffeeScript로도 개발할 수 있다.
 
 * The <a href="#jquery">jQuery</a>
   and <a href="#backbone">Backbone</a> packages are examples of using
@@ -685,7 +719,10 @@ Meteor 패키지는 그 자체로도 JavaScript 프로그램이다. 그리고 �
   the same result by copying the JavaScript files into your tree, but
   it's faster to add a package.
 
-* 클라이언트 라이브러리를 Meteor 패키지로 만들러면 <a href="#jquery">jQuery</a>와 <a href="#backbone">Backbone</a> 패키지를 참고하는 것이 좋다. 자바 스크립트 파일을 소스 트리에 복사해 넣어도 되지만 패키지로 만드는 것이 더 빠르다.
+* 클라이언트 라이브러리를 Meteor 패키지로 만들려면
+  <a href="#jquery">jQuery</a>와 <a href="#backbone">Backbone</a> 패키지를
+  참고하는 것이 좋다. 자바 스크립트 파일을 소스 트리에 복사해 넣어도
+  되지만 패키지로 만드는 것이 더 빠르다.
 
 * The <a href="#underscore">underscore</a> package extends both the
   client and server environments.  Many of the core Meteor features,
@@ -693,7 +730,9 @@ Meteor 패키지는 그 자체로도 JavaScript 프로그램이다. 그리고 �
   templates, are implemented as internal packages automatically
   included with every Meteor application.
 
-* <a href="#underscore">underscore</a>  패키지는 클라이언트와 서버에 모두 포함된다. Minimongo, Session 객체, Reactive Handlebar 등 Meteor 핵심 패키지들은 자동으로 Meteor 앱에 포함된다.
+* <a href="#underscore">underscore</a> 패키지는 클라이언트와 서버에
+  모두 포함된다. Minimongo, Session 객체, Reactive Handlebar 등
+  Meteor 핵심 패키지들은 자동으로 Meteor 앱에 포함된다.
 
 You can see a list of available packages
 with <a href="#meteorlist">meteor list</a>,
@@ -701,12 +740,15 @@ add packages to your project
 with <a href="#meteoradd">meteor add</a>, and remove them
 with <a href="#meteorremove">meteor remove</a>.
 
-<a href="#meteorlist">meteor list</a> 명령은 이용가능한 패키지를 보여준다. <a href="#meteoradd">meteor add</a> 명령으로 프로젝트에 패키지를 추가하고 <a href="#meteorremove">meteor remove</a> 명령으로 제거할 수 있다.
+<a href="#meteorlist">meteor list</a> 명령은 이용가능한 패키지를 보여준다.
+<a href="#meteoradd">meteor add</a> 명령으로 프로젝트에 패키지를 추가하고
+<a href="#meteorremove">meteor remove</a> 명령으로 제거할 수 있다.
 
 See the <a href="#packages">Package List</a> section for a description
 of the existing packages.
 
-패키지들에 대해서 <a href="#packages">Package 목록</a> 절에 간략하게 설명돼 있다.
+패키지들에 대해서 <a href="#packages">Package 목록</a> 절에 간략하게
+설명돼 있다.
 
 {{#warning}}
 The package API is rapidly changing and isn't documented, so you can't
@@ -714,7 +756,8 @@ make your own packages just yet. Coming soon.
 {{/warning}}
 
 {{#warning}}
-패키지 API는 자주 변경되며 아직 문서가 없으니 직접 패키지를 만들기는 쉽지 않다. Coming soon. 
+패키지 API는 자주 변경되며 아직 문서가 없으니 직접 패키지를 만들기는
+쉽지 않다. 조만간 이 부분이 추가될 것이다.
 {{/warning}}
 
 {{/better_markdown}}
@@ -729,7 +772,8 @@ Meteor is a full application server.  We include everything you need
 to deploy your application on the internet: you just provide the JavaScript,
 HTML, and CSS.
 
-Meteor는 애플리케이션 서버다. 인터넷 애플리케이션에 필요한 모든 것이 들어 있다. 개발자는 애플리케이션 코드(JavaScript, HTML, CSS)만 개발하면 된다.
+Meteor는 애플리케이션 서버다. 인터넷에 애플리케이션을 서비스하기위해 필요한
+모든 것이 들어 있다. 개발자는 애플리케이션 코드(JavaScript, HTML, CSS)만 개발하면 된다.
 
 <h3 class="nosection">Running on Meteor's infrastructure</h3>
 
@@ -739,7 +783,10 @@ wanted: an easy way to take an app idea, flesh it out over a weekend,
 and put it out there for the world to use, with nothing getting in the
 way of creativity.
 
-<b>meteor deploy</b> 명령으로 사용하면 쉽게 앱을 배포할 수 있다. meteor를 사용하면 새로운 아이디어를 구현하고, 매주 살을 붙이고, 그걸 세상에 공개하는 일을 가장 쉽게 할 수 있다. 나는 개인적으로 이런게 필요하다고 생각해왔다.
+<b>meteor deploy</b> 명령으로 사용하면 쉽게 앱을 배포할 수 있다.
+meteor를 사용하면 새로운 아이디어를 구현하고, 매주 살을 붙이고,
+그것을 세상에 공개하는 일을 가장 쉽게 할 수 있다.
+나는 개인적으로 이런게 필요하다고 생각해왔다.
 
     $ meteor deploy myapp.meteor.com
 
@@ -749,20 +796,24 @@ fresh empty database for your application.  If you want to deploy an
 update, Meteor will preserve the existing data and just refresh the
 code.
 
-그러면 myapp.meteor.com에 앱이 배포된다. Meteor는 처음에 실행할 때 데이터베이스를 새로 만든다. 두번째 실행할 때부터는 기존 데이터를 그대로 유지하고 단지 코드만 배포한다.
+그러면 myapp.meteor.com에 앱이 배포된다. Meteor는 처음에 실행할 때
+데이터베이스를 새로 만든다. 두번째 실행할 때부터는 기존 데이터를
+그대로 유지하고 단지 코드만 배포한다.
 
 You can also deploy to your own domain.  Just set up the hostname you
 want to use as a CNAME to <code>origin.meteor.com</code>,
 then deploy to that name.
 
-다른 도메인으로 배포할 수도 있다. 이 때는 CNAME을 <code>origin.meteor.com</code>으로 설정하고 해당 hostname으로 배포한다.
+다른 도메인으로 배포할 수도 있다. 이 때는 CNAME을
+<code>origin.meteor.com</code>으로 설정하고 해당 hostname으로 배포한다.
 
     $ meteor deploy www.myapp.com
 
 We provide this as a free service so you can try Meteor.  It is also
 helpful for quickly putting up internal betas, demos, and so on.
 
-이것은 우리가 제공하는 무료 서비스로 Meteor를 돌려볼 수 있다. 내부 베타, 데모, 등등을 빨리 만들어 보는데 좋다.
+이것은 우리가 제공하는 무료 서비스로 Meteor를 돌려볼 수 있다.
+내부 베타, 데모, 등등을 빨리 만들어 보는데 좋다.
 
 <h3 class="nosection">Running on your own infrastructure</h3>
 
@@ -784,7 +835,10 @@ invoking node, specifying the HTTP port for the application to listen
 on, and the MongoDB endpoint.  If you don't already have a MongoDB
 server, we can recommend our friends at [MongoHQ](http://mongohq.com).
 
-이 명령어는 Node.js 애플리케이션을 tar 파일로 떨궈준다. 이 앱을 실행하는 데는 Node.js 0.6과 MongoDB 서버가 필요하다. MongoDB URL과 HTTP 포트를 명시하고 애플리케이션을 실행한다. 가지고 있는 MongoDB가 잆으면 [MongoHQ](http://mongohq.com)를 사용하면 좋다.
+이 명령어는 Node.js 애플리케이션을 tar 파일로 떨궈준다. 이 앱을 실행하는
+데는 Node.js 0.6과 MongoDB 서버가 필요하다. MongoDB URL과 HTTP 포트를
+명시하고 애플리케이션을 실행한다.
+가지고 있는 MongoDB가 잆으면 [MongoHQ](http://mongohq.com)를 사용하면 좋다.
 
     $ PORT=3000 MONGO_URL=mongodb://localhost:27017/myapp node bundle/main.js
 
@@ -800,7 +854,9 @@ have <code>npm</code> available, and run the following:
 {{/warning}}
 
 {{#warning}}
-지금까지 번들은 해당 번들을 만든 플랫폼에서만 실행했다. 다른 플랫폼에서 실행하려면 번들에 있는 네이티브 패키지를 다시 빌드해야 한다. <code>npm</code>을 사용해서 다음과 같이 실행한다:
+지금까지 번들은 해당 번들을 만든 플랫폼에서만 실행했다. 다른 플랫폼에서
+실행하려면 번들에 있는 네이티브 패키지를 다시 빌드해야 한다.
+<code>npm</code>을 사용해서 다음과 같이 실행한다:
 
     $ cd bundle/server/node_modules
     $ rm -r fibers
