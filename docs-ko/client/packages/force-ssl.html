@@ -25,7 +25,7 @@ bundle must set the standard `x-forwarded-proto` header for the
 
 애플리케이션 번들(`meteor bundle`)은 HTTPS 서버나 SSL용 인증서를 포함하지 않는다.
 Meteor 앞단에 SSL을 담당하는 Proxy 서버를 구성해야 force-ssl 패키지가 잘 동작한다.
-그리 Proxy 서버는 반드시 표준 `x-forwarded-proto` 헤더를 지원해야 한다.
+Proxy 서버는 반드시 표준 `x-forwarded-proto` 헤더를 지원해야 한다.
 
 Applications deployed to `meteor.com` subdomains with
 `meteor deploy` are automatically served via HTTPS using Meteor's
