@@ -8,7 +8,7 @@
 
 <h3 id="meteorhelp">meteor help</h3>
 
-Meteor의 명령줄 사용법 도움말이 출력된다. `meteor help`를 실행하면 Meteor의 일반적인 명령어 리스트가 나온다.  <code>meteor help <i>command</i></code> 는 해당 명령어에 대한 자세한 도움말을 출력한다.
+Meteor의 명령줄 사용법 도움말이 출력된다. `meteor help`를 실행하면 Meteor의 일반적인 명령어 리스트가 나온다.  <code>meteor help <i>command</i></code> 는 해당 명령어에 대한 자세한 도움말을 보여준다.
 
 <h3 id="meteorrun">meteor run</h3>
 
@@ -34,7 +34,7 @@ Meteor의 명령줄 사용법 도움말이 출력된다. `meteor help`를 실행
 
 배포된 앱을 지우려면 사이트 뒤에 `--delete` 옵션을 주면 된다.
 
-`--password` 옵션을 주면 관리용 패스워드를 추가할 수 있다. 그러면 Meteor는 패스워드를 묻는다. 한번 설정한면 앞으로 그 도메인으로 배포할 때는 설정한 패스워드를 묻는다. 이 패스워드는 `meteor mongo`명령어와 `meteor logs` 명령어에도 필요하다. `meteor deploy --password` 명령어를 다시 실행하면 패스워드를 바꿀 수 있다. 처음 프롬프트에서는 현재 패스워드를 입력하고 다음 프롬프트에서는 새로운 패스워드를 입력하면 된다.
+`--password` 옵션을 주면 관리용 패스워드를 추가할 수 있다. 그러면 Meteor는 패스워드를 묻는다. 한번 설정하면 앞으로 그 도메인으로 배포할 때는 설정한 패스워드를 묻는다. 이 패스워드는 `meteor mongo`명령어와 `meteor logs` 명령어에도 필요하다. `meteor deploy --password` 명령어를 다시 실행하면 패스워드를 바꿀 수 있다. 처음 프롬프트에서는 현재 패스워드를 입력하고 다음 프롬프트에서는 새로운 패스워드를 입력하면 된다.
 
 {{#warning}}
 Meteor 명령어로 관리하는 것만 패스워드로 보호한다. 즉 배포된 웹 사이트를 보호하진 않는다. 이것은 더 나은 Meteor 계정을 제공할 때 까지만 사용하는 임시 방편책이다.
