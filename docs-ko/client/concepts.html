@@ -7,9 +7,9 @@ Writing an entire application in one language (JavaScript) with one
 data format (JSON) is a real joy.  Meteor is everything we wanted
 when writing those apps.
 
-우리는 페이지 하나 짜리 JavaScript 앱을 일일히 수도 없이 만들어 왔다.
+우리는 맨손으로 페이지 하나 짜리 JavaScript 앱을 수도 없이 만들어 왔다.
 언어 하나(JavaScript)와 데이터 포멧 하나(JSON)로 앱 전체를 개발하는
-것은 하염이 기쁜 일이다. Meteor는 앱을 개발하면서 우리가 바랬던 모든
+것은 하염없이 기쁜 일이다. Meteor에는 앱을 개발하면서 우리가 바랬던 모든
 것이 들어 있다.
 
 {{> structure }}
@@ -37,7 +37,7 @@ Meteor 앱은 브라우저가 실행하는 클라이언트 JavaScript와 Node.js
 실행하는 서버 JavaScript가 한데 섞여있다. HTML 파일, CSS 파일, 그외의 정적
 파일도 함께 섞여 있다. 이 모든 파일을 패키징하고 배포하는 일을 Meteor가
 모두 자동화 했다. 어느 디렉토리에 해당 파일을 넣을지에 대한 제약은 거의
-없다. 자유롭게 넣을 수 있다.
+없다. 자유롭게 넣으면 된다.
 
 The only server asset is JavaScript.  Meteor gathers all your JavaScript
 files, excluding anything under the `client`
@@ -50,7 +50,7 @@ the typical server code in a Meteor application.
 서버쪽 컴포넌트는 JavaScript 뿐이다. Meteor는 `client`와 `public` 디렉토리에
 있는 파일을 제외한 나머지 JavaScript 파일을 모아서 Fiber Node.js 서버를
 실행한다. Meteor는 요청 당 쓰레드 하나로 실행한다. Node의 비동기 콜백
-스타일을 사용하지 않는다. Meteor 앱의 서버 코드에는 순차적 실행 모델이
+스타일은 사용하지 않는다. Meteor 앱의 서버 코드에는 순차적 실행 모델이
 더 낫다.
 
 There are more assets to consider on the client side.  Meteor
@@ -60,11 +60,11 @@ client.  It minifies this bundle and serves it to each new client.
 You're free to use a single JavaScript file for your entire application, or
 create a nested tree of separate files, or anything in between.
 
-클라이언트쪽은 더 다양한 컴포넌트를 사용한다. Meteor는 클라이언트쪽
-JavaScript 코드로 `server`와 `public` 디렉토리를 제외한 나머지 JavaScript
-코드를 하나로 모은다. 이렇게 모은 번들을 minify하여 클라이언트에 전송한다.
-따라서 JavaScript 파일 하나만으로 앱을 개발해도 되고 파일을 여러 개로
-쪼개서 개발해도 된다.
+클라이언트는 더 다양한 컴포넌트를 사용한다. Meteor는 `server`와 
+`public` 디렉토리를 제외한 나머지 JavaScript 코드를 한데 모아서 
+클라이언트쪽 JavaScript 코드로 사용한다. 이렇게 모은 번들을 minify하여 
+클라이언트에 전송한다. 따라서 JavaScript 파일 하나만으로 앱을 개발해도 
+되고 파일을 여러 개로 쪼개서 개발해도 된다.
 
 Files outside the `client` and `server`
 subdirectories are loaded on both the client and the server!  That's
@@ -74,7 +74,7 @@ your code can alter its behavior depending on whether it's running
 on the client or the server.
 
 `client`와 `server` 디렉토리 밖에 있는 파일들은 클라이언트와 서버 모두에서
-사용한다. 모델이나 공통 파일을 사용하는 장소다. Meteor는
+사용한다. 모델 파일이나 공통 파일에 적합한 장소다. Meteor는
 [`is_client`와 `is_server`](#meteor_is_client) 프로퍼티를 제공하기 때문에
 해당 코드가 클라이언트에서 실행할 코드인지 서버에서 실행할 코드인지
 구분할 수 있다.
@@ -83,14 +83,14 @@ Any sensitive code that you don't want served to the client, such as code
 containing passwords or authentication mechanisms, should be
 kept in the `server` directory.
 
-클라이언트에 노출되면 안되는 코드는 `server` 디렉토리에 넣는다. 노출되면
-안되는 암호나 인증 메커니즘 같은 코드를 `server` 디렉토리에 넣으면 된다.
+클라이언트에 숨겨야 하는 코드는 `server` 디렉토리에 넣는다. 암호나 인증 
+메커니즘 같은 코드를 `server` 디렉토리에 넣으면 된다.
 
 CSS files are gathered together as well: the client will get a bundle with all
 the CSS in your tree (excluding the `server`
 and `public` subdirectories).
 
-CSS 파일도 `server` 디렉토리와 `public` 디렉토리를 제외하고 하나로 합쳐진다.
+`server` 디렉토리와 `public` 디렉토리 밖에 있는 CSS 파일도 하나로 합쳐진다.
 클라이언트가 로드하는 것은 모두 합쳐진 번들 하나다.
 
 In development mode, JavaScript and CSS files are sent individually to make
@@ -115,17 +115,16 @@ functions, available under the `Template` namespace.  It's
 a really convenient way to ship HTML templates to the client.
 See the [templates](#templates) section for more.
 
-앞의 다른 일레먼트와는 달리 템플릿은 `Template` 네임스페이스를 가지는
-JavaScript 함수로 변환된다. 이 방식은 템플릿을 클라이언트로 보내기에
-정말 편리한 방식이다. 자세한 내용은 [templates](#templates)절에서 살펴보자.
+앞의 다른 엘리먼트와는 달리 템플릿은 `Template` 네임스페이스의 JavaScript 
+함수로 변환된다. 이 방식은 템플릿을 클라이언트로 보내기에 정말 편리한 
+방식이다. 자세한 내용은 [templates](#templates)절에서 살펴보자.
 
 Lastly, the Meteor server will serve any files under the `public`
 directory, just like in a Rails or Django project.  This is the place
 for images, `favicon.ico`, `robots.txt`, and anything else.
 
-Rails나 Django 프로젝트 처럼 `public` 디렉토리에 있는 파일은 그대로
-서비스된다. 이미지, `favicon.ico`, `robots.txt` 같은 파일은 이 디렉토리에
-넣는다.
+Rails나 Django 프로젝트처럼 `public` 디렉토리에 있는 파일은 그대로 서비스된다.
+이미지, `favicon.ico`, `robots.txt` 같은 파일은 이 디렉토리에 넣는다.
 
 {{/better_markdown}}
 </template>
@@ -140,11 +139,11 @@ local database.  It's a clean and simple approach, much easier than
 building individual RPC endpoints, slow roundtrips to the server, and
 orchestrating invalidation messages.
 
-데이터가 필요할 때마다 RPC 통로를 뚫고, 메시지를 제대로 보냈는지도
-검사해야 하고, 서버를 거쳐야 하기에 느리지만, Meteor에서는 그러지
-않아도 된다. Meteor는 로컬에서 데이터베이스로 접근하듯 사용할 수
-있는 코드를 클라이언트에 배포한다. 그리하여 클라이언트에서 바로
-간단명료하게 데이터에 접근할 수 있다.
+데이터가 필요할 때마다 RPC 통로를 뚫고, 서버를 거쳐야 하기 때문에 느려지고 
+메시지를 제대로 보냈는지도 검사해야 했지만, Meteor에서는 그러지 않아도 
+된다. Meteor는 로컬에서 데이터베이스로 접근하듯 사용할 수 있는 코드를 
+클라이언트에 배포한다. 그리하여 클라이언트에서 바로 간단 명료하게 
+데이터에 접근할 수 있다.
 
 Every Meteor client includes an in-memory database cache.  Each client's
 cache holds valid copies of some set of documents that are stored in a
@@ -170,8 +169,8 @@ your client model code.
 클라이언트가 <b>Subscribe</b>해야 한다. 채팅 시스템을 개발한다고 해보자.
 서버는 모든 채팅방과 메시지를 Publish하고 클라이언트는 채팅방과
 선택한 채팅방의 메시지를 Subscribe한다. 한번 Subscribe하면 클라이언트는
-캐시를 로컬 데이터베이스처럼 사용한다.
-클라이언트 모델 코드가 마법처럼 단순해진다.
+캐시를 로컬 데이터베이스처럼 사용한다. 클라이언트 모델 코드가 마법처럼 
+단순해진다.
 
 Meteor's protocol for distributing document updates is database
 agnostic.  By default, Meteor applications use the
@@ -181,11 +180,12 @@ servers store documents in MongoDB collections, and clients cache those
 documents in a client-side cache that implements the same Mongo API for
 queries and updates.
 
-Meteor's protocol for distributing document updates is database agnostic.
-기본적으로 Meteor 앱은 <a target="_blank"
-href="http://www.mongodb.org/display/DOCS/Manual">MongoDB API</a>를
-사용한다. 서버는 MongoDB 컬렉션에 도큐먼트를 저장하고 클라이언트는
-클라이언트 사이드에 도큐먼트를 캐시로 저장한다. 클라이언트는 데이터를
+Meteor가 도큐먼트 업데이트를 퍼트리는 데(distributing) 사용하는 
+프로토콜은 모든 데이터베이스를 지원한다(database agnostic). 기본적으로 
+Meteor 앱은 <a target="_blank" 
+href="http://www.mongodb.org/display/DOCS/Manual"> MongoDB API</a>를 
+사용한다. 서버는 MongoDB 컬렉션에 도큐먼트를 저장하고 클라이언트는 
+클라이언트 사이드에 도큐먼트를 캐시로 저장한다. 클라이언트는 데이터를 
 검색하고 업데이트 하기 위한 캐시 API로 Mongo API를 그대로 구현했다.
 
     // 서버: 모든 채팅방 정보, 채팅방의 메시지를 Publish
@@ -210,9 +210,9 @@ subscription automatically receive an updated document.
 
 도큐먼트가 수정되면 자동으로 퍼진다. 클라이언트 캐시에서 `insert`,
 `remote`, `update` 명령어로 문서를 수정하면 명령은 바로 실행된다. 동시에
-클라이언트는 서버에 수정 명령을 전송하고 서버의 데이터베이도 변경된다.
-물론 클라이언트와 서버가 데이터 변경에 동의하는 경우는 말이다.
-클라이언트에서 수정한 내용을 서버는 거부할수도 있다. 권한문제라던가
+클라이언트는 서버에 수정 명령을 전송하고 그러면 서버의 데이터베이스도 
+변경된다. 물론 클라이언트와 서버가 데이터 변경에 동의하는 경우는 말이다.
+클라이언트에서 수정한 내용을 서버가 거부할수도 있다. 권한문제라던가
 데이터를 동시에 다른 클라이언트도 수정하는 경우가 있을 수 있다.
 서버는 데이터베이스를 수정하고 클라이언트에 도큐먼트를 다시 Publish한다.
 Subscribe하는 클라이언트는 자동으로 그 문서를 받아서 업데이트한다.
@@ -227,11 +227,11 @@ modify data, those modifications can run locally without waiting for the
 confirmation from the server, while still giving the server final say
 over the requested change.
 
-레이턴시 보정 기술을 사용하여 클라이언트는
-항상 최신 데이터를 유지하며 서버에 요청하고 응답할
-때 까지 절대 기다리지 않는다. 데이터를 수정해야 하면 바로 로컬
-캐시를 수정한다. 서버로부터 변경이 완료될 때 까지 기다리지 않는다.
-다만 서버쪽 데이터도 변경되도록 수정 메시지를 서버로 보낸다.
+레이턴시 보정 기술을 사용하여 클라이언트는 항상 최신 데이터를 유지하며 
+서버에 요청하고 응답할 때 까지 절대 기다리지 않는다. 데이터를 수정해야 
+하면 바로 로컬 캐시를 수정한다. 서버로부터 변경이 완료될 때 까지 
+기다리지 않는다. 다만 서버쪽 데이터도 변경되도록 수정 메시지를 
+서버로 보낸다.
 
 You can substitute another database for MongoDB by providing a
 server-side database driver and/or a client-side cache that implements
@@ -239,8 +239,8 @@ an alternative API.  The `mongo-livedata` is a good starting point for
 such a project.
 
 MongoDB 대신 다른 데이터베이스를 사용하고 싶다면 서버 데이터베이스
-드라이버와 클라이언트 캐시를 만들어야 한다. `mongo-livedata`
-패키지를 참고하여 만드는 것이 좋다.
+드라이버와 클라이언트 캐시를 만들어야 한다. `mongo-livedata` 패키지를
+참고하여 만드는 것이 좋다.
 
 {{/better_markdown}}
 </template>
@@ -257,11 +257,11 @@ simple imperative style, and the result will be automatically
 recalculated whenever data changes that your code depends on.
 
 Meteor는 <a target="_blank" href="http://en.wikipedia.org/wiki/Reactive_programming">
-Reactive 프로그래밍</a> 개념을 따른다. 이 말은 명령형(Imperative) 프로그래밍
+Reactive 프로그래밍</a> 개념을 따른다. 이 말은 Imperative 프로그래밍
 스타일로 코딩을 해도 데이터가 바뀌면 자동으로 다시 계산된다는 것을 의미한다.
-(역주: `a = b + c`라는 수식이 있을 때 명령형 프로그래밍에서는
+(역주: `a = b + c`라는 수식이 있을 때 Imperative 프로그래밍에서는
 b, c 값이 변경되도 a 값이 변경되지 않는다. 하지만 Reactive 프로그래밍에서는
-b, c 값이 변경되면 a 값도 바뀐다. (from wikipedia))
+b, c 값이 변경되면 a 값도 바뀐다. - from wikipedia)
 
     Meteor.autosubscribe(function () {
       Meteor.subscribe("messages", Session.get("currentRoomId"));
@@ -286,12 +286,12 @@ providers like `Session`, on the other hand, make note of
 the context they are called from and what data was requested, and they
 are prepared to send an invalidation signal when the data changes.
 
-이 마법은 `Session`과 `Meteor.autosubscribe`가 부린다.
+이 마법을 부리는 것은 `Session`과 `Meteor.autosubscribe`다.
 `Meteor.autosubscribe` 메소드가 데이터 의존성을 추적하는
 "Reactive 컨텍스트"를 만들고 필요할 때마다 아큐먼트로 넘겨받은
 함수를 매번 실행한다. `Session` 같은 데이터 프로바이더는 무슨
 데이터가 변경됐고 어떤 컨텍스트를 호출해야 하는지 알아내서
-데이터가 변경됐다는 Invalidation(유효하지 않음) 시그널을 보낸다.
+데이터가 변경됐다는 무효화(Invalidation) 시그널을 보낸다.
 
 This simple pattern has wide applicability.  Above, the programmer is
 saved from writing unsubscribe/resubscribe calls and making sure they
@@ -387,15 +387,10 @@ live database query.
 
 모든 일이 자동으로 일어난다. [`Meteor.ui.render`](#meteor_ui_render)는
 [Reactive 컨텍스트](#reactivity)를 사용해서 렌더링 함수에서 사용하는
-데이터가 무엇인지 알아낸다. [`Meteor.ui.render`](#meteor_ui_render)에서
-[`Meteor.ui.chunk`](#meteor_ui_chunk)...
-???
-
-[`Meteor.ui.render`](#meteor_ui_render) 함수 안에서는
-[`Meteor.ui.chunk`](#meteor_ui_chunk) 함수를 사용하여 데이터가
-변경되면 수정해야할 HTML의 범위를 결정한다.
-[`Meteor.ui.listChunk`](#meteor_ui_listchunk) 함수는
-데이터베이스 쿼리를 이용하여 효과적으로 HTML을 생성한다.
+데이터가 무엇인지 알아낸다. [`Meteor.ui.render`](#meteor_ui_render) 함수 
+안에서 [`Meteor.ui.chunk`](#meteor_ui_chunk)나 
+[`Meteor.ui.listChunk`](#meteor_ui_listchunk)로 범위를 결정한다.
+이렇게 데이터가 어떻게 렌더링할지 조정해서 라이브 쿼리를 최적화 시킨다.
 
 Most of the time, though, you won't call these functions directly
 &mdash; you'll just use your favorite templating package, such as
@@ -403,8 +398,8 @@ Handlebars or Jade. The `render` and `chunk` functions are intended
 for people that are implementing new templating systems.
 
 보통은 이 함수를 직접 호출하지 않는다. 그냥 Handlebar나 Jade처럼
-선호하는 템플릿 패키지를 사용하면 된다.
-`render`나 `chunk` 함수는 템플릿 시스템을 새로 만들 때 필요하다.
+선호하는 템플릿 패키지를 사용하면 된다. `render`나 `chunk` 함수는 
+템플릿 시스템을 새로 만들 때 필요하다.
 
 Meteor normally batches up any needed updates and executes them only
 when your code isn't running. That way, you can be sure that the DOM
@@ -415,7 +410,7 @@ the new elements using a library like jQuery. In that case, call
 [`Meteor.flush`](#meteor_flush) to bring the DOM up to date
 immediately.
 
-Methor는 보통 업데이트가 필요한 경우 한데 모아서(Batch) 업데이트한다.
+Methor는 보통 업데이트를 하나로 모아서(Batch) 업데이트한다. 
 배치 업데이트는 클라이언트 코드가 실행중이지 않을 때 한다.
 앱이 계속 실행중이라면 DOM에 적용되지 않는다. 하지만 바로 적용돼야
 할 때도 있다. 데이터베이스에 레코드를 하나 추가하자마자 바로
@@ -436,9 +431,9 @@ call you make to [`Meteor.flush`](#meteor_flush).
 라이브 DOM 엘리먼트가 화면에서 떨어지면 자동으로 정리된다.
 관련 콜백도 파괴되고, 관련 데이터베이스 쿼리도 멈추고, 업데이트 중인
 것도 멈춘다. 그래서 <a href="http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/" target="_blank">좀비 템플릿</a>
-문제에 대해 걱정할 필요가 없다. 엘리먼트가 자동으로 정리되지 않게
+문제에 대해 걱정할 필요가 없다. 엘리먼트가 정리되지 않게
 하려면 다음 이벤트 주기(event loop)가 오기전이나
-[`Meteor.flush`](#meteor_flush)를 호출하기 전에 화면에 붙여야 한다(on-screen).
+[`Meteor.flush`](#meteor_flush)를 호출하기 전에 다시 화면에 붙여야 한다(on-screen).
 
 Another thorny problem in hand-written applications is element
 preservation. Suppose the user is typing text into an `<input>`
@@ -450,8 +445,8 @@ character input state will be lost when the `<input>` is recreated.
 또 다른 문제로 '엘리먼트 상태 보존' 문제가 있을 수 있다.
 사용자가 `<input>` 엘리먼트에 뭔가 입력하고 있을 때 페이지의
 해당 부분이 다시 그려진다고 생각해보자. 그러면 포커스나 커서
-위치가 계속 바껴서 사용자는 울렁증이 올 수 있다. 그리고 `<input>`
-엘리먼트가 재생성 되면 부분적으로 입력한 텍스트나 관련
+위치가 계속 바껴서 사용자에게 울렁증이 올 수 있다. 그리고 `<input>`
+엘리먼트가 다시 생성되면 부분적으로 입력한 텍스트나 관련
 상태 정보를 잃게 된다.
 
 This is another problem that Meteor solves automatically. Just make
@@ -484,7 +479,7 @@ will take care of making it update in realtime.
 Meteor에서는 원하는 HTML 템플릿 엔진을 골라 사용하기 쉽다.
 Handlebar도 Jade도 Meteor의 라이브 페이지 기술과 함께 사용할 수 있다.
 다른 HTML 템플릿 엔진 패키지를 직접 만들어도 Meteor가 실시간으로
-페이지를 업데이트시킨다.
+페이지를 업데이트한다.
 
 To use this feature, create a file in your project with the `.html`
 extension. In the file, make a `<template>` tag and give it a
@@ -492,12 +487,11 @@ extension. In the file, make a `<template>` tag and give it a
 will precompile the template, ship it down to the client, and make it
 available as a function on the global `Template` object.
 
-이 기능을 사용하려면 `.html` 파일을 만든다.
-`.html` 파일을 만들고 `<template>` 태그 추가한다.
-이 태그의 `name` 속성에 템플릿 이름을 입력한다. 그리고 이 `<template>`
-태그 바디에 템플릿 내용을 넣는다. Meteor는 템플릿을 컴파일해서
-클라이언트로 보낸다. 이 템플릿 함수는 `Template` 객체를 통해
-사용할 수 있다.
+이 기능을 사용하려면 `.html` 파일을 만든다. `.html` 파일을 만들고 
+`<template>` 태그 추가한다. 이 태그의 `name` 속성에 템플릿 이름을 
+입력한다. 그리고 이 `<template>` 태그 바디에 템플릿 내용을 넣는다. 
+Meteor는 템플릿을 컴파일해서 클라이언트로 보낸다. 이 템플릿 함수는 
+`Template` 객체를 통해 사용할 수 있다.
 
 {{#note}}
 Today, the only templating system that has been packaged for Meteor is
@@ -513,7 +507,7 @@ Handlebars extensions</a>.
 사용하고 싶은 템플릿 엔진이 있으면 알려 줘라. Handlerbar는
 <a href="http://www.handlebarsjs.com/">Handlebars 문서</a>와
 <a href="https://github.com/meteor/meteor/wiki/Handlebars">Meteor
-Handlebars extensions</a>에서 설명한다.
+Handlebars extensions</a>에서 사세히 설명한다.
 {{/note}}
 
 A template with a `name` of `hello` is rendered by calling the
@@ -573,10 +567,9 @@ database cursor is passed to `#each`, it will wire up all of the
 machinery to efficiently add and move DOM nodes as new results enter
 the query.
 
-이렇게 함수로 정의한 `top_scorers` 데이터는 데이터베이스에서 가져오게
-된다. 쿼리에 대한 데이터베이스 커서는 `#each`로 전달되고, Meteor는
-기계적으로 데이버베이스의 데이터를 DOM 노드로 추가하고 업데이트 하는
-과정을 수행하게 된다.
+이렇게 함수로 정의한 `top_scorers` 데이터는 데이터베이스에서 가져온다.
+쿼리에 대한 데이터베이스 커서는 `#each`로 전달되고, Meteor는 기계적으로
+데이버베이스의 데이터를 DOM 노드로 추가하고 업데이트 하는 과정을 수행한다.
 
 Helpers can take arguments, and they receive the current template data
 in `this`:
@@ -658,7 +651,7 @@ whenever that data changes. See [Live HTML](#livehtml) for further
 discussion.
 
 지금까지 설명한 것을 복습해보자. 다음은 템플릿에 임의 데이터를
-넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트 된다.
+넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트한다.
 자동으로 업데이트 하는 부분은 [Live HTML](#livehtml)에서 다룬다.
 
     <!-- in myapp.html -->
@@ -757,7 +750,7 @@ make your own packages just yet. Coming soon.
 
 {{#warning}}
 패키지 API는 자주 변경되며 아직 문서가 없으니 직접 패키지를 만들기는
-쉽지 않다. 조만간 이 부분이 추가될 것이다.
+쉽지 않다. 조만간 이 부분도 추가할 계획이다.
 {{/warning}}
 
 {{/better_markdown}}
@@ -820,7 +813,7 @@ helpful for quickly putting up internal betas, demos, and so on.
 You can run also your application on your own infrastructure, or any
 other hosting provider like Heroku.
 
-Heroku 같은 호스팅 어체나 어디 다른 환경에도 자유롭게 배포할 수 있다.
+Heroku 같은 호스팅 업체 같은 곳에도 자유롭게 배포할 수 있다.
 
 To get started, run
 
