@@ -2,34 +2,17 @@
 {{#better_markdown}}
 ## `force-ssl`
 
-This package causes Meteor to redirect insecure connections (HTTP) to a
-secure URL (HTTPS). Use this package to ensure that communication to the
-server is always encrypted to protect users from active spoofing
-attacks.
-
 force-ssl 패키지를 사용하면 보안이 적용되지 않은 HTTP 연결을 SSL 보안을
 적용하는 HTTPS로 리다이렉트 한다. force-ssl 패키지를 사용하면 서버와
 주고받는 모든 데이터를 암호화 한다. 사용자가 서버와 주고받는 데이터를
 스푸핑 공격으로부터 보호하는 용도로 이 force-ssl 패키지를 사용한다.
 
-To simplify development, unencrypted connections from `localhost` are
-always accepted over HTTP.
-
 `localhost`에서 들어오는 요청에 대해서는 HTTPS가 아니더라도 리다이렉트하지
 않고 바로 처리하기 때문에 개발과정에서는 신경쓰지 않아도 된다.
-
-Application bundles (`meteor bundle`) do not include an HTTPS server or
-certificate. A proxy server that terminates SSL in front of a Meteor
-bundle must set the standard `x-forwarded-proto` header for the
-`force-ssl` package to work.
 
 애플리케이션 번들(`meteor bundle`)은 HTTPS 서버나 SSL용 인증서를 포함하지 않는다.
 Meteor 앞단에 SSL을 담당하는 Proxy 서버를 구성해야 force-ssl 패키지가 잘 동작한다.
 Proxy 서버는 반드시 표준 `x-forwarded-proto` 헤더를 지원해야 한다.
-
-Applications deployed to `meteor.com` subdomains with
-`meteor deploy` are automatically served via HTTPS using Meteor's
-certificate.
 
 `meteor.com`의 서브 도메인으로 deploy하는 모든 애플리케이션은
 자동으로 Meteor의 인증서를 통해 HTTPS 프로토콜로 호스팅된다.
