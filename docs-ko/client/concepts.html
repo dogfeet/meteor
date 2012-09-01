@@ -22,12 +22,12 @@
 <h2 id="structuringyourapp">Structuring your application</h2>
 
 Meteor 앱은 브라우저가 실행하는 클라이언트 JavaScript와 Node.js 컨테이너가
-실행하는 서버 JavaScript가 한데 섞여있다. HTML 파일, CSS 파일, 그외의 정적
+실행하는 서버 JavaScript가 한데 섞여 있다. HTML 파일, CSS 파일, 그 외의 정적
 파일도 함께 섞여 있다. 이 모든 파일을 패키징하고 배포하는 일을 Meteor가
-모두 자동화 했다. 어느 디렉토리에 해당 파일을 넣을지에 대한 제약은 거의
+모두 자동화했다. 어느 디렉토리에 해당 파일을 넣을지에 대한 제약은 거의
 없다. 자유롭게 넣으면 된다.
 
-서버쪽 컴포넌트는 JavaScript 뿐이다. Meteor는 `client`와 `public` 디렉토리에
+서버 쪽 컴포넌트는 JavaScript 뿐이다. Meteor는 `client`와 `public` 디렉토리에
 있는 파일을 제외한 나머지 JavaScript 파일을 모아서 Fiber Node.js 서버를
 실행한다. Meteor는 요청 당 쓰레드 하나로 실행한다. Node의 비동기 콜백
 스타일은 사용하지 않는다. Meteor 앱의 서버 코드에는 순차적 실행 모델이
@@ -35,7 +35,7 @@ Meteor 앱은 브라우저가 실행하는 클라이언트 JavaScript와 Node.js
 
 클라이언트는 더 다양한 컴포넌트를 사용한다. Meteor는 `server`와 
 `public` 디렉토리를 제외한 나머지 JavaScript 코드를 한데 모아서 
-클라이언트쪽 JavaScript 코드로 사용한다. 이렇게 모은 번들을 minify하여 
+클라이언트 쪽 JavaScript 코드로 사용한다. 이렇게 모은 번들을 minify해서 
 클라이언트에 전송한다. 따라서 JavaScript 파일 하나만으로 앱을 개발해도 
 되고 파일을 여러 개로 쪼개서 개발해도 된다.
 
@@ -82,7 +82,7 @@ Rails나 Django 프로젝트처럼 `public` 디렉토리에 있는 파일은 그
 Meteor 클라이언트에는 in-memory 데이터베이스 캐시가 있다.
 이 캐시에는 서버 데이터베이스의 도큐먼트 중 일부가 저장된다.
 데이터베이스에서 도큐먼트가 변경되면 자동으로 도큐먼트를 이용하는
-모든 클라이언트와 동기화 된다.
+모든 클라이언트와 동기화된다.
 
 클라이언트 캐시를 관리하려면 서버가 도큐먼트를 <b>Publish</b>하고
 클라이언트가 <b>Subscribe</b>해야 한다. 채팅 시스템을 개발한다고 해보자.
@@ -113,8 +113,8 @@ href="http://www.mongodb.org/display/DOCS/Manual"> MongoDB API</a>를
 `remote`, `update` 명령어로 문서를 수정하면 명령은 바로 실행된다. 동시에
 클라이언트는 서버에 수정 명령을 전송하고 그러면 서버의 데이터베이스도 
 변경된다. 물론 클라이언트와 서버가 데이터 변경에 동의하는 경우는 말이다.
-클라이언트에서 수정한 내용을 서버가 거부할수도 있다. 권한문제라던가
-데이터를 동시에 다른 클라이언트도 수정하는 경우가 있을 수 있다.
+클라이언트에서 수정한 내용을 서버가 거부할 수도 있다. 권한문제라던가
+데이터를 동시에 다른 클라이언트도 수정할 때가 있을 수 있다.
 서버는 데이터베이스를 수정하고 클라이언트에 도큐먼트를 다시 Publish한다.
 Subscribe하는 클라이언트는 자동으로 그 문서를 받아서 업데이트한다.
 
@@ -122,9 +122,9 @@ Subscribe하는 클라이언트는 자동으로 그 문서를 받아서 업데�
     Messages.insert({room: 2413, text: "hello!"});
 
 레이턴시 보정 기술을 사용하여 클라이언트는 항상 최신 데이터를 유지하며 
-서버에 요청하고 응답할 때 까지 절대 기다리지 않는다. 데이터를 수정해야 
-하면 바로 로컬 캐시를 수정한다. 서버로부터 변경이 완료될 때 까지 
-기다리지 않는다. 다만 서버쪽 데이터도 변경되도록 수정 메시지를 
+서버에 요청하고 응답할 때까지 절대 기다리지 않는다. 데이터를 수정해야 
+하면 바로 로컬 캐시를 수정한다. 서버로부터 변경이 완료될 때까지 
+기다리지 않는다. 다만, 서버 쪽 데이터도 변경되도록 수정 메시지를 
 서버로 보낸다.
 
 MongoDB 대신 다른 데이터베이스를 사용하고 싶다면 서버 데이터베이스
@@ -141,16 +141,16 @@ MongoDB 대신 다른 데이터베이스를 사용하고 싶다면 서버 데이
 
 Meteor는 <a target="_blank" href="http://en.wikipedia.org/wiki/Reactive_programming">
 Reactive 프로그래밍</a> 개념을 따른다. 이 말은 Imperative 프로그래밍
-스타일로 코딩을 해도 데이터가 바뀌면 자동으로 다시 계산된다는 것을 의미한다.
+스타일로 코딩해도 데이터가 바뀌면 자동으로 다시 계산된다는 것을 의미한다.
 (역주: `a = b + c`라는 수식이 있을 때 Imperative 프로그래밍에서는
-b, c 값이 변경되도 a 값이 변경되지 않는다. 하지만 Reactive 프로그래밍에서는
+b, c 값이 변경돼도 a 값이 변경되지 않는다. 하지만, Reactive 프로그래밍에서는
 b, c 값이 변경되면 a 값도 바뀐다. - from wikipedia)
 
     Meteor.autosubscribe(function () {
       Meteor.subscribe("messages", Session.get("currentRoomId"));
     });
 
-이 것은 채팅 클라이언트 예제다. Subscribe해서 세션의 `currentRoomId`
+이것은 채팅 클라이언트 예제다. Subscribe해서 세션의 `currentRoomId`
 값에 따라서 데이터를 받는다. `Session.get("currentRoomId")` 값이 변경되면
 자동으로 함수를 실행해서 변경한 값으로 다시 Subscribe한다.
 
@@ -163,7 +163,7 @@ b, c 값이 변경되면 a 값도 바뀐다. - from wikipedia)
 
 이 패턴이 적용되는 범위는 굉장히 넓다. 개발자가 Subscribe 관련 코드를
 직접 작성하지 않아도 된다. Unsubscribe/Resubscribe를 호출하거나 이
-함수들을 제때 호출되도록 만드는 일은 Meteor가 해준다. Meteor는 개발자가
+함수들을 제때 호출되게 하는 일은 Meteor가 해준다. Meteor는 개발자가
 데이터를 전파하는 코드를 작성할 필요가 없게 만들어 준다.
 
 Reactive 컨텍스트를 만드는 Meteor 함수들:
@@ -179,7 +179,7 @@ Reactive 컨텍스트를 만드는 Meteor 함수들:
 * <a href="#meteor_status">`Meteor.status`</a>
 
 메테오의 <a href="https://github.com/meteor/meteor/blob/master/packages/deps/deps.js" target="_blank">Reactive
-구현</a>은 작지만 맵다. 겨우 50줄에 불과하다. 그 코드를 살펴 보고
+구현</a>은 작지만 맵다. 겨우 50줄에 불과하다. 그 코드를 살펴보고
 <a href="#meteor_deps">Meteor.deps</a> 모듈을 사용해서 데이터
 소스나 Reactive 컨택스트를 직접 만들어 쓸 수 있다.
 
@@ -221,8 +221,8 @@ Reactive 컨텍스트를 만드는 Meteor 함수들:
 템플릿 시스템을 새로 만들 때 필요하다.
 
 Methor는 보통 업데이트를 하나로 모아서(Batch) 업데이트한다. 
-배치 업데이트는 클라이언트 코드가 실행중이지 않을 때 한다.
-앱이 계속 실행중이라면 DOM에 적용되지 않는다. 하지만 바로 적용돼야
+배치 업데이트는 클라이언트 코드가 실행 중이지 않을 때 한다.
+앱이 계속 실행 중이라면 DOM에 적용되지 않는다. 하지만, 바로 적용돼야
 할 때도 있다. 데이터베이스에 레코드를 하나 추가하자마자 바로
 DOM에도 적용되게 하려면 [`Meteor.flush`](#meteor_flush)를 호출한다.
 DOM을 즉시 업데이트하면 jQuery 같은 라이브러리로 새로 추가된
@@ -232,13 +232,13 @@ DOM을 즉시 업데이트하면 jQuery 같은 라이브러리로 새로 추가�
 관련 콜백도 파괴되고, 관련 데이터베이스 쿼리도 멈추고, 업데이트 중인
 것도 멈춘다. 그래서 <a href="http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/" target="_blank">좀비 템플릿</a>
 문제에 대해 걱정할 필요가 없다. 엘리먼트가 정리되지 않게
-하려면 다음 이벤트 주기(event loop)가 오기전이나
+하려면 다음 이벤트 주기(event loop)가 오기 전이나
 [`Meteor.flush`](#meteor_flush)를 호출하기 전에 다시 화면에 붙여야 한다(on-screen).
 
 또 다른 문제로 '엘리먼트 상태 보존' 문제가 있을 수 있다.
 사용자가 `<input>` 엘리먼트에 뭔가 입력하고 있을 때 페이지의
 해당 부분이 다시 그려진다고 생각해보자. 그러면 포커스나 커서
-위치가 계속 바껴서 사용자에게 울렁증이 올 수 있다. 그리고 `<input>`
+위치가 계속 바뀌어서 사용자에게 울렁증이 올 수 있다. 그리고 `<input>`
 엘리먼트가 다시 생성되면 부분적으로 입력한 텍스트나 관련
 상태 정보를 잃게 된다.
 
@@ -268,7 +268,7 @@ Meteor는 템플릿을 컴파일해서 클라이언트로 보낸다. 이 템플�
 `Template` 객체를 통해 사용할 수 있다.
 
 {{#note}}
-현재 Meteor에 패키징된 템플릿 엔진은 Handlerbars 뿐이다. Meteor에서
+현재 Meteor에 패키징 된 템플릿 엔진은 Handlerbars 뿐이다. Meteor에서
 사용하고 싶은 템플릿 엔진이 있으면 알려 줘라. Handlerbar는
 <a href="http://www.handlebarsjs.com/">Handlebars 문서</a>와
 <a href="https://github.com/meteor/meteor/wiki/Handlebars">Meteor
@@ -338,7 +338,7 @@ Helper 함수에서 `this`는 템플릿 데이터를 가리킨다:
     </{{! }}template>
 
 {{#note}}
-`if`와 `league_is`는 기술적으로 헬퍼이며 기존의 Handlebar 로는
+`if`와 `league_is`는 기술적으로 헬퍼이고 기존의 Handlebar 로는
 `league_is`를 실행하지 못한다. `{{dstache}}#if league_is "junior"}}`란
 표현은 Meteor에서 Hanldebar를 확장한 것이다.
 그 결과로 helper 블럭 안에서 helper를 사용할 수 있다.
@@ -349,7 +349,7 @@ Helper 함수로 상수를 넘길 수 있다:
     // {{dstache}}#each sections}} 코드와도 잘 동작함
     Template.report.sections = ["Situation", "Complication", "Resolution"];
 
-마지막으로 템플릿 함수의 `events` 프로퍼티에 이벤트 핸들러를 등록할
+마지막으로 템플릿 함수의 `events` 프로퍼티로 이벤트 핸들러를 등록할
 수 있다. 정확한 형식은 [Event Maps](#eventmaps)에 나와있다.
 이벤트 핸들러의 `this`는 엘리먼트의 데이터 컨텍스트를 가리킨다.
 
@@ -374,7 +374,7 @@ Helper 함수로 상수를 넘길 수 있다:
     });
 
 지금까지 설명한 것을 복습해보자. 다음은 템플릿에 임의 데이터를
-넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트한다.
+넣는 예제다. 데이터가 변경될 때마다 자동으로 업데이트한다.
 자동으로 업데이트 하는 부분은 [Live HTML](#livehtml)에서 다룬다.
 
     <!-- in myapp.html -->
@@ -444,7 +444,7 @@ Meteor 패키지는 그 자체로도 JavaScript 프로그램이다.
 
 <h2 id="deploying">Deploying</h2>
 
-Meteor는 애플리케이션 서버다. 인터넷에 애플리케이션을 서비스하기위해 필요한
+Meteor는 애플리케이션 서버다. 인터넷에 애플리케이션을 서비스하는 데 필요한
 모든 것이 들어 있다. 개발자는 애플리케이션 코드(JavaScript, HTML, CSS)만 개발하면 된다.
 
 <h3 class="nosection">Running on Meteor's infrastructure</h3>
@@ -452,15 +452,15 @@ Meteor는 애플리케이션 서버다. 인터넷에 애플리케이션을 서�
 <b>meteor deploy</b> 명령으로 사용하면 쉽게 앱을 배포할 수 있다.
 meteor를 사용하면 새로운 아이디어를 구현하고, 매주 살을 붙이고,
 그것을 세상에 공개하는 일을 가장 쉽게 할 수 있다.
-나는 개인적으로 이런게 필요하다고 생각해왔다.
+나는 개인적으로 이런 게 필요하다고 생각해왔다.
 
     $ meteor deploy myapp.meteor.com
 
 그러면 myapp.meteor.com에 앱이 배포된다. Meteor는 처음에 실행할 때
-데이터베이스를 새로 만든다. 두번째 실행할 때부터는 기존 데이터를
+데이터베이스를 새로 만든다. 두 번째 실행할 때부터는 기존 데이터를
 그대로 유지하고 단지 코드만 배포한다.
 
-다른 도메인으로 배포할 수도 있다. 이 때는 CNAME을
+다른 도메인으로 배포할 수도 있다. 이때는 CNAME을
 <code>origin.meteor.com</code>으로 설정하고 해당 hostname으로 배포한다.
 
     $ meteor deploy www.myapp.com
@@ -476,10 +476,10 @@ Heroku 같은 호스팅 업체 같은 곳에도 자유롭게 배포할 수 있�
 
     $ meteor bundle myapp.tgz
 
-이 명령어는 Node.js 애플리케이션을 tar 파일로 떨궈준다. 이 앱을 실행하는
+이 명령어는 Node.js 애플리케이션을 tar 파일로 떨어뜨려 준다. 이 앱을 실행하는
 데는 Node.js 0.6과 MongoDB 서버가 필요하다. MongoDB URL과 HTTP 포트를
 명시하고 애플리케이션을 실행한다.
-가지고 있는 MongoDB가 잆으면 [MongoHQ](http://mongohq.com)를 사용하면 좋다.
+가진 MongoDB가 잆으면 [MongoHQ](http://mongohq.com)를 사용하면 좋다.
 
     $ PORT=3000 MONGO_URL=mongodb://localhost:27017/myapp node bundle/main.js
 
