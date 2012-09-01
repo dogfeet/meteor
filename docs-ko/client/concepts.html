@@ -168,7 +168,7 @@ b, c 값이 변경되면 a 값도 바뀐다. - from wikipedia)
 
 Reactive 컨텍스트를 만드는 Meteor 함수들:
 
-* [`Meteor.ui.render`](#meteor_ui_render)와 [`Meteor.ui.chunk`](#meteor_ui_chunk)
+* [`Meteor.render`](#meteor_render) and [`Meteor.renderList`](#meteor_renderlist)
 * [`Meteor.autosubscribe`](#meteor_autosubscribe)
 * [Templates](#templates)
 
@@ -198,7 +198,7 @@ Reactive 컨텍스트를 만드는 Meteor 함수들:
 다른 HTML 템플릿 엔진을 사용할 수도 있고 JavaScript로 직접 생성할 수도
 있다. 다음은 JavaScript로 생성하는 예다:
 
-    var fragment = Meteor.ui.render(
+    var fragment = Meteor.render(
       function () {
         var name = Session.get("name") || "Anonymous";
         return "<div>Hello, " + name + "</div>";
@@ -207,22 +207,17 @@ Reactive 컨텍스트를 만드는 Meteor 함수들:
 
     Session.set("name", "Bob"); // page updates automatically!
 
-[`Meteor.ui.render`](#meteor_ui_render) 함수는 HTML 문자열을 반환하는
-렌더링 함수를 아규먼트로 받는다. [`Meteor.ui.render`](#meteor_ui_render)는
+[`Meteor.render`](#meteor_render) 함수는 HTML 문자열을 반환하는
+렌더링 함수를 아규먼트로 받는다. [`Meteor.render`](#meteor_render)는
 자동으로 업데이트하는 `DocumentFragment`를 리턴한다. 렌더링 함수에서
 사용하는 데이터가 변하면 다시 실행된다. `DocumentFragment`에 DOM 노드가
 들어 있어 정확히 어디에 업데이트 해야 할지 알 수 있다. 페이지가 어떻게
-업데이트되는지 걱정하지 않아도 된다.
-
-모든 일이 자동으로 일어난다. [`Meteor.ui.render`](#meteor_ui_render)는
-[Reactive 컨텍스트](#reactivity)를 사용해서 렌더링 함수에서 사용하는
-데이터가 무엇인지 알아낸다. [`Meteor.ui.render`](#meteor_ui_render) 함수 
-안에서 [`Meteor.ui.chunk`](#meteor_ui_chunk)나 
-[`Meteor.ui.listChunk`](#meteor_ui_listchunk)로 범위를 결정한다.
-이렇게 데이터가 어떻게 렌더링할지 조정해서 라이브 쿼리를 최적화 시킨다.
+업데이트되는지 걱정하지 않아도 된다. 모든 일이 자동으로 일어난다. 
+[`Meteor.render`](#meteor_render)는 [Reactive 컨텍스트](#reactivity)를 
+사용해서 렌더링 함수에서 사용하는 데이터가 무엇인지 알아낸다.
 
 보통은 이 함수를 직접 호출하지 않는다. 그냥 Handlebar나 Jade처럼
-선호하는 템플릿 패키지를 사용하면 된다. `render`나 `chunk` 함수는 
+선호하는 템플릿 패키지를 사용하면 된다. `render`나 `renderlist` 함수는 
 템플릿 시스템을 새로 만들 때 필요하다.
 
 Methor는 보통 업데이트를 하나로 모아서(Batch) 업데이트한다. 
@@ -247,12 +242,11 @@ DOM을 즉시 업데이트하면 jQuery 같은 라이브러리로 새로 추가�
 엘리먼트가 다시 생성되면 부분적으로 입력한 텍스트나 관련
 상태 정보를 잃게 된다.
 
-이 문제 또한 Meteor가 자동으로 해결해준다. `<input>`과  같이 포커스를 받을
-수 있는 엘리먼트에 대해서 유일한 이름의 `id` 속성이나 포함된 `id` 값이 정의된
-상위 엘리먼트 안에서 유일한 이름의 `name` 속성을 정의해두면 된다.
-Meteor는 이러한 엘리먼트에 대해서는 상위 템플릿이 다시 그려지는 경우에도
-그 상태를 유지시켜준다. 단 엘리먼트의 하위 엘리먼트나 엘리먼트의 속성이
-변경된 부분은 업데이트를 한다.
+Meteor는 이 문제도 해결해준다. 템플릿이 다시 렌더링될 때 템플릿에
+[`preserve`](#template_preserve) 디렉티브를 명시하면 엘리먼트 상태가
+보존된다. Meteor는 preserve 엘리먼트에 대해서 상위 템플릿이 다시 
+렌더링될 때도 그 상태를 유지시킨다. 하지만 그 perserve 엘리먼트의 
+자식 엘리먼트나 속성은 업되이트 된다.
 
 {{/better_markdown}}
 </template>
@@ -294,10 +288,10 @@ Handlebars extensions</a>에서 자세히 설명한다.
      => "<div class="greeting">Hello there, Alyssa Hacker!</div>"
 
 템플릿 함수는 문자열을 반환하므로 [`Live HTML`](#livehtml) 시스템과
-함께 사용할 수 있다. [`Meteor.ui.render`](#meteor_ui_render)에서
+함께 사용할 수 있다. [`Meteor.render`](#meteor_render)에서
 이 템플릿 함수를 사용하면 템플릿 데이터가 변경될 때 자동으로 업데이트된다:
 
-    Meteor.ui.render(function () {
+    Meteor.render(function () {
       return Template.hello({first: "Alyssa", last: "Hacker"});
     })
       => automatically updating DOM elements
@@ -373,11 +367,11 @@ Helper 함수로 상수를 넘길 수 있다:
     </{{! }}template>
 
     <!-- myapp.js -->
-    Template.player_score.events = {
+    Template.player_score.events({
       'click .give_points': function () {
         Users.update({_id: this._id}, {$inc: {score: 2}});
       }
-    };
+    });
 
 지금까지 설명한 것을 복습해보자. 다음은 템플릿에 임의 데이터를
 넣는 예제다. 데이터가 변경될 때 마다 자동으로 업데이트한다.
@@ -396,7 +390,7 @@ Helper 함수로 상수를 넘길 수 있다:
 
     <!-- in the console -->
     > Session.set("weather", "cloudy");
-    > document.body.appendChild(Meteor.ui.render(Template.forecast));
+    > document.body.appendChild(Meteor.render(Template.forecast));
     In DOM:  <div>It'll be cloudy tonight</div>
 
     > Session.set("weather", "cool and dry");
