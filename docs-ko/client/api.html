@@ -80,9 +80,9 @@ sure to call `this.flush` from inside your observe callbacks.  Methods
 that update the database are considered finished when the observe
 callbacks return.
 
-observe()를 사용해서 데이터베이스가 변경되는 것을 지켜보려면
+observe()를 사용해서 DB가 변경되는 것을 지켜보려면
 observe 콜백 안에서 `this.flush`를 호출해 줘야 한다.
-데이터베이스를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하면
+DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하면
 업데이트 작업이 완료됐다고 간주한다.
 
 Example:
@@ -182,11 +182,7 @@ on the client will be that from the *first* subscription the client
 activated.  (Even if it is not the first to send the duplicated
 attribute.)
 
-(???)
-
-여러개의 Subscription에서 동일한 애트리뷰트에 대해 서로 다른 값을 보내오면
-첫 번째로 설정한 Subscription의 값을 사용한다(해당 값이 먼저 도착한 값이
-아니라도 첫 번째 Subscription의 값을 사용한다).
+여러 개의 Subscription에서 동일한 속성에 대해 서로 다른 값을 보내오면 첫 번째로 설정한 Subscription의 값을 사용한다. 해당 값이 먼저 도착한 값이 아니라고 해도 첫 번째 Subscription의 값을 사용한다.
 
 If all of the attributes in a document are removed, Meteor
 will remove the (now empty) document.  If you want to publish empty
@@ -390,10 +386,10 @@ invoking their stub versions that update the local cache, instead of
 their "real" versions that update the database (using credentials known
 only to the server.)
 
-데이터베이스 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문에 우리는 항상 이
-기능을 사용하게 된다. 클라이언트에서 데이터베이스 함수를 호출하면 Stub 버전이 실행돼서
+DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문에 우리는 항상 이
+기능을 사용하게 된다. 클라이언트에서 DB 함수를 호출하면 Stub 버전이 실행돼서
 클라이언트 로컬 캐시가 수정된다. 어떤 함수에서 호출하든 최상위에서 호출하든 호출하는 위치는
-상관 없다. 서버 데이터베이스를 수정하는 실제 버전을 수정하지 않고 계정이나 권한 같은
+상관 없다. 서버 DB를 수정하는 실제 버전을 수정하지 않고 계정이나 권한 같은
 정보는(credentials) 서버에서만 사용할 수 있다.
 
 {{> api_box meteor_apply}}
@@ -592,7 +588,7 @@ this cache, without talking to the server.
 
 * 클라이언트에서는 Minimongo 인스턴스가 만들어진다. Minimongo는 in-memory이고,
 non-persistent 이면서, 순수하게 JavaScript로 만들어진 Mongo 구현체이다. Minimongo는
-데이터베이스에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하는 로컬 캐시로 사용한다.
+DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하는 로컬 캐시로 사용한다.
 클라이언트에서 실행하는 [`find`](#find) 쿼리는 서버와 통신하지 않고 캐시에서만 찾는다.
 
 * When you write to the database on the client ([`insert`](#insert),
@@ -601,9 +597,9 @@ immediately on the client, and, simultaneously, it's shipped up to the
 server and executed there too.  The `livedata` package is
 responsible for this.
 
-* 클라이언트에서 데이터베이스 쓰기 명령을 실행하면 
+* 클라이언트에서 DB 쓰기 명령을 실행하면 
 ([`insert`](#insert), [`update`](#update), [`remove`](#remove)) 클라이언트에서는 바로
-적용되고 서버에도 전송돼서 데이터베이스에 써진다.
+적용되고 서버에도 전송돼서 DB에 써진다.
 이 쓰기 명령이 실행되면 `livedata` 패키지에 할 일이 생긴다.
 
 If you pass `null` as the `name`, then you're creating a local
@@ -715,7 +711,7 @@ documents, `map` and `forEach` to iterate over all matching
 documents, and `observe` to register callbacks when the set of
 matching documents changes.
 
-`find`는 커서를 리턴한다. 커서는 데이터베이스에 접근 하는 것도 아니고 실제 도큐먼트가
+`find`는 커서를 리턴한다. 커서는 DB에 접근 하는 것도 아니고 실제 도큐먼트가
 들어 있지도 않다. 커서는 조건에 만족하는 도큐먼트를 `fetch`하거나, `iterate`하거나,
 `map`하거나, `forEach`하거나, 콜백을 등록해서 `observe`하는 기능을 제공한다.
 
@@ -728,9 +724,9 @@ those changes may or may not appear in the result set.
 
 {{#warning}}
 컬렉션 커서는 질의하는 순간의 스냅샷이 아니다. 커서는 데이터를 가져오는 순간의 스냅샷을
-가져오고 그 사이에 데이터베이스가 변경되면 변경내용이 포함될 수도 있고 포함되지 않을
+가져오고 그 사이에 DB가 변경되면 변경내용이 포함될 수도 있고 포함되지 않을
 수도 있다. `Collection.find`를 호출하고 나서 커서를 만드는 사이에, 그리고 그 커서로
-데이터를 가져오는 사이에 데이터베이스가 변하면 변한대로 가져온다.
+데이터를 가져오는 사이에 DB가 변하면 변한대로 가져온다.
 {{/warning}}
 
 Cursors are a reactive data source.  The first time you retrieve a
@@ -767,7 +763,7 @@ true, false'를 말한다.
 `insert` will generate a unique ID for the object you pass, insert it
 in the database, and return the ID.
 
-`insert`는 객체에 필요한 ID를 생성한다. 그리고 데이터베이스에 객체를 넣고서 그 ID를 리턴한다.
+`insert`는 객체에 필요한 ID를 생성한다. 그리고 DB에 객체를 넣고서 그 ID를 리턴한다.
 
 On the server, if you don't provide a callback, then `insert` blocks
 until the database acknowledges the write, or throws an exception if
@@ -777,7 +773,7 @@ callback is called with error and result arguments.  In an error case,
 `result` is undefined.  If the insert is successful, `error` is
 undefined and `result` is the new document ID.
 
-서버에서는 콜백 없이 `insert`를 실행하면 블럭되며 데이터베이스에서 쓰기가 끝났다고
+서버에서는 콜백 없이 `insert`를 실행하면 블럭되며 DB에서 쓰기가 끝났다고
 알려주거나 뭔가 문제가 있어서 예외가 발생하면 풀린다. 콜백을 주고 `insert`를 실행하면
 즉시 ID를 리턴한다. insert가 성공했든 실패했든지 간에 콜백으로 `error`, `result`
 아규먼트를 넘긴다. 에러가 있으면 `result`에는 undefined를 넘긴다.
@@ -821,7 +817,7 @@ immediately.  Once the update completes, the callback is called with a
 single error argument in the case of failure, or no arguments if the
 update was successful.
 
-서버에서는 `update`를 콜백없이 호출하면 데이터베이스가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어 온다.
+서버에서는 `update`를 콜백없이 호출하면 DB가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어 온다.
 
 On the client, `update` never blocks.  If you do not provide a callback
 and the update fails on the server, then Meteor will log a warning to
@@ -870,7 +866,7 @@ immediately.  Once the remove completes, the callback is called with a
 single error argument in the case of failure, or no arguments if the
 update was successful.
 
-서버에서는 콜백 없이 `remove`를 호출하면 데이터베이스가 ACK를 주거나 예외가
+서버에서는 콜백 없이 `remove`를 호출하면 DB가 ACK를 주거나 예외가
 날 때까지 블럭한다. 콜백을 주고 호출하면 `remove`는 바로 리턴한다. remove가 완료되면
 콜백이 호출되는데 에러가 있으면 error가 아규먼트로 넘어오고 에러가 없으면
 아규먼트 없이 호출한다.
@@ -1019,7 +1015,7 @@ The document at position `at_index`, which was previously
 {{/dtdd}}
 
 {{#dtdd "removed(old_document, at_index)"}}
-`at_index`에 있는 문서가 삭제될 때 호출된다. 해당 도큐먼트의 내용은
+`at_index`에 있는 도큐먼트가 삭제될 때 호출된다. 해당 도큐먼트의 내용은
 `old_document`이고 아예 삭제된다.
 {{/dtdd}}
 </dl>
@@ -1099,7 +1095,7 @@ See the <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries" target="_
 A modifier is an object that describes how to update a document in
 place by changing some of its fields. Some examples:
 
-modifier는 어떻게 문서를 업데이트해야 하는지를 명시하는 객체다.
+modifier는 어떻게 도큐먼트를 업데이트해야 하는지를 명시하는 객체다.
 어떤 필드를 어떻게 업데이트해야 하는지 표현한다:
 
     // Set the 'admin' property on the document to true
@@ -1114,7 +1110,7 @@ instead interpreted as a literal document, and completely replaces
 whatever was previously in the database.
 
 만약 modifier에서 $-오퍼레이터를 빼먹으면 일반 도큐먼트로 해석된다.
-그래서 데이터베이스에 원래 있던 도큐먼트를 통째로 바꿔버린다.
+그래서 DB에 원래 있던 도큐먼트를 통째로 바꿔버린다.
 
     // Find the document with id "123", and completely replace it.
     Users.update({_id: "123"}, {name: "Alice", friends: ["Bob"]});
@@ -1303,7 +1299,7 @@ or replaced and should be cleaned up.  You can associate data with a
 template instance, and you can access its DOM nodes when it is in the
 document.
 
-한 템플릿을 여러번 사용하면 그때마다 템플릿 인스턴스라고 부른다.
+같은 템플릿을 여러번 사용할 수 있는데 그때마다 템플릿 인스턴스가 생긴다. 템플릿 인스턴스의 라이프싸이클은 생성되서, DOM에 넣어지고, 나중에 DOM에서 제거되고, 메모리에서 해제되는 순이다. 이 라이프싸이클은 Meteor가 알아서 관리해준다. 템플릿 인스턴스가 언제 제거할지, 언제 교체할지, 언제 메모리에서 해제할지도 Meteor 결정해준다. 사용자는 템플릿 인스턴스와 데이터와 엮어 주기만 하며 되고 바로 DOM 노드에 접근해서 사용할 수 있다.
 
 Additionally, Meteor will maintain a template instance and its state
 even if its surrounding HTML is re-rendered into new DOM nodes.  As
@@ -1312,9 +1308,13 @@ not consider any instances to have been created or destroyed.  You can
 request that the same DOM nodes be retained as well using `preserve`
 and `constant`.
 
+뿐만아니라 템플릿 인스턴스가 새로운 DOM 노드로 다시 렌더링된다고 해도 Meteor는 해당 템플릿 인스턴스와 상태를 관리해준다. 같은 방법으로 템플릿을 호출할 수 있으니까 Meteor는 인스턴스가 해제되고 다시 생성됐다고 여기지 않는다. 그리고 `preserve`와 `constant`를 사용하면 Meteor는 DOM 노드를 새로 만들지 않고 그대로 유지한다.
+
 There are a number of callbacks and directives that you can specify on
 a named template and that apply to all instances of the template.
 They are described below.
+
+템플릿과 템플릿 인스턴스에 사용하는 콜백과 옵션이 많다. 어떤 콜백과 옵션이 있는지 살펴보자.
 
 {{> api_box template_call}}
 
@@ -1323,16 +1323,21 @@ other settings where reactive HTML is being generated, the resulting
 HTML is annotated so that it renders as reactive DOM elements.
 Otherwise, the HTML is unadorned and static.
 
+`Meteor.render` 안에서 호출하면 템플릿의 리턴하는 HTML에는 부가 정보가 붙고 Reactive DOM 엘리먼트로 렌더링된다. `Meteor.render`뿐만 아니라 Reactive 컨텍스트 어디에서나 가능하고 
 
 {{> api_box template_rendered}}
 
 This callback is called once when an instance of Template.*myTemplate* is rendered into DOM nodes and put into the document for the first time, and again each time any part of the template is re-rendered.
+
+이 함수는 Template.*myTemplate* 인스턴스가 렌더링될 때 호출된다. 템플릿이 DOM 노드로 생성되서 DOM 트리에 넣어질 때마다 호출되는 것이라서 다시 렌더링될 때도 호출된다.
 
 In the body of the callback, `this` is a [template
 instance](#template_inst) object that is unique to this occurrence of
 the template and persists across re-renderings.  Use the `created` and
 `destroyed` callbacks to perform initialization or clean-up on the
 object.
+
+콜백 안에서 `this`는 [템플릿 인스턴스](#template_inst) 객체를 가리킨다. 그래서 정확하게 템플릿이 사용된 위치를 식별할 수 있어서 렌더링될 때 데이터를 저장할 수도 있다. 템플릿 인스턴스가 만들어질 때나 해제될 때를 원한다면 `created`와 `destroyed` 콜백을 사용하라 
 
 {{> api_box template_created}}
 
@@ -1343,10 +1348,14 @@ instance](#template_inst) object.  Properties you set on this object
 will be visible from the `rendered` and `destroyed` callbacks and from
 event handlers.
 
+이 콜백은 *myTemplate* 템플릿 인스턴스가 새로 생성될 때 호출된다. 기존의 템플릿 인스턴스를 다시 랜더링할 때는 호출되지 않는다. 이 콜백에서 `this'`는 [템플릿 인스턴스](#template_inst) 객체다. 객체에 프로퍼티를 추가하면 나중에 `rendered`와 `destroyed` 콜백에서도 접근할 수 있다.
+
 This callback fires once and is the first callback to fire.  Every
 `created` has a corresponding `destroyed`; that is, if you get a
 `created` callback with a certain template instance object in `this`,
 you will eventually get a `destroyed` callback for the same object.
+
+이 콜백은 딱 한번 호출되며 다른 여러 콜백 중에서 가장 먼저 호출된다. `created` 콜백과 `destroyed` 콜백은 한 쌍이다. `create` 콜백에서 초기화하고 `destoryed` 콜백에서 해제한다.
 
 {{> api_box template_destroyed}}
 
@@ -1358,27 +1367,41 @@ being destroyed.
 This callback is most useful for cleaning up or undoing any external
 effects of `created`.  It fires once and is the last callback to fire.
 
+이 콜백은 템플릿 인스턴스가 페이지에서 떼어져서 다시 렌더링되지 않을 때 발생한다. 떼어진 이유는 중요치 않다. 이 콜박 안에서 `this`는 해제될 [템플릿 인스턴스](#template_inst) 객체다.
+
+`created` 콜백에서 만든 쓰레기를 청소하기엔 `destroyed`가 최적의 장소다. 이 콜백은 여러 콜백 중에서 가장 마지막에 딱 한번만 호출된다.
 
 {{> api_box template_events}}
 
 Declare event handers for instances of this template. Multiple calls add
 new event handlers in addition to the existing ones.
 
+이 함수로 템플릿 인스턴스에 사용될 이벤트 핸들러를 등록한다. 여러번 호출하면 호출하는 만큼 새로운 이벤트 핸들러로 등록된다.
+
 See [Event Maps](#eventmaps) for a detailed description of the event
 map format and how event handling works in Meteor.
+
+어떤 형식으로 [이벤트 맵](#eventmaps)을 넘겨야하고 어떻게 핸들링해야 하는지는 [이벤트 맵](#eventmaps) 설명하는 부분을 보라.
 
 {{#note}}
 This syntax replaces the previous syntax: `Template.myTemplate.events = {...}`, but for now, the
 old syntax still works.
 {{/note}}
 
+{{#note}}
+이전 버전까지는 `Template.myTemplate.events = {...}` 형식으로 사용했어야 했다. 아직까지는 이 예전 문법을 지원하긴 한다.
+{{/note}}
 
 {{> api_box template_helpers}}
 
 Each template has a local dictionary of helpers that are made available to it,
 and this call specifies helpers to add to the template's dictionary.
 
+템플릿 하나에서만 사용할 수 있는 로컬 헬퍼를 정의할 수 있다. helpers 함수를 통해서 딕셔너리 형태로 정의한다.
+
 Example:
+
+예제:
 
     Template.myTemplate.helpers({
       foo: function () {
@@ -1387,9 +1410,12 @@ Example:
     });
 
 In Handlebars, this helper would then be invoked as `{{dstache}}foo}}`.
+Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출한다.
 
 The following syntax is equivalent, but won't work for reserved property
 names:
+
+다음과 같이 정의하는 것도 가능하다. 하지만 heplers 같은 특수한 프로퍼티는 사용할 수 없다.
 
     Template.myTemplate.foo = function () {
       return Session.get("foo");
@@ -1405,18 +1431,29 @@ contains.  The elements to preserve must be present both as nodes in
 the old DOM and as tags in the new HTML.  Meteor will patch the DOM
 around the preserved elements.
 
+DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싸고 있는 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지된다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링되어도 유지된다. 
+
 Preservation is useful in a variety of cases where replacing a DOM
 element with an identical or modified element would not have the same
 effect as retaining the original element.  These include:
+
+DOM 엘리먼트를 동일하거나(identical) 수정하 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음과 같은 경우에 매우 유용하다:
 
 * Input text fields and other form controls
 * Elements with CSS animations
 * Iframes
 * Nodes with references kept in JavaScript code
 
+* 텍스트 Input 필드 같은 폼 컨트롤
+* CSS 에니메이션이 있는 엘리먼트
+* Iframes
+* JavaScript 코드에서 참조하고 있는 엘리먼트
+
 If you want to preserve a whole region of the DOM, an element and its
 children, or nodes not rendered by Meteor, use a [constant
 region](#constant) instead.
+
+엘리먼트와 그 자식을 포함한 DOM 전체나 Meteor가 렌더링하지 않은 노드까지 유지하고 싶으면 [constant](#constant)를 사용하라.
 
 To preserve nodes, pass a list of selectors each of which should match
 at most one element in the template.  When the template is re-rendered,
@@ -1424,12 +1461,18 @@ the selector is run on the old DOM and the new DOM, and Meteor will
 reuse the old element in place while working in any HTML changes around
 it.
 
+DOM 노드를 유지하려면 템플릿의 엘리먼트에 일치하는 셀렉터 목록을 넘긴다. 넘긴 셀렉터는 템플릿이 다시 렌더링될 때 사용한다. Meteor는 HTML이 어떻게 변하든 해당 엘리먼트는 원래 엘리먼트를 재사용한다.
+
 A second form of `preserve` takes a labeling function for each selector
 and allows the selectors to match multiple nodes. The node-labeling
 function takes a node and returns a label string that is unique for each
 node, or `false` to exclude the node from preservation.
 
+그리고 labeling 함수도 preserve에 넘긴다. labeling 함수는 해당 셀렉터에 만족하는 엘리먼트가 여러개 일 때 사용한다. 노드 객체를 넘겨받고 그 노드를 식별하는 스트링을 리턴한다. 만약 `false`를 리턴하면 해당 노드는 유지하지 않는다.
+
 For example, to preserve all `<input>` elements with ids in template 'foo', use:
+
+예를 들어, id로 식별하면서 `foo` 템플릿의 `<input>` 엘리먼트를 전부 유지하려면 다음과 같이 사용한다:
 
     Template.foo.preserve({
       'input[id]': function (node) { return node.id; }
@@ -1441,11 +1484,15 @@ do not have to be unique on the entire page, only within one occurrence
 of the template.  Selectors will match nodes even if they are in
 sub-templates.
 
+셀렉터는 해당 템플릿 인스턴스 안에서만 적용된다. 템플릿 인스턴스마다 독립적이기 때문에 셀렉터는 템플릿 인스턴스 안에서만 식별할 수 있으면 된다. 전체 페이지에서 식별하지 않는다. 만약 하위 템플릿이 있으면 셀렉터는 그 하위 템플릿의 엘리먼트에도 적용된다.
+
 Preserving a node does *not* preserve its attributes or contents. They
 will be updated to reflect the new HTML. Text in input fields is not
 preserved unless the input field has focus, in which case the cursor and
 selection are left intact. Iframes retain their navigation state and
 animations continue to run as long as their parameters haven't changed.
+
+엘리먼트를 유지한다고 해서 속성이나 내용까지 유지하지 않는다. 다시 렌더링할 때 업데이트가 필요하면 속성과 내용은 업데이트된다. input 엘리먼트에 포커스가 없으면 input 엘리먼트의 텍스트는 유지하지 않는다. 하지만 커서나 셀렉션은 그대로 유지된다. Iframe은 네비게이션 상태를 유지하고 애니메이션은 아무것도 변하지 않은 것처럼 계속 실행한다.
 
 There are some cases where nodes can not be preserved because of
 constraints inherent in the DOM API. For example, an element's tag name
@@ -1453,12 +1500,17 @@ can't be changed, and it can't be moved relative to its parent or other
 preserved nodes.  For this reason, nodes that are re-ordered or
 re-parented by an update will not be preserved.
 
+DOM API의 한계때문에 어쩔 수 없이 유지 못할 수도 있다. 엘리먼트 태그의 이름은 변경할 수 없고 다른 부모 밑으로 옮길 수도 없다. 그러니까 노드가 재정 정렬돼야 한다거나 부모를 바꿔야 되면 유지되지 않는다.
+
 {{#note}}
 Previous versions of Meteor had an implicit page-wide `preserve`
 directive that labeled nodes by their "id" and "name" attributes.
 This has been removed in favor of the explicit, opt-in mechanism.
 {{/note}}
 
+{{#note}}
+이전 버전에서는 불명확하게 "id"와 "name" 속성을 Preserve 디렉티브로 사용했었다. 지금은 명시적으로 선택하는 방법으로 변경됐다.
+{{/note}}
 
 <h2 id="template_inst"><span>Template instances</span></h2>
 
@@ -1466,9 +1518,13 @@ A template instance object represents an occurrence of a template in
 the document.  It can be used to access the DOM and it can be
 assigned properties that persist across page re-renderings.
 
+템플릿을 사용할 때마다 템플릿 인스턴스가 생성된다. 템플릿 인스턴스를 통해 해당 DOM에 접근할 수 있을 뿐만 아니라 템플릿 인스턴스에 프로퍼티를 할당할 수도 있다. 그래서 다시 렌더링하는 동안에 데이터를 저장해둘 수 있다.
+
 Template instance objects are found as the value of `this` in the
 `created`, `rendered`, and `destroyed` template callbacks and as an
 argument to event handlers.
+
+`created`, `rendered`, `destroyed` 템플릿 콜백에서는 `this`가 템플릿 인스턴스를 가리키고 이벤트 핸들러에는 아규먼트로 넘겨진다.
 
 In addition to the properties and functions described below, you can
 assign additional properties of your choice to the object.  Property names
@@ -1476,27 +1532,39 @@ starting with `_` are guaranteed to be available for your use.  Use
 the `created` and `destroyed` callbacks to perform initialization or
 clean-up on the object.
 
+아래에서 설명하는 함수와 프로퍼티말고 다른 프로퍼티와 함수는 마음대로 추가할 수 있다. 프로퍼티 이름만 `_`로 시작하게 지어서 사용자가 만들었음을 표시하라. 그리고 초기화나 객체를 해제하는 것은 `created`와 `destroyed` 콜백을 사용한다.
+
 You can only access `findAll`, `find`, `firstNode`, and `lastNode`
 from the `rendered` callback and event handlers, not from `created`
 and `destroyed`, because they require the template instance to be
 in the DOM.
 
+`findAll`, `find`, `firstNode`, `lastNode` 함수는 `rendered` 콜백과 이벤트 핸들러에서만 사용할 수 있다. 이 함수를 사용하려면 템플릿 인스턴스가 DOM안에 있어야 하기 때문에 `created`와 `destroyed` 콜백에서는 사용할 수 없다.
+
 {{> api_box template_findAll}}
 
 Returns an array of DOM elements matching `selector`.
 
+`selector`에 일치하는 DOM 엘리먼트를 배열에 담아 리턴한다.
+
 The template instance serves as the document root for the selector. Only
 elements inside the template and its sub-templates can match parts of
 the selector.
+
+셀렉터가 적용되는 도큐먼트 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
 
 {{> api_box template_find}}
 
 Returns one DOM element matching `selector`, or `null` if there are no
 such elements.
 
+`selector`에 일치하는 DOM 엘리먼트 한 개를 리턴한다. 일치하는 엘리먼트가 없으면 `null`을 반환한다.
+
 The template instance serves as the document root for the selector. Only
 elements inside the template and its sub-templates can match parts of
 the selector.
+
+셀렉터가 적용되는 도큐먼트 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
 
 {{> api_box template_firstNode}}
 
@@ -1506,6 +1574,8 @@ nodes, their intervening siblings, and their descendents.  These two
 nodes are siblings (they have the same parent), and `lastNode` comes
 after `firstNode`, or else they are the same node.
 
+두 노드 `firstNode`와 `lastNode`는 템플릿을 DOM으로 렌더링했을 때 범위를 나타낸다. 렌더링한 템플릿은 이 두 노드와 사이의 다른 노드들 그리고 그외 자식(descendent) 노드로 구성된다. `firstNode`와 `lastNode`는 부모가 같고 `firstNode` 다음에 `lastNode`가 온다. 그게 아니면 두 노두가 같을 수 있다.
+
 {{> api_box template_lastNode}}
 
 {{> api_box template_data}}
@@ -1514,12 +1584,15 @@ This property provides access to the data context at the top level of
 the template.  It is updated each time the template is re-rendered.
 Access is read-only and non-reactive.
 
+이 프로퍼티는 템플릿의 데이터 컨텍스트다. 템플릿이 렌더링될 때마다 변경되고 읽기만 가능하고 Reactive 데이터 소스가 아니다.
 
 {{> api_box render}}
 
 `Meteor.render` creates a `DocumentFragment` (a sequence of DOM nodes)
 that automatically updates in realtime. Most Meteor apps don't need to
 call this directly, they use templates and Meteor handles the rendering.
+
+`Meteor.render`는 실시간으로 자동 업데이트를 수행하는 `DocumentFragment`를 하나 생성한다. 대부분의 Meteor 앱은 이 함수를 직접호출 하지 않는다. 템플릿을 사용하면 Meteor가 렌더링하는 부분을 관리해준다.
 
 Pass in `htmlFunc`, a function that returns an HTML
 string. `Meteor.render` calls the function and turns the output into
@@ -1528,17 +1601,23 @@ ran, and automatically wires up callbacks so that whenever any of the
 data changes, `htmlFunc` is re-run and the DOM nodes are updated in
 place.
 
+HTML 스트링을 리턴하는 함수 `htmlFunc`를 아규먼트로 넘긴다. `Meteor.render`는 그 함수를 실행해서 HTML 스트링을 얻어서 DOM 노드를 만든다. 이 때 자동으로 htmlFunc 함수에서 사용한 데이터를 추적하고 그 데이터와 콜백을 엮는다. 그래서 데이터가 변하면 htmlFunc 함수가 다시 실행돼서 DOM 노드가 바로 업데이트된다.
+
 You may insert the returned `DocumentFragment` directly into the DOM
 wherever you would like it to appear. The inserted nodes will continue
 to update until they are taken off the screen. Then they will be
 automatically cleaned up. For more details about clean-up, see
 [`Meteor.flush`](#meteor_flush).
 
+리턴한 `DocumentFragment`를 원하는 DOM 위치에 넣는다. 그 삽입된 노드는 화면에서 사라질(take off the screen)때까지 계속 업데이트된다. 사라지면 자동으로 정리된다. 자세한건 [`Meteor.flush`](#meteor_flush)를 봐라.
+
 `Meteor.render` tracks the data dependencies of `htmlFunc` by running
 it in a reactive context, so it can respond to changes in any reactive
 data sources used by that function. For more information, or to learn
 how to make your own reactive data sources, see
 [Reactivity](#reactivity).
+
+`Meteor.render`는 Reactive 컨텍스트에서 실행하는 것이라서 htmlFunc의 데이터 의존성의 추적한다. 그래서 `Meteor.render`는 htmlFunc 함수에서 사용한 Reactive 데이터 소스가 변경되는 것을 처리할 수 있다. Reactive 데이터 소스를 직접 만들려면 [Reactivity](#reactivity)를 봐라.
 
 Example:
 
@@ -1559,6 +1638,8 @@ Creates a `DocumentFragment` that automatically updates as the results
 of a database query change. Most Meteor apps use `{{dstache}}#each}}` in
 a template instead of calling this directly.
 
+이 함수는 DB 쿼리 결과가 변경되면 자동으로 업데이트하는 `DocumentFragment`를 생성한다. 보통은 이 함수을 직접 호출하지 않고 템플릿에서 `{{dstache}}#each}}`를 사용하면 이 함수가 사용된다.
+
 `renderList` is more efficient than using `Meteor.render` to render HTML
 for a list of documents.  For example, if a new document is created in
 the database that matches the query, a new item will be rendered and
@@ -1566,14 +1647,20 @@ inserted at the appropriate place in the DOM without re-rendering the
 other elements.  Similarly, if a document changes position in a sorted
 query, the DOM nodes will simply be moved and not re-rendered.
 
+도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.render`보다 효율적이다. 예를 들어, 어떤 쿼리에 만족하는 도큐먼트가 DB에 새로 추가되면 전체가 아니라 그 도큐먼트에 해당하는 부분만 다시 렌더링된다. 다른 엘리먼트는 건드리지 않는다. 정렬하는 쿼리를 실행하고 있을 때 도큐먼트 순서가 바뀌면 다시 렌더링하는 것이 아니라 단순히 DOM 노드를 옮길뿐이다.
+
 `docFunc` is called as needed to generate HTML for each document.  If
 you provide `elseFunc`, then whenever the query returns no results, it
 will be called to render alternate content. You might use this to show
 a message like "No records match your query."
 
+도큐먼트를 하나씩 HTML로 생성할 때마다 `docFunc`를 호출하고 쿼리 결과가 없을 때에는 `elseFunc`를 호출한다. 결과가 없을 때에는 다른 화면을 보여줄 수 있도록 호출한다. 예를 들어, "절대 결과가 없을리 없다" 같은 메시지를 보여줄 수 있다.
+
 Each call to `docFunc` or `elseFunc` is run in its own reactive
 context so that if it has other external data dependencies, it will be
 individually re-run when the data changes.
+
+`docFunc`나 `elseFunc` 함수는 각각 다른 Reactive 컨텍스트에서 실행된다. 그래서 데이터가 변경되면 해당 Reactive 컨텍스트만 다시 렌더링 된다.
 
 Example:
 
@@ -1895,6 +1982,8 @@ retains not only the identities of its nodes but also their attributes
 and contents.  The contents of the block will only be evaluated once
 per occurrence of the enclosing template.
 
+다시 렌더링하지 않을 Constant 영역임을 표시할 수 있다. `{{dstache}}#constant}}...{{dstache}}/constant}}` 블럭 헬퍼로 표시하면 된다. 템플릿이 다시 렌더링될 때 `#constant` 블럭 헬퍼에 들어 있는 내용은 그대로 유지된다. Preserve 엘리먼트 처럼 해당 엘리먼트 근처에 있는 템플릿 엘리먼트만 패치된다. 노드를 선택적으로 유지하는 것과는 달리 이렇게 Constant 영역을 정의하면 해당 노드의 ID 뿐만아니라 속성과 내용까지 유지된다. 이 영역의 내용은 템플릿이 처음 렌더링될 때 딱 한번 생성된다.
+
 Constant regions allow non-Meteor content to be embedded in a Meteor
 template.  Many third-party widgets create and manage their own DOM
 nodes programmatically. Typically, you put an empty element in your
@@ -1904,10 +1993,16 @@ would remove the new children, since the template says it should be
 empty. If the container is wrapped in a `#constant` block, however, it
 is left alone; whatever content is currently in the DOM remains.
 
+Constant 영역은 Meteor 템플릿에 Meteor 답지 않은(non-Meteor) 내용을 넣을 때 사용한다. 개발자가 직접 다른 제 3의 위젯을 사용해서 화면을 만들고 관리할 때 사용하면 좋다. 보통 템플릿에 빈 엘리먼트를 넣는다. 템플릿을 하나 만들고 그 안에는 별 내용 없이 비워두었고 다른 위젯과 라이브러리로 그 템플릿 안에 엘리먼트를 채워 넣었었다고 하자. Meteor가 그 템플릿을 다시 랜더링할 때 원래 그 템플릿은 비워져 있었으므로 나중에 만들어 넣은 엘리먼트를 제거해버린다. 그런데 `#constant` 블럭을 이용해서 감싸 놓으면 그대로 유지된다. 그 안에 어떤 DOM이 들어 있던지 상관없이 유지된다.
+
 {{#note}}
 Constant regions are intended for embedding non-Meteor content.
 Event handlers and reactive dependencies don't currently work
 correctly inside constant regions.
+{{/note}}
+
+{{#note}}
+Constant 영역은 non-Metor 내용을 넣기 위해 사용한다. 이 Constant 영역 안에서는 이벤트 핸들러와 Reactive 의존성이 동작하지 않는다.
 {{/note}}
 
 {{/api_box_inline}}
@@ -1921,6 +2016,9 @@ cause the whole template to be re-rendered when the data changes.
 This means that the amount of re-rendering for a particular change
 is affected by how you've divided your HTML into templates.
 
+템플릿은 각각 별도의 Reactive 컨텍스트에서 실행한다. 템플릿이 Reactive 데이터 소스에 접근할 때 데이터 의존성이 만들어진다.
+그래서 데이터가 변하면 템플릿은 통째로 다시 렌더링된다. 이 말은 어떻게 템플릿을 구성했는지에 따라 렌더링하는 단위가 결정된다는 뜻이다.
+
 Typically, the exact extent of re-rendering is not crucial, but if you
 want more control, such as for performance reasons, you can use the
 `{{dstache}}#isolate}}...{{dstache}}/isolate}}` helper.  Data
@@ -1929,6 +2027,8 @@ the block and will not in themselves cause the parent template to be
 re-rendered.  This block helper essentially conveys the reactivity
 benefits you would get by pulling the content out into a new
 sub-template.
+
+보통 렌더링 범위는 그렇게 중요한게 아니다. 하지만 꼼꼼하게 튜닝해서 최적화해야 한다면 `{{dstache}}#isolate}}...{{dstache}}/isolate}}`를 사용할 수 있다. 데이터 의존성은 `#isolate` 블럭에만 국한되며 이 블럭에서 데이터가 변경되도 부모 템플릿까지 다시 렌더링하지 않는다. 이 블럭 헬퍼를 사용하면 별도의 템플릿으로 정의한 것과 같은 효과를 낼 수 있다.
 
 {{/api_box_inline}}
 
@@ -1962,7 +2062,7 @@ automatically rerender templates and such when [`Session`](#session)
 variables are modified, or database queries change.
 
 Meteor에는 의존성 추적 시스템이 있어서 [`Session`](#session) 변수가
-수정되거나 데이터베이스 질의 결과가 달라지면 자동으로 템플릿을 다시 렌더링한다. 
+수정되거나 DB 질의 결과가 달라지면 자동으로 템플릿을 다시 렌더링한다. 
 
 Unlike most other systems, you don't have to manually declare these
 dependencies &mdash; it "just works". The mechanism is simple and
@@ -1974,7 +2074,7 @@ context (tell the template to rerender itself.) The whole
 implementation is about 50 lines of code.
 
 다른 추적 시스템과 다르게 이 시스템은 손으로 의존성을 정의하지 않아도
-그냥 동작한다. 메커니즘은 단순하지만 효과적이다. 데이터베이스 쿼리처럼
+그냥 동작한다. 메커니즘은 단순하지만 효과적이다. DB 쿼리처럼
 Reactive 업데이트를 지원하는 함수를 호출할 때 자동으로 "무효화 컨텍스트"
 객체를 전부 저장한다. 템플릿을 렌더링할 때에도 그 함수가 호출된다.
 나중에 데이터가 변경되면 저장한 컨텍스트를 무효화한다.
@@ -2218,7 +2318,7 @@ brought up to date with your latest changes, so you can manually
 manipulate it with jQuery or the like.
 
 `Meteor.flush`는 대기하고 있는 Reactive 업데이트를 강제로 완료시킨다
-(데이터베이스의 변경된 내용을 DOM에 모두 적용시킨다). `flush`를 호출하면
+(DB의 변경된 내용을 DOM에 모두 적용시킨다). `flush`를 호출하면
 대기중인 변경사항이 즉시 적용된다. 이 함수는 최신 데이터에 DOM을 동기화
 시키기는데 사용한다. 그래야 jQuery 같은 라이브러리를 써서 DOM을
 수동으로 관리할 수 있다.
@@ -2323,7 +2423,7 @@ function, and the `error` value is a stored as a property in `result`.
 
 콜백에는 `error`와 `result` 아규먼트가 있다. Request가 실패하면 `error`
 아규먼트에 Error가 들어 간다. HTTP 상태 코드가 400나 500이거나, 네트워크
-에러, 타임아웃일 때 모두 동일하다. `result`에는 항상 객체가 반환된다.
+에러, 타임아웃일 때 모두 동일하다. `result`에는 항상 객체가 리턴된다.
 동기 모드로 호출했으면 `rusult` 객체가 리턴되고 `error`는 `result`의 프로퍼티로 저장된다.
 
 Contents of the result object:
