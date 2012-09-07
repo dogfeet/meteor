@@ -3,14 +3,9 @@
 
 <h1 id="api">The Meteor API</h1>
 
-Your Javascript code can run in two environments: the <i>client</i>
-(browser), and the <i>server</i> (a Node.js container on a server).  For
-each function in this API reference, we'll indicate if the function is
-available just on the client, just on the server, or *Anywhere*.
-
 Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
 클라이언트는 브라우저이고 서버는 Node.js 컨테이너이다.
-이 API 레퍼런스에서는 함수 설명 모두에 그 함수가 클라이언트용인지 서버용인지 명시했다.
+이 API 레퍼런스에서는 함수를 설명할 때 그 함수가 클라이언트용인지 서버용인지 명시했다.
 
 <h2 id="core"><span>Meteor Core</span></h2>
 
@@ -18,12 +13,6 @@ Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
 {{> api_box is_server}}
 {{> api_box startup}}
 
-On a server, the function will run as soon as the server process is
-finished starting. On a client, the function will run as soon as the DOM
-is ready and any `<body>` templates from your `.html` files have been
-put on the screen.
-
-서버의 경우 서버 프로세스가 다 뜨면 startup 함수가 실행된다.
 클라이언트에서는 DOM ready 상태가 되고 `.html` 파일에 정의한 `<body>`
 템플릿이 화면에 다 그려지고 나면 이 함수가 실행된다.
 
@@ -38,25 +27,14 @@ put on the screen.
 
 <h2 id="publishandsubscribe"><span>Publish and subscribe</span></h2>
 
-These functions control how Meteor servers publish sets of records and
-how clients can subscribe to those sets.
-
 Meteor 서버가 어떻게 레코드를 Publish하고 또 어떻게 그 레코드를 Subscribe해야
 하는지 설명한다. 여기서 설명하는 함수로 Publish와 Subscribe를 제어한다.
 
 {{> api_box publish}}
 
-To publish records to clients, call `Meteor.publish` on the server with
-two parameters: the name of the record set, and a *publish function*
-that Meteor will call each time a client subscribes to the name.
-
 서버에서 `Meteor.publish`를 호출하면 클라이언트에 Publish할 수 있다.
-Publish 할 레코드셋 이름과 클라이언트가 Subscribe를 하면 호출될
-*Publish 함수* 이렇게 아규먼트를 두 개 주고 호출한다.
-
-Publish functions can return a
-[`Collection.Cursor`](#meteor_collection_cursor), in which case Meteor
-will publish that cursor's documents.
+Publish 할 레코드 셋 이름과 클라이언트가 Subscribe를 하면 호출될
+*Publish 함수*, 이렇게 아규먼트를 두 개 주고 호출한다.
 
 Meteor에서 커서 Document를 Publish하려면 Publish 함수에서
 [`Collection.Cursor`](#meteor_collection_cursor) 타입 객체를 리턴하면 된다.
@@ -66,26 +44,15 @@ Meteor에서 커서 Document를 Publish하려면 Publish 함수에서
       return Rooms.find({}, {fields: {secret_info: false}});
     });
 
-Otherwise, the publish function can <i>set</i> and <i>unset</i>
-individual record attributes on a client, use these methods provided by
-`this` in your publish function.
-
 그리고 Publish 함수에서 레코드 속성을 추가, 삭제할 수 있다.
 Publish 함수에서 `this`의 <i>set</i>, <i>unset</i> 메소드를 호출해서 추가, 삭제한다.
 
 <!-- discuss complete -->
 
-In particular, if you use observe() to watch changes to the database, be
-sure to call `this.flush` from inside your observe callbacks.  Methods
-that update the database are considered finished when the observe
-callbacks return.
-
 observe()를 사용해서 DB가 변경되는 것을 지켜보려면
 observe 콜백 안에서 `this.flush`를 호출해 줘야 한다.
 DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하면
 업데이트 작업이 완료됐다고 간주한다.
-
-Example:
 
 예제:
 
@@ -129,14 +96,8 @@ Example:
     console.log("Current room has " + Counts.findOne().count + " messages.");
 
 {{#warning}}
-Meteor will emit a warning message if you call `Meteor.publish` in a
-project that includes the `autopublish` package.  Your publish function
-will still work.
-{{/warning}}
-
-{{#warning}}
 `autopublish` 패키지를 사용하고 있는 프로젝트에서 `Meteor.publish`를 호출하면
-현재 Publish 중 상태라는 경고 메시지를 보여주지만 정상적으로 Publish는 동작한다.
+현재 Publish 중이라는 경고 메시지를 보여주지만 Publish는 정상적으로 동작한다.
 {{/warning}}
 
 {{> api_box subscription_set}}
@@ -146,21 +107,11 @@ will still work.
 
 {{> api_box subscription_onStop}}
 
-If you call [`observe`](#observe) in your publish handler, this
-is the place to stop the observes.
-
-[`observe`](#observe)로 지켜보고 있는 것은 언젠가 멈춰야 한다.
-시작하고 멈추는 코드는 Publish 핸들러에 구현한다.
+Publish 핸들러에서 [`observe`](#observe)를 호출 했으면 그 핸들러 안에서 멈춰야 한다.
 
 {{> api_box subscription_stop}}
 
 {{> api_box subscribe}}
-
-When you subscribe to a record set, it tells the server to send records
-to the client.  The client stores these records in local Minimongo
-collections, with the same name as the `collection` argument to `set`.
-Meteor will queue incoming attributes until you declare the
-`Meteor.Collection` on the client with the matching collection name.
 
 Subscribe하는 것은 레코드를 클라이언트로 보내라고 서버에 알리는 것이다.
 클라이언트는 이 레코드를 로컬에 있는 Minimongo 컬렉션에 저장한다. 이 때
@@ -176,17 +127,7 @@ Subscribe하는 것은 레코드를 클라이언트로 보내라고 서버에 �
     ...
     Players = new Meteor.Collection("players");
 
-If more than one subscription sends conflicting values for an attribute
-(same collection name, document ID, and attribute name), then the value
-on the client will be that from the *first* subscription the client
-activated.  (Even if it is not the first to send the duplicated
-attribute.)
-
 여러 개의 Subscription에서 동일한 속성에 대해 서로 다른 값을 보내오면 첫 번째로 설정한 Subscription의 값을 사용한다. 해당 값이 먼저 도착한 값이 아니라고 해도 첫 번째 Subscription의 값을 사용한다.
-
-If all of the attributes in a document are removed, Meteor
-will remove the (now empty) document.  If you want to publish empty
-documents, just use a placeholder attribute.
 
 Document의 속성이 모두 삭제되면 Document도 삭제된다.
 빈 Document를 Publish하고 싶으면 아무 속성이나 하나 넣어야 한다.
@@ -195,29 +136,15 @@ Document의 속성이 모두 삭제되면 Document도 삭제된다.
 
 {{> api_box autosubscribe}}
 
-`func` will be run immediately, and while it runs,
-records will be kept of the subscriptions it makes
-(via [`Meteor.subscribe`](#meteor_subscribe)) and the data it uses
-(including calls to [`Session.get`](#session_get)
-and [`collection.find`](#find)).
-
 `func`는 넘기는 즉시 실행되고 레코드에 대해서 Subscribe한 것은 계속 유지된다.
 [`Meteor.subscribe`](#meteor_subscribe)으로 Subscribe하고
 [`Session.get`](#session_get)과 [`collection.find`](#find)를 호출해서
 데이터를 가져온다.
 
-Whenever the used data changes, the subscriptions will be cancelled and
-`func` will be re-run to make replacement subscriptions.
-`Meteor.autosubscribe` will automatically stop the old subscription.
-It's not necessary to call `stop` on subscriptions made from inside
-`Meteor.autosubscribe`.
-
 데이터가 변경될 때 마다 Subscribe한 것은 취소하고 `func`를 다시 실행해서
 다시 Subscribe해야 한다. `Meteor.autosubscribe`는 기존의 Subscribe한 것을
 자동으로 중단한다. 그래서 `Meteor.autosubscribe` 안에서는 수동으로
 Subscribe를 중단하지 않아도 된다.
-
-Example:
 
 예제:
 
@@ -229,13 +156,9 @@ Example:
 
 <h2 id="methods_header"><span>Methods</span></h2>
 
-Methods are remote functions that Meteor clients can invoke.
-
-Method는 Meteor 클라이언트가 실행할 수 있는 원격 함수다.
+Method는 Meteor 클라이언트가 실행하는 원격 함수다.
 
 {{> api_box methods}}
-
-Example:
 
 예제:
 
@@ -253,39 +176,15 @@ Example:
       }
     });
 
-Calling `methods` on the server defines functions that can be called
-remotely by clients.  They should return a value or throw an exception.
-Inside your method invocation, `this` is bound to a method invocation
-object, which provides the following:
-
-클라이언트가 원격으로 실행할 수 있는 함수를 정의하려면 서버에서 `methods`를
-호출해서 정의한다. 여기서 정의하는 함수는 값을 리턴하고 예외를 던질 수 있다.
-`this`는 메소드를 실행하는 객채를 가리키고 그 객체에는 다음과 같은 게 들어 있다:
-
-* `is_simulation`: a boolean value, true if this invocation is a stub.
-* `unblock`: when called, allows the next method from this client to
-begin running.
+서버에서 `methods` 함수를 호출해서 클라이언트 클라이언트가 원격으로 실행할 수 있는 함수를 정의한다. 여기서 정의하는 함수는 값을 리턴하고 예외를 던질 수 있다. `this`는 메소드를 실행하는 객채를 가리키고 그 객체에는 다음과 같은 게 들어 있다:
 
 * `is_simulation`: Boolean 값, stub 함수일 때 true
-* `unblock`: 이 함수를 호출하면 해당 Method가 끝날 때까지 다음 Method를
-블럭하지 않는다. 다음 Method는 다른 Fiber에서 실행된다.
-
-Calling `methods` on the client defines *stub* functions associated with
-server methods of the same name.  You don't have to define a stub for
-your method if you don't want to.  In that case, method calls are just
-like remote procedure calls in other systems, and you'll have to wait
-for the results from the server.
+* `unblock`: 이 함수를 호출하면 다음 Method는 해당 Method가 
+끝날 때까지 블럭하지 않는다. 다음 Method는 다른 Fiber에서 실행된다.
 
 클라이언트에서 `methods`를 호출하면 서버의 메소드와 이름이 같은 *stub* 함수가 정의된다.
-stub 함수는 필요할 때만 정의해서 사용할 수 있다. stub 함수를 호출하는 것은 원격 메소드와
-비슷하지만, 서버에서 결과를 기다리지 않는다.
-
-If you do define a stub, when a client invokes a server method it will
-also run its stub in parallel.  On the client, the return value of a
-stub is ignored.  Stubs are run for their side-effects: they are
-intended to *simulate* the result of what the server's method will do,
-but without waiting for the round trip delay.  If a stub throws an
-exception it will be logged to the console.
+stub 함수는 필요할 때만 정의해서 사용할 수 있다. stub 함수가 있을 때 원격 메소드를 
+호출하면 서버 결과를 기다리지 않는다.
 
 stub을 정의하면 클라이언트가 서버 Method를 실행할 때 stub 함수도 병렬로 실행된다.
 클라이언트에서는 stub이 리턴하는 값은 무시된다. stub은 서버 메소드의 결과를
@@ -296,21 +195,10 @@ Stub이 예외를 던지면 console에 로그가 출력된다.
 
 {{> api_box method_invocation_unblock}}
 
-On the server, methods from a given client run one at a time. The N+1th
-invocation from a client won't start until the Nth invocation
-returns. However, you can change this by calling `this.unblock`. This
-will allow the N+1th invocation to start running in a new fiber.
-
 서버에서, 클라이언트가 원격 메소드를 동시에 호출해도 서버에서는 한번에 하나씩 호출된다.
 N+1번째 실행한 메소드는 N번째 실행이 끝날 때까지 시작하지 않는다. 하지만 `this.unblock`을 호출하면 바꿀 수 있다. 이 함수를 호출하면 N+1번째 메소드는 다른 Fiber에서 실행된다.
 
 {{> api_box error}}
-
-If you want to return an error from a method, throw an exception.
-Methods can throw any kind of exception.  But `Meteor.Error` is the only
-kind of error that a server will send to the client.  If a method
-function throws a different exception, then it will be mapped to
-`Meteor.Error(500, "Internal server error")` on the wire.
 
 Method가 에러를 리턴하려면 예외를 던져야 한다. 클라이언트에 전송되는 에러는
 `Meteor.Error` 뿐이다. 다른 예외를 던지면 `Meteor.Error(500, "Internal server error")`가
@@ -318,19 +206,7 @@ Method가 에러를 리턴하려면 예외를 던져야 한다. 클라이언트�
 
 {{> api_box meteor_call}}
 
-This is how to invoke a method.  It will run the method on the server.
-If a stub is available, it will also run the stub on the client.
-
-서버 Method는 이 함수로 실행한다. 그리고 해당 클라이언트 Stub이 있으면 Stub도 실행한다.
-
-If you include a callback function as the last argument (which can't be
-an argument to the method, since functions aren't serializeable), the
-method will run asynchronously: it will return nothing in particular and
-will not throw an exception.  When the method is complete (which may or
-may not happen before `Meteor.call` returns), the callback will be
-called with two arguments: `error` and `result`. If an error was thrown,
-then `error` will be the exception object.  Otherwise, `error` will be
-undefined and the return value (possibly undefined) will be in `result`.
+이 함수로 서버 Method를 실행한다. 그리고 클라이언트에 해당 Stub이 있으면 Stub도 실행된다.
 
 마지막 아규먼트로 콜백 함수를 넘기면 비동기로 호출된다(함수는 Serializeable하지
 않기 때문에 원격에 전송할 수 없다). 비동기로 호출하면 아무것도 리턴하지 않고 예외를
@@ -341,12 +217,6 @@ undefined and the return value (possibly undefined) will be in `result`.
     // async call
     Meteor.call('foo', 1, 2, function (error, result) { ... } );
 
-If you do not pass a callback on the server, the method invocation will
-block until the method is complete.  It will eventually return the
-return value of the method, or it will throw an exception if the method
-threw an exception. (Possibly mapped to 500 Server Error if the
-exception happened remotely and it was not a `Meteor.Error` exception.)
-
 콜백을 넘기지 않으면 해당 Method가 완료될 때까지 블럭된다. 이 메소드는 서버의
 Method가 리턴한 값을 리턴하거나 서버가 던진 예외를 그대로 던진다. 서버 Method가
 명시적으로 `Meteor.Error`를 던진게 아니면 500 서버 에러를 던진다.
@@ -354,37 +224,16 @@ Method가 리턴한 값을 리턴하거나 서버가 던진 예외를 그대로 
     // sync call
     var result = Meteor.call('foo', 1, 2);
 
-On the client, if you do not pass a callback and you are not inside a
-stub, `call` will return `undefined`, and you will have no way to get
-the return value of the method. That is because the client doesn't have
-fibers, so there is not actually any way it can block on the remote
-execution of a method.
-
 클라이언트에서는 `call` 함수를 호출하면 다르게 동작한다. 클라이언트에서는
-콜백 없이 `call` 함수를 실행하면 `undefined`가 리턴된다. Stub 함수 안에서
-`call` 함수를 사용할 수 없다. 서버 Method의 리턴값을 리턴하게 할 수 없다.
-클라이언트에는 Fibers가 없어서 서버 Method가 리턴할 때까지 블럭 시킬 방법이 없다.
-
-Finally, if you are inside a stub on the client and call another
-method, the other method is not executed (no RPC is generated, nothing
-"real" happens.)  If that other method has a stub, that stub stands in
-for the method and is executed. The method call's return value is the
-return value of the stub function.  The client has no problem executing
-a stub synchronously, and that is why it's okay for the client to use
-the synchronous `Meteor.call` form from inside a method body, as
-described earlier.
+콜백 없이 `call` 함수를 실행하면 `undefined`가 리턴된다. 클라이언트에는 
+Fibers가 없어서 서버 Method가 리턴할 때까지 블럭 시킬 방법이 없다.
+그리고 Stub 함수 안에서 `call` 함수를 사용할 수 없다. 
+서버 Method가 리턴하는 값을 리턴하게 할 수 없다.
 
 마지막으로 Stub 함수 안에서는 다른 Method를 호출해도 실행되지 않는다. Stub은 RPC도 아니고
 가짜라서 Method를 호출할 필요가 없다. 하지만, Method에서는 Stub을 호출할 수 있다. `call`
 함수는 Stub 함수가 리턴하는 값을 리턴한다. 클라이언트에서 `Meteor.call`을 동기로 호출할 수
-없다고 했는데 Stub Method는 괜찮다. Stub은 즉시 리턴된다.
-
-You use this functionality all the time, because the database mutators
-(`insert`, `update`, `remove`) are essentially methods. When you call
-them on the client (whether from inside a method or at top level), you're
-invoking their stub versions that update the local cache, instead of
-their "real" versions that update the database (using credentials known
-only to the server.)
+없다고 했는데 Stub Method는 괜찮다. Stub은 즉시 결과를 리턴한다.
 
 DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문에 우리는 항상 이
 기능을 사용하게 된다. 클라이언트에서 DB 함수를 호출하면 Stub 버전이 실행돼서
@@ -394,44 +243,21 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 
 {{> api_box meteor_apply}}
 
-`Meteor.apply` is just like `Meteor.call`, but it allows the
-arguments to be passed as an array.
-
 `Meteor.apply`는 `Meteor.call`과 비슷하지만 아규먼트를 배열에 담아서 넘길 수 있다.
 
 <h2 id="connections"><span>Server connections</span></h2>
 
-These functions manage and inspect the network connection between the
-Meteor client and server.
-
 이 함수는 Meteor 클라이언트와 서버 간의 네트워크 연결을 살펴보고 관리하는데 사용한다.
 
 {{> api_box status}}
-
-This method returns the status of the connection between the client and
-the server. The return value is an object with the following fields:
 
 이 메소드는 클라이언트와 서버 간의 연결 상태를 리턴한다. 리턴 객체에는 다음과 같은 필드가 있다:
 
 <dl class="objdesc">
 <dt><span class="name">connected</span>
   <span class="type">Boolean</span></dt>
-<dd>True if currently connected to the server. If false, changes and
-  method invocations will be queued up until the connection is
-  reestablished.</dd>
-
-<dt><span class="name">connected</span>
-  <span class="type">Boolean</span></dt>
 <dd>서버에 연결돼 있으면 True다. 연결이 끊겨 있으면 다시 연결될 때까지 모든 변경 내역과
   메소드 실행은 큐에 담겨진다.</dd>
-
-<dt><span class="name">status</span>
-  <span class="type">String</span></dt>
-<dd>Describes the current reconnection status. The possible
-  values are <code>connected</code> (the connection is up and
-  running), <code>connecting</code> (disconnected and trying to open a
-  new connection), and <code>waiting</code> (failed to connect and
-  waiting to try to reconnect).</dd>
 
 <dt><span class="name">status</span>
   <span class="type">String</span></dt>
@@ -441,20 +267,7 @@ the server. The return value is an object with the following fields:
 
 <dt><span class="name">retry_count</span>
   <span class="type">Number</span></dt>
-<dd>The number of times the client has tried to reconnect since the
-  connection was lost. 0 when connected.</dd>
-
-<dt><span class="name">retry_count</span>
-  <span class="type">Number</span></dt>
 <dd>연결을 시도한 횟수. 0이면 연결된 거다.</dd>
-
-<dt><span class="name">retry_time</span>
-  <span class="type">Number or undefined</span></dt>
-<dd>The estimated time of the next reconnection attempt. To turn this
-  into an interval until the next reconnection, use
-  <code>retry_time - (new Date()).getTime()</code>. This key will
-  be set only when <code>status</code> is <code>waiting</code>.
-</dd>
 
 <dt><span class="name">retry_time</span>
   <span class="type">Number or undefined</span></dt>
@@ -464,11 +277,6 @@ the server. The return value is an object with the following fields:
 
 </dl>
 
-Instead of using callbacks to notify you on changes, this is
-a <a href="#reactivity">reactive</a> data source. You can use it in a
-<a href="#templates">template</a> or <a href="#meteor_deps">invalidation
-context</a> to get realtime updates.
-
 이것은 <a href="#reactivity">Reactive</a> 데이터 소스이기 때문에 콜백을 사용할 필요가 없다.
 <a href="#templates">템플릿</a>이나 <a href="#meteor_deps">무효화 컨텍스트</a>에서
 사용하면 업데이트가 실시간으로 잘 된다.
@@ -476,10 +284,6 @@ context</a> to get realtime updates.
 {{> api_box reconnect}}
 
 {{> api_box connect}}
-
-To call methods on another Meteor application or subscribe to its data
-sets, call `Meteor.connect` with the URL of the application.
-`Meteor.connect` returns an object which provides:
 
 다른 Meteor 앱의 Method를 호출하거나 데이터를 Subscribe하려면 그 앱의 URL을 주고
 `Meteor.connect`를 호출한다. `Meteor.connect`는 다음과 같은 메소드가 있는 객체를 리턴한다:
@@ -491,17 +295,8 @@ sets, call `Meteor.connect` with the URL of the application.
 * `status`
 * `reconnect`
 
-When you call `Meteor.subscribe`, `Meteor.status`, `Meteor.call`, and
-`Meteor.apply`, you are using a connection back to that default
-server.
-
 `Meteor.subscribe`, `Meteor.status`, `Meteor.call`, `Meteor.apply`를 직접 호출하면
 기본 서버에 연결된다.
-
-{{#warning}}
-In this release, `Meteor.connect` can only be called on the client.
-Servers can not yet connect to other servers.
-{{/warning}}
 
 {{#warning}}
 이번 버전에서는 아직 클라이언트에서만 `Meteor.connect`를 사용할 수 있다.
@@ -510,39 +305,20 @@ Servers can not yet connect to other servers.
 
 <h2 id="collections"><span>Collections</span></h2>
 
-Meteor stores data in *collections*.  To get started, declare a
-collection with `new Meteor.Collection`.
-
 Meteor는 데이터를 *컬렉션*에 저장한다. `new Meteor.Collection`으로 컬렉션을 정의한다.
 
 {{> api_box meteor_collection}}
 
-Calling this function is analogous to declaring a model in an
-traditional ORM (Object-Relation Mapper)-centric framework. It sets up a
-*collection* (a storage space for records, or "documents") that can be
-used to store a particular type of information, like users, posts,
-scores, todo items, or whatever matters to your application.  Each
-document is a JSON object.  It includes an `_id` property whose value is
-unique in the collection, which Meteor will set when you first create
-the document.
-
 이 함수는 ORM(Object-Relation Mapper)에서 모델을 정의하는 것과 비슷하게 호출한다.
 사용자, 글, 점수, todo 아이템 같은 정보를 저장하는 *컬렉션*을 만든다.
-사실 아무 데이터나 다 저장할 수 있다. 도큐먼트는 JSON 객체이고 `_id` 프로퍼티가 있어
+사실 아무 데이터나 다 저장할 수 있다. 도큐먼트는 JSON 객체이고 `_id` 프로퍼티가 있어서
 그 값으로 컬렉 션에서 해당 도큐먼트를 식별한다.
-Meteor는 도큐먼트가 만들어질 때 이 `_id` 값을 생성한다.
+Meteor는 도큐먼트를 만들 때 이 `_id` 값을 생성한다.
 
     // common code on client and server declares livedata-managed mongo
     // collection.
     Chatrooms = new Meteor.Collection("chatrooms");
     Messages = new Meteor.Collection("messages");
-
-The function returns an object with methods to [`insert`](#insert)
-documents in the collection, [`update`](#update) their properties, and
-[`remove`](#remove) them, and to [`find`](#find) the documents in the
-collection that match arbitrary criteria. The way these methods work is
-compatible with the popular Mongo database API.  The same database API
-works on both the client and the server (see below).
 
 `Meteor.Collection`이 리턴하는 객체에는 
 도큐먼트를 컬렉션에 입력하는 [`insert`](#insert), 
@@ -560,75 +336,33 @@ works on both the client and the server (see below).
     // mark my first message as "important"
     Messages.update(my_messages[0].id, {$set: {important: true}});
 
-If you pass a `name` when you create the collection, then you are
-declaring a persistent collection &mdash; one that is stored on the
-server and seen by all users. Client code and server code can both
-access the same collection using the same API.
-
 `name`을 주고 컬렉션을 만들면 Persistent 컬렉션이 정의된다. 서버에 저장되기 때문에
 모든 사용자가 볼 수 있다. 클라이언트와 서버 코드는 동일한 API로 컬렉션에 접근한다.
 
-Specifically, when you pass a `name`, here's what happens:
-
 정확히 말해서 `name`을 주고 컬렉션을 만들면 다음과 같은 일들이 일어난다:
-
-* On the server, a collection with that name is created on a backend
-Mongo server. When you call methods on that collection on the server,
-they translate directly into normal Mongo operations.
 
 * 서버에서는 백엔드 Mongo 서버에 주어진 이름으로 컬렉션이 만들어진다.
 서버 컬렉션의 메소드를 호출하면 Mongo 오퍼레이션으로 바로 변환된다.
-
-* On the client, a Minimongo instance is
-created. Minimongo is essentially an in-memory, non-persistent
-implementation of Mongo in pure JavaScript. It serves as a local cache
-that stores just the subset of the database that this client is working
-with. Queries on the client ([`find`](#find)) are served directly out of
-this cache, without talking to the server.
 
 * 클라이언트에서는 Minimongo 인스턴스가 만들어진다. Minimongo는 in-memory이고,
 non-persistent 이면서, 순수하게 JavaScript로 만들어진 Mongo 구현체이다. Minimongo는
 DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하는 로컬 캐시로 사용한다.
 클라이언트에서 실행하는 [`find`](#find) 쿼리는 서버와 통신하지 않고 캐시에서만 찾는다.
 
-* When you write to the database on the client ([`insert`](#insert),
-[`update`](#update), [`remove`](#remove)), the command is executed
-immediately on the client, and, simultaneously, it's shipped up to the
-server and executed there too.  The `livedata` package is
-responsible for this.
-
 * 클라이언트에서 DB 쓰기 명령을 실행하면 
 ([`insert`](#insert), [`update`](#update), [`remove`](#remove)) 클라이언트에서는 바로
 적용되고 서버에도 전송돼서 DB에 써진다.
 이 쓰기 명령이 실행되면 `livedata` 패키지에 할 일이 생긴다.
-
-If you pass `null` as the `name`, then you're creating a local
-collection. It's not synchronized anywhere; it's just a local scratchpad
-that supports Mongo-style [`find`](#find), [`insert`](#insert),
-[`update`](#update), and [`remove`](#remove) operations.  (On both the
-client and the server, this scratchpad is implemented using Minimongo.)
 
 컬렉션 이름을 `null`로 주면 로컬 컬렉션을 생성한 것이고 서버와 동기화하지 않는다.
 이 컬렉션은 일종의 연습장이라서 Mongo 스타일의 [`find`](#find), [`insert`](#insert),
 [`update`](#update), [`remove`](#remove) 명령어를 맘 껏 사용할 수 있다.
 Minimongo가 제공하는 이 연습장은 클라이언트에서도 사용할 수 있지만 서버에서도 사용할 수 있다.
 
-By default, Meteor automatically publishes every document in your
-collection to each connected client.  To turn this behavior off, remove
-the package:
-
 Meteor는 자동으로 컬렉션에 있는 모든 도큐먼트를 모든 클라이언트에 Publish한다.
 이 기능을 끄려면 다음과 같이 `autopublish` 패키지를 제거해준다:
 
     $ meteor remove autopublish
-
-{{#warning}}
-Currently the client is given full write access to the collection. They
-can execute arbitrary Mongo update commands. Once we build
-authentication, you will be able to limit the client's direct access to
-insert, update, and remove.  We are also considering validators and
-other ORM-like functionality.
-{{/warning}}
 
 {{#warning}}
 현재 클라이언트는 모든 쓰기 권한을 가지고 있다. 그래서 클라이언트에서 멋대로 Mongo 쓰기
@@ -659,43 +393,18 @@ other ORM-like functionality.
     assert(Scratchpad.find({number: {$lt: 9}}).count() === 5);
 
 {{#warning}}
-In this release, Minimongo has some limitations:
 
 이번 버전의 Minimongo는 몇가지 부족한 부분이 있다:
 
-* `$elemMatch` is not supported in selectors.
-* `$pull` in modifiers can only accept certain kinds
-of selectors.
-* In selectors, dot notation and ordinal indexing may not work correctly.
-* `$` to denote the matched array position is not
-supported in modifier.
-* Sort does not support subkeys (you can sort on `a`,
-but not `a.b`.)
-* `findAndModify`, upsert, aggregate functions, and
-map/reduce aren't supported.
-* The supported types are String, Number, Boolean, Array,
-and Object.
-
 * 셀렉터에 `$elemMatch`가 지원되지 않는다.
-* `$pull` Modifier는 certain kinds of selectors만 가능하다.
+* `$pull` Modifier는 특정 셀렉터에만 사용할 수 있다.
 * 셀렉터에서 점(.) 노테이션과 인덱스가 제대로 동작하지 않는다.
 * 서브키에 대한 정렬을 지원하지 않는다. `a`에 대해서는 가능하지만 `a.b`는 지원하지 않는다.
 * `findAndModify`, upsert, aggregate 함수, map/reduce는 지원하지 않는다.
 * 형식은 String, Number, Boolean, Array, Object만 지원한다.
 
-All of these will be addressed in a future release. For full
-Minimongo release notes, see packages/minimongo/NOTES
-in the repository.
-
 여기서 언급한 것은 향후에 뭔가 조치가 있을 것이다. 저장소에 있는 
 packages/minimongo/NOTES 파일이 Minimongo 릴리즈 노트이며 자세한 내용은 이 파일을 확인하자.
-{{/warning}}
-
-{{#warning}}
-Minimongo currently doesn't have indexes. This will come soon. It's
-usually not an issue, since there usually isn't that much data in
-the client &mdash; it is not that common for developers to implement
-indexes in their client-side models anyway.
 {{/warning}}
 
 {{#warning}}
@@ -705,22 +414,9 @@ Minimongo는 현재 index가 없다. 하지만 곧 구현할 것이다. 클라�
 
 {{> api_box find}}
 
-`find` returns a cursor.  It does not immediately access the database or
-return documents.  Cursors provide `fetch` to return all matching
-documents, `map` and `forEach` to iterate over all matching
-documents, and `observe` to register callbacks when the set of
-matching documents changes.
-
 `find`는 커서를 리턴한다. 커서는 DB에 접근 하는 것도 아니고 실제 도큐먼트가
 들어 있지도 않다. 커서는 조건에 만족하는 도큐먼트를 `fetch`하거나, `iterate`하거나,
 `map`하거나, `forEach`하거나, 콜백을 등록해서 `observe`하는 기능을 제공한다.
-
-{{#warning}}
-Collection cursors are not query snapshots.  If the database changes
-between calling `Collection.find` and fetching the
-results of the cursor, or while fetching results from the cursor,
-those changes may or may not appear in the result set.
-{{/warning}}
 
 {{#warning}}
 컬렉션 커서는 질의하는 순간의 스냅샷이 아니다. 커서는 데이터를 가져오는 순간의 스냅샷을
@@ -728,15 +424,6 @@ those changes may or may not appear in the result set.
 수도 있다. `Collection.find`를 호출하고 나서 커서를 만드는 사이에, 그리고 그 커서로
 데이터를 가져오는 사이에 DB가 변하면 변한대로 가져온다.
 {{/warning}}
-
-Cursors are a reactive data source.  The first time you retrieve a
-cursor's documents with `fetch`, `map`, or `forEach` inside a
-reactive context (eg, [`Meteor.ui.render`](#meteor_ui_render),
-[`Meteor.autosubscribe`](#meteor_autosubscribe), Meteor will register a
-dependency on the underlying data.  Any change to the collection that
-changes the documents in a cursor will trigger a recomputation.  To
-disable this behavior, pass `{reactive: false}` as an option to
-`find`.
 
 커서는 Reactive 데이터 소스다. Reactive 컨텍스트에서(eg,
 [`Meteor.render`](#meteor_render), [`Meteor.autosubscribe`](#meteor_autosubscribe)
@@ -746,51 +433,27 @@ find에 `{reactive: false}` 옵션을 주고 이 동작을 끌 수 있다.
 
 {{> api_box findone}}
 
-Equivalent to `find(selector, options).fetch()[0]`.
-
 `find(selector, options).fetch()[0]`와 똑같다.
 
 {{> api_box insert}}
-
-Add a document to the collection. A document is just an object, and
-its fields can contain any combination of JSON-compatible datatypes
-(arrays, objects, numbers, strings, null, true, and false).
 
 컬렉션에 도큐먼트를 추가한다. 이 도큐먼트는 객체이고 각 필드에 JSON 호환 데이터
 타입을 할당할 수 있다. JSON 호환 데이터 타입은 '배열, 객체, 숫자, 스트링, null,
 true, false'를 말한다.
 
-`insert` will generate a unique ID for the object you pass, insert it
-in the database, and return the ID.
-
 `insert`는 객체에 필요한 ID를 생성한다. 그리고 DB에 객체를 넣고서 그 ID를 리턴한다.
-
-On the server, if you don't provide a callback, then `insert` blocks
-until the database acknowledges the write, or throws an exception if
-something went wrong.  If you do provide a callback, `insert` still
-returns the ID immediately.  Once the insert completes (or fails), the
-callback is called with error and result arguments.  In an error case,
-`result` is undefined.  If the insert is successful, `error` is
-undefined and `result` is the new document ID.
 
 서버에서는 콜백 없이 `insert`를 실행하면 블럭되며 DB에서 쓰기가 끝났다고
 알려주거나 뭔가 문제가 있어서 예외가 발생하면 풀린다. 콜백을 주고 `insert`를 실행하면
 즉시 ID를 리턴한다. insert가 성공했든 실패했든지 간에 콜백으로 `error`, `result`
 아규먼트를 넘긴다. 에러가 있으면 `result`에는 undefined를 넘긴다.
-성공하면 `error`에는 undefined를 넘기고 `result`에는 도큐먼트 ID를 넘긴다.
-
-On the client, `insert` never blocks.  If you do not provide a callback
-and the insert fails on the server, then Meteor will log a warning to
-the console.  If you provide a callback, Meteor will call that function
-with `error` and `result` arguments.  In an error case, `result` is
-undefined.  If the insert is successful, `error` is undefined and
-`result` is the new document ID.
+성공하면 `error`에 undefined를 넘기고 `result`에는 도큐먼트 ID를 넘긴다.
 
 클라이언트에서, `insert`는 블럭되지 않는다. 콜백 없이 insert를 호출했는데 서버에서
 실패하면 Meteor는 그냥 콘솔에 로그를 남긴다. 콜백을 주고 호출하면 Meteor는 콜백으로
 `error`, `result` 아규먼트를 넘긴다. 에러가 있으면 `result`는 undefined를 넘기고 성공하면 `error`는 undefined이고 `result`는 도큐먼트 ID를 넘긴다.
 
-Example:
+예제:
 
     var groceries_id = Lists.insert({name: "Groceries"});
     Items.insert({list: groceries_id, name: "Watercress"});
@@ -798,37 +461,13 @@ Example:
 
 {{> api_box update}}
 
-Modify documents that match `selector` as
-given by `modifier` (see <a href="#modifiers">modifier
-documentation</a>).  By default, modify only one matching document.
-If `multi` is true, modify all matching documents.
-
 `selector` 조건에 일치하는 도큐먼트를 찾아서 `modifier`로 수정한다(<a href="#modifiers">modifier 문서</a>). 기본적으로 일치하는 도큐먼트를 수정하는 것이고 `multi`가 true면 일치하는 도큐먼트를 전부 수정한다.
-
-Instead of a selector, you can pass a string, which will be
-interpreted as an `_id`.
 
 selector 말고 스트링을 넘길 수도 있는데, 넘긴 스트링은 `_id`의 값으로 간주한다.
 
-On the server, if you don't provide a callback, then `update` blocks
-until the database acknowledges the write, or throws an exception if
-something went wrong.  If you do provide a callback, `update` returns
-immediately.  Once the update completes, the callback is called with a
-single error argument in the case of failure, or no arguments if the
-update was successful.
-
 서버에서는 `update`를 콜백없이 호출하면 DB가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어 온다.
 
-On the client, `update` never blocks.  If you do not provide a callback
-and the update fails on the server, then Meteor will log a warning to
-the console.  If you provide a callback, Meteor will call that function
-with an error argument if there was an error, or no arguments if the
-update was successful.
-
-클라이언트에서는 `update`가 절대 블럭하지 않는다. 콜백 없이 호출했는데 update가 서버에서 실패하면 Meteor는 console에 로그를 남긴다. 콜백을 주고 호출하면 Mereor는 에러가 있을 때
-`error` 아규먼트를 넘기면서 콜백을 호출하고 에러가 없으면 아규먼트 없이 호출한다.
-
-Example:
+클라이언트에서는 `update`가 절대 블럭하지 않는다. 콜백 없이 호출했는데 update가 서버에서 실패하면 Meteor는 console에 로그를 남긴다. 콜백을 주고 호출하면 Mereor는 에러가 있을 때 `error` 아규먼트를 넘기면서 콜백을 호출하고 에러가 없으면 아규먼트 없이 호출한다.
 
 예제:
 
@@ -840,49 +479,24 @@ Example:
                  {multi: true});
 
 {{#warning}}
-The Mongo `upsert` feature is not implemented.
-{{/warning}}
-
-{{#warning}}
 Mongo의 `upsert` 기능은 구현하지 않았다.
 {{/warning}}
 
 {{> api_box remove}}
 
-Find all of the documents that match `selector` and delete them from the
-collection. Or instead of a selector, you may pass a string, to delete
-the document with that `_id`.  As a safety measure, do nothing if the
-selector is undefined.  If the selector is `{}`, remove all the
-documents from the collection.)
-
 `selector`에 만족하는 도큐먼트를 모두 찾아서 삭제한다. selector 대신 스트링을 넣으면
-스트링이 `_id`인 도큐먼트를 삭제한다. 위험하기 때문에 selector가 undefined이면 아무것도
+스트링이 `_id`인 도큐먼트를 삭제한다. selector가 undefined이면 위험해서 아무것도
 하지 않는다. 대신 selector가 `{}`이면 모든 도큐먼트를 삭제한다.
-
-On the server, if you don't provide a callback, then `remove` blocks
-until the database acknowledges the write, or throws an exception if
-something went wrong.  If you do provide a callback, `remove` returns
-immediately.  Once the remove completes, the callback is called with a
-single error argument in the case of failure, or no arguments if the
-update was successful.
 
 서버에서는 콜백 없이 `remove`를 호출하면 DB가 ACK를 주거나 예외가
 날 때까지 블럭한다. 콜백을 주고 호출하면 `remove`는 바로 리턴한다. remove가 완료되면
 콜백이 호출되는데 에러가 있으면 error가 아규먼트로 넘어오고 에러가 없으면
 아규먼트 없이 호출한다.
 
-On the client, `remove` never blocks.  If you do not provide a callback
-and the remove fails on the server, then Meteor will log a warning to
-the console.  If you provide a callback, Meteor will call that function
-with an error argument if there was an error, or no arguments if the
-update was successful.
-
 클라이언트에서는 `remove`를 절대 블럭하지 않는다. 콜백 없이 호출했는데
 remove메소드가 서버에서 실패하면 Meteor는 console에 로그를 남긴다. 콜백을 주고
 호출하면 Mereor는 에러가 있을 때 `error` 아규먼트를 넘기면서 콜백을 호출하고
 에러가 없으면 아규먼트 없이 호출한다.
-
-Example:
 
 예제:
 
@@ -894,20 +508,12 @@ Example:
 
 <h2 id="meteor_collection_cursor"><span>Cursors</span></h2>
 
-To create a cursor, use [`find`](#find).  To access the documents in a
-cursor, use [`forEach`](#foreach), [`map`](#map), or [`fetch`](#fetch).
-
 [`find`](#find)를 사용하면 커서가 만들어 진다. 커서에서 [`forEach`](#foreach),
 [`map`](#map), [`fetch`](#fetch)를 사용해서 도큐먼트에 접근할 수 있다.
 
 {{> api_box cursor_foreach}}
 
-When called in a reactive context, `forEach` registers dependencies on
-the matching documents.
-
 Reactive 컨텍스트에서 `forEach`를 호출하면 해당 도큐먼트의 의존성이 모두 등록된다.
-
-Examples:
 
 예제:
 
@@ -921,17 +527,11 @@ Examples:
 
 {{> api_box cursor_map}}
 
-When called in a reactive context, `map` registers dependencies on
-the matching documents.
-
-Reactive 컨텍스트에서 `map`를 호출하면 해당 도큐먼트의 의존성이 모두 등록된다.
+Reactive 컨텍스트에서 `map`를 호출하면 해당 도큐먼트의 의존성을 모두 등록한다.
 
 {{> api_box cursor_fetch}}
 
-When called in a reactive context, `fetch` registers dependencies on
-the matching documents.
-
-Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의존성이 모두 등록된다.
+Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의존성을 모두 등록한다.
 
 {{> api_box cursor_count}}
 
@@ -944,42 +544,21 @@ Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의�
     });
     document.body.appendChild(frag);
 
-Unlike the other functions, `count` registers a dependency only on the
-number of matching documents.  (Updates that just change or reorder the
-documents in the result set will not trigger a recomputation.)
-
-다른 함수랑 다르게 `count`는 일치하는 도큐먼트의 개수에만 의존성이 등록된다.
-도큐먼트 순서를 바꾸거나 update하는 것으로는 무효화되지 않아 다시 렌더링하지 않는다.
+다른 함수랑 다르게 `count`는 일치하는 도큐먼트의 개수에만 의존성을 등록한다.
+도큐먼트 순서를 바꾸거나 update하는 것으로는 무효화되지 않기 때문에 다시 렌더링하지 않는다.
 
 {{> api_box cursor_rewind}}
-
-The `forEach`, `map`, or `fetch` methods can only be called once on a
-cursor.  To access the data in a cursor more than once, use `rewind` to
-reset the cursor.
 
 커서에서 `forEach`, `map`, `fetch` 메소드는 딱 한번만 호출할 수 있다.
 한번 호출하고 또 호출하려면 `rewind` 함수로 커서를 리셋해야 한다.
 
 {{> api_box cursor_observe}}
 
-Establishes a *live query* that notifies callbacks on any change to the
-query result.
-
 데이터를 변경시키는 쿼리를 콜백으로 알려주는 *라이브 쿼리*를 생성한다.
-
-`callbacks` may have the following functions as properties:
 
 `callbacks`의 프로퍼티 함수는 다음과 같다:
 
 <dl class="callbacks">
-{{#dtdd "added(document, before_index)"}}
-A new document entered the result set. It was inserted
-immediately before the document currently at the
-position `before_index`. Or if it was inserted at the end
-of the list, `before_index` will be equal to the (prior)
-length of the list.
-{{/dtdd}}
-
 {{#dtdd "added(document, before_index)"}}
 도큐먼트가 새로 추가되면 호출된다. 이 도큐먼트는 `before_index` 위치에 있던 도큐먼트
 바로 앞에 삽입된다. 이 도큐먼트가 리스트의 맨끝에 삽입되면 `before_index`는 삽입하기전
@@ -987,20 +566,8 @@ length of the list.
 {{/dtdd}}
 
 {{#dtdd "changed(new_document, at_index, old_document)"}}
-The contents of the document at position `at_index`
-changed to `new_document`, was previously `old_document`.
-{{/dtdd}}
-
-{{#dtdd "changed(new_document, at_index, old_document)"}}
 `at_index` 위치에 있는 도큐먼트가 변경될 때 호출된다. 도큐먼트의 내용이 원래는
 old_document이였고 `new_document`로 변경됐다는 의미다.
-{{/dtdd}}
-
-{{#dtdd "moved(document, old_index, new_index)"}}
-A document changed its position in the result set,
-from `old_index` to `new_index`. For your
-convenience, its current contents is `document`. (This will
-only fire immediately after `changed`.
 {{/dtdd}}
 
 {{#dtdd "moved(document, old_index, new_index)"}}
@@ -1010,31 +577,16 @@ only fire immediately after `changed`.
 {{/dtdd}}
 
 {{#dtdd "removed(old_document, at_index)"}}
-The document at position `at_index`, which was previously
-`old_document`, is no longer in the result set.
-{{/dtdd}}
-
-{{#dtdd "removed(old_document, at_index)"}}
 `at_index`에 있는 도큐먼트가 삭제될 때 호출된다. 해당 도큐먼트의 내용은
 `old_document`이고 아예 삭제된다.
 {{/dtdd}}
 </dl>
 
-`added` will immediately be called as necessary to
-deliver the initial results of the query, if any.
-
 쿼리 결과에 영향을 주기 때문에 `added`는 즉시 호출된다.
-
-`observe` returns a live query handle, which is an object with a
-`stop` method.  Call this function with no arguments to stop calling
-the callback functions and tear down the query. **The query will run
-forever until you call this.**
 
 `observe`는 라이브 쿼리의 핸들를 리턴하고 그 핸들에는 `stop` 메소드가 있다.
 아규먼트 없이 stop 메소드를 호출하면 더이상 콜백은 호출되지 않고 쿼리 객체도 해제된다.
 **라이브 쿼리는 `stop` 함수가 호출될 때까지 영원하다**
-
-Example:
 
 예제:
 
@@ -1057,9 +609,6 @@ Example:
 
 {{#api_box_inline selectors}}
 
-In its simplest form, a selector is just a set of keys that must
-match in a document:
-
 거두절미하고 말하자면 selector는 도큐먼트를 검색할 때 사용하는 키다:
 
     // Matches all documents where deleted is false
@@ -1070,8 +619,6 @@ match in a document:
 
     // Matches every document
     {}
-
-But they can also contain more complicated tests:
 
 좀 더 꼼꼼하게 검색할 수 있다:
 
@@ -1084,16 +631,11 @@ But they can also contain more complicated tests:
     // Matches documents where fruit is one of three possibilities
     {fruit: {$in: ["peach", "plum", "pear"]}}
 
-See the <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries" target="_blank">complete documentation.</a>
-
 자세한 내용은  <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries" target="_blank">mongo 문서</a>를 봐라.
 
 {{/api_box_inline}}
 
 {{#api_box_inline modifiers}}
-
-A modifier is an object that describes how to update a document in
-place by changing some of its fields. Some examples:
 
 modifier는 어떻게 도큐먼트를 업데이트해야 하는지를 명시하는 객체다.
 어떤 필드를 어떻게 업데이트해야 하는지 표현한다:
@@ -1105,17 +647,11 @@ modifier는 어떻게 도큐먼트를 업데이트해야 하는지를 명시하�
     // 'supporters' array
     {$inc: {votes: 2}, $push: {supporters: "Traz"}}
 
-But if a modifier doesn't contain any $-operators, then it is
-instead interpreted as a literal document, and completely replaces
-whatever was previously in the database.
-
 만약 modifier에서 $-오퍼레이터를 빼먹으면 일반 도큐먼트로 해석된다.
 그래서 DB에 원래 있던 도큐먼트를 통째로 바꿔버린다.
 
     // Find the document with id "123", and completely replace it.
     Users.update({_id: "123"}, {name: "Alice", friends: ["Bob"]});
-
-See the <a href="http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations" target="_blank">full list of modifiers.</a>
 
 나머지 <a href="http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations" target="_blank">modifier에
 대해서는 mongo 문서</a>를 봐라.
@@ -1123,8 +659,6 @@ See the <a href="http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierO
 {{/api_box_inline}}
 
 {{#api_box_inline sortspecifiers}}
-
-Sorts may be specified using your choice of several syntaxes:
 
 정렬 기준을 명시하는 방법은 한 가지가 아니고 다음과 같다:
 
@@ -1135,39 +669,23 @@ Sorts may be specified using your choice of several syntaxes:
     ["a", ["b", "desc"]]
     {a: 1, b: -1}
 
-The last form will only work if your JavaScript implementation
-preserves the order of keys in objects. Most do, most of the time, but
-it's up to you to be sure.
-
 Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
-보통은 마지막 방법만 쓰고 그거면 되는데 확인해보든가, 모르겠다.
+보통은 마지막 방법만 쓰고 그거면 된다. 못 믿겠으면 확인해보등가.
 
 {{/api_box_inline}}
 
 {{#api_box_inline fieldspecifiers}}
 
-On the server, queries can specify a particular set of fields to include
-or exclude from the result object.  Minimongo ignores the field
-specifier.
-
 서버에서는 특정 필드가 있는 도큐먼트나 특정 필드가 없는 도큐먼트를 선택적으로
 검색할 수 있지만 Minimongo는 이 field specifier를 무시한다.
-
-To exclude certain fields from the result objects, the field specifier
-is a dictionary whose keys are field names and whose values are `0`.
 
 다음과 같이 키에 필드 이름을 넣고 값에 `0`을 넣으면 해당 필드가 있는 도큐먼트는 제외된다.
 
     // Users.find({}, {fields: {password: 0, hash: 0}})
 
-To return an object that only includes the specified field, use `1` as
-the value.  The `_id` field is still included in the result.
-
 다음과 같이 키에 필드 이름을 넣고 값에 `1`을 넣으면 해당 필드가 있는 도큐먼트만 검색된다.
 
     // Users.find({}, {fields: {firstname: 1, lastname: 1}})
-
-It is not possible to mix inclusion and exclusion styles.
 
 하지만, 이 두 표현을 섞어쓸 수는 없다.
 
@@ -1175,25 +693,14 @@ It is not possible to mix inclusion and exclusion styles.
 
 <h2 id="session"><span>Session</span></h2>
 
-`Session` provides a global object on the client that you can use to
-store an arbitrary set of key-value pairs. Use it to store things like
-the currently selected item in a list.
-
 `Session`은 글로벌 객체이고 키-밸류 형태로 데이터를 저장한다.
 `Session`은 리스트에서 현재 선택한 아이템 같은 것을 저장해둔다거나 하는데 사용한다.
-
-What's special about `Session` is that it's reactive. If
-you call [`Session.get`](#session_get)`("current_list")`
-from inside a template, the template will automatically be rerendered
-whenever [`Session.set`](#session_set) is called.
 
 `Session`도 Reactive라는 것이 중요하다. 템플릿에
 [`Session.get`](#session_get)`("current_list")`라고 호출하는 코드가 있으면
 [`Session.set`](#session_set)이 호출될 때마다 템플릿이 다시 렌더링된다.
 
 {{> api_box set}}
-
-Example:
 
 예제:
 
@@ -1205,13 +712,9 @@ Example:
     // that the chat-history subscription is moved to the room "home".
     Session.set("currentRoomId", "home");
 
-See [`Meteor.deps`](#meteor_deps) for another example.
-
 [`Meteor.deps`](#meteor_deps)을 보면 관련 예제가 더 있다.
 
 {{> api_box get}}
-
-Example:
 
 예제:
 
@@ -1229,19 +732,12 @@ Example:
 
 {{> api_box equals}}
 
-These two expressions do the same thing:
-
 다음 두 코드는 같은 목적으로 사용한 것이다:
 
     (1) Session.get("key") === value
     (2) Session.equals("key", value)
 
-... but the second one is always better. It triggers fewer invalidations
-(template redraws), making your program more efficient.
-
 하지만 두 번째가 더 낫다. 무효화를 더 적게 발생시켜서 더 효율적인 프로그램이 된다.
-
-Example:
 
 예제:
 
@@ -1284,88 +780,33 @@ Example:
 
 <h2 id="templates_api"><span>Templates</span></h2>
 
-A template that you declare as `<{{! }}template name="foo"> ... </{{!
-}}template>` can be accessed as the function `Template.foo`, which
-returns a string of HTML when called.
-
 `<{{! }}template name="foo"> ... </{{! }}template>` 으로 정의한 템플릿은 `Template.foo` 함수를 통해서 접근할 수 있고 호출하면 HTML 스트링을 리턴한다.
 
-The same template may occur many times on the page, and these
-occurrences are called template instances.  Template instances have a
-life cycle of being created, put into the document, and later taken
-out of the document and destroyed.  Meteor manages these stages for
-you, including determining when a template instance has been removed
-or replaced and should be cleaned up.  You can associate data with a
-template instance, and you can access its DOM nodes when it is in the
-document.
-
-같은 템플릿을 여러번 사용할 수 있는데 그때마다 템플릿 인스턴스가 생긴다. 템플릿 인스턴스의 라이프싸이클은 생성되서, DOM에 넣어지고, 나중에 DOM에서 제거되고, 메모리에서 해제되는 순이다. 이 라이프싸이클은 Meteor가 알아서 관리해준다. 템플릿 인스턴스가 언제 제거할지, 언제 교체할지, 언제 메모리에서 해제할지도 Meteor 결정해준다. 사용자는 템플릿 인스턴스와 데이터와 엮어 주기만 하며 되고 바로 DOM 노드에 접근해서 사용할 수 있다.
-
-Additionally, Meteor will maintain a template instance and its state
-even if its surrounding HTML is re-rendered into new DOM nodes.  As
-long as the structure of template invocations is the same, Meteor will
-not consider any instances to have been created or destroyed.  You can
-request that the same DOM nodes be retained as well using `preserve`
-and `constant`.
+같은 템플릿을 여러번 사용할 수 있는데 그때마다 템플릿 인스턴스가 생긴다. 템플릿 인스턴스의 라이프싸이클은 생성되서, DOM에 넣어지고, 나중에 DOM에서 제거되고, 메모리에서 해제되는 순이다. 이 라이프싸이클은 Meteor가 알아서 관리해준다. 템플릿 인스턴스를 언제 제거할지, 언제 교체할지, 언제 메모리에서 해제할지도 Meteor 결정해준다. 사용자는 템플릿 인스턴스와 데이터와 엮어 주기만 하며 되고 바로 DOM 노드에 접근해서 사용할 수 있다.
 
 뿐만아니라 템플릿 인스턴스가 새로운 DOM 노드로 다시 렌더링된다고 해도 Meteor는 해당 템플릿 인스턴스와 상태를 관리해준다. 같은 방법으로 템플릿을 호출할 수 있으니까 Meteor는 인스턴스가 해제되고 다시 생성됐다고 여기지 않는다. 그리고 `preserve`와 `constant`를 사용하면 Meteor는 DOM 노드를 새로 만들지 않고 그대로 유지한다.
-
-There are a number of callbacks and directives that you can specify on
-a named template and that apply to all instances of the template.
-They are described below.
 
 템플릿과 템플릿 인스턴스에 사용하는 콜백과 옵션이 많다. 어떤 콜백과 옵션이 있는지 살펴보자.
 
 {{> api_box template_call}}
 
-When called inside a template helper, the body of `Meteor.render`, or
-other settings where reactive HTML is being generated, the resulting
-HTML is annotated so that it renders as reactive DOM elements.
-Otherwise, the HTML is unadorned and static.
+템플릿 헬퍼 안에서, `Meteor.render` 안에서, 혹은 Reactive HTML을 생성하는 어떤 곳에서 호출하면 Reactive Context가 만들어진다. Reactive Context에서 HTML을 리턴하면 거기에 Reactive 정보가 붙고 Reactive DOM 엘리먼트로 렌더링된다. 그게 아니면 HTML은 그냥 순수한 HTML이다.
 
-`Meteor.render` 안에서 호출하면 템플릿의 리턴하는 HTML에는 부가 정보가 붙고 Reactive DOM 엘리먼트로 렌더링된다. `Meteor.render`뿐만 아니라 Reactive 컨텍스트 어디에서나 가능하고 
+ `Meteor.render` 뿐만 아니라 Reactive 컨텍스트 어디에서나 가능하고 
 
 {{> api_box template_rendered}}
 
-This callback is called once when an instance of Template.*myTemplate* is rendered into DOM nodes and put into the document for the first time, and again each time any part of the template is re-rendered.
-
 이 함수는 Template.*myTemplate* 인스턴스가 렌더링될 때 호출된다. 템플릿이 DOM 노드로 생성되서 DOM 트리에 넣어질 때마다 호출되는 것이라서 다시 렌더링될 때도 호출된다.
-
-In the body of the callback, `this` is a [template
-instance](#template_inst) object that is unique to this occurrence of
-the template and persists across re-renderings.  Use the `created` and
-`destroyed` callbacks to perform initialization or clean-up on the
-object.
 
 콜백 안에서 `this`는 [템플릿 인스턴스](#template_inst) 객체를 가리킨다. 그래서 정확하게 템플릿이 사용된 위치를 식별할 수 있어서 렌더링될 때 데이터를 저장할 수도 있다. 템플릿 인스턴스가 만들어질 때나 해제될 때를 원한다면 `created`와 `destroyed` 콜백을 사용하라 
 
 {{> api_box template_created}}
 
-This callback is called when an invocation of *myTemplate* represents
-a new occurrence of the template and not a re-rendering of an existing
-template instance.  Inside the callback, `this` is the new [template
-instance](#template_inst) object.  Properties you set on this object
-will be visible from the `rendered` and `destroyed` callbacks and from
-event handlers.
-
-이 콜백은 *myTemplate* 템플릿 인스턴스가 새로 생성될 때 호출된다. 기존의 템플릿 인스턴스를 다시 랜더링할 때는 호출되지 않는다. 이 콜백에서 `this'`는 [템플릿 인스턴스](#template_inst) 객체다. 객체에 프로퍼티를 추가하면 나중에 `rendered`와 `destroyed` 콜백에서도 접근할 수 있다.
-
-This callback fires once and is the first callback to fire.  Every
-`created` has a corresponding `destroyed`; that is, if you get a
-`created` callback with a certain template instance object in `this`,
-you will eventually get a `destroyed` callback for the same object.
+이 콜백은 *myTemplate* 템플릿 인스턴스가 새로 생성될 때 호출된다. 기존의 템플릿 인스턴스를 다시 랜더링할 때는 호출되지 않는다. 이 콜백에서 `this`는 [템플릿 인스턴스](#template_inst) 객체다. 객체에 프로퍼티를 추가하면 나중에 `rendered`와 `destroyed` 콜백에서도 접근할 수 있다.
 
 이 콜백은 딱 한번 호출되며 다른 여러 콜백 중에서 가장 먼저 호출된다. `created` 콜백과 `destroyed` 콜백은 한 쌍이다. `create` 콜백에서 초기화하고 `destoryed` 콜백에서 해제한다.
 
 {{> api_box template_destroyed}}
-
-This callback is called when an occurrence of a template is taken off
-the page for any reason and not replaced with a re-rendering.  Inside
-the callback, `this` is the [template instance](#template_inst) object
-being destroyed.
-
-This callback is most useful for cleaning up or undoing any external
-effects of `created`.  It fires once and is the last callback to fire.
 
 이 콜백은 템플릿 인스턴스가 페이지에서 떼어져서 다시 렌더링되지 않을 때 발생한다. 떼어진 이유는 중요치 않다. 이 콜박 안에서 `this`는 해제될 [템플릿 인스턴스](#template_inst) 객체다.
 
@@ -1373,20 +814,9 @@ effects of `created`.  It fires once and is the last callback to fire.
 
 {{> api_box template_events}}
 
-Declare event handers for instances of this template. Multiple calls add
-new event handlers in addition to the existing ones.
-
 이 함수로 템플릿 인스턴스에 사용될 이벤트 핸들러를 등록한다. 여러번 호출하면 호출하는 만큼 새로운 이벤트 핸들러로 등록된다.
 
-See [Event Maps](#eventmaps) for a detailed description of the event
-map format and how event handling works in Meteor.
-
 어떤 형식으로 [이벤트 맵](#eventmaps)을 넘겨야하고 어떻게 핸들링해야 하는지는 [이벤트 맵](#eventmaps) 설명하는 부분을 보라.
-
-{{#note}}
-This syntax replaces the previous syntax: `Template.myTemplate.events = {...}`, but for now, the
-old syntax still works.
-{{/note}}
 
 {{#note}}
 이전 버전까지는 `Template.myTemplate.events = {...}` 형식으로 사용했어야 했다. 아직까지는 이 예전 문법을 지원하긴 한다.
@@ -1394,12 +824,7 @@ old syntax still works.
 
 {{> api_box template_helpers}}
 
-Each template has a local dictionary of helpers that are made available to it,
-and this call specifies helpers to add to the template's dictionary.
-
 템플릿 하나에서만 사용할 수 있는 로컬 헬퍼를 정의할 수 있다. helpers 함수를 통해서 딕셔너리 형태로 정의한다.
-
-Example:
 
 예제:
 
@@ -1409,11 +834,7 @@ Example:
       }
     });
 
-In Handlebars, this helper would then be invoked as `{{dstache}}foo}}`.
 Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출한다.
-
-The following syntax is equivalent, but won't work for reserved property
-names:
 
 다음과 같이 정의하는 것도 가능하다. 하지만 heplers 같은 특수한 프로퍼티는 사용할 수 없다.
 
@@ -1423,54 +844,20 @@ names:
 
 {{> api_box template_preserve}}
 
-You can "preserve" a DOM element during re-rendering, leaving the
-existing element in place in the document while replacing the
-surrounding HTML.  This means that re-rendering a template need not
-disturb text fields, iframes, and other sensitive elements it
-contains.  The elements to preserve must be present both as nodes in
-the old DOM and as tags in the new HTML.  Meteor will patch the DOM
-around the preserved elements.
+DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싸고 있는 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지한다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링된 후에도 유지된다. 
 
-DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싸고 있는 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지된다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링되어도 유지된다. 
-
-Preservation is useful in a variety of cases where replacing a DOM
-element with an identical or modified element would not have the same
-effect as retaining the original element.  These include:
-
-DOM 엘리먼트를 동일하거나(identical) 수정하 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음과 같은 경우에 매우 유용하다:
-
-* Input text fields and other form controls
-* Elements with CSS animations
-* Iframes
-* Nodes with references kept in JavaScript code
+DOM 엘리먼트를 같지만 새로운 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음과 같은 경우에 매우 유용하다:
 
 * 텍스트 Input 필드 같은 폼 컨트롤
 * CSS 에니메이션이 있는 엘리먼트
 * Iframes
 * JavaScript 코드에서 참조하고 있는 엘리먼트
 
-If you want to preserve a whole region of the DOM, an element and its
-children, or nodes not rendered by Meteor, use a [constant
-region](#constant) instead.
-
 엘리먼트와 그 자식을 포함한 DOM 전체나 Meteor가 렌더링하지 않은 노드까지 유지하고 싶으면 [constant](#constant)를 사용하라.
-
-To preserve nodes, pass a list of selectors each of which should match
-at most one element in the template.  When the template is re-rendered,
-the selector is run on the old DOM and the new DOM, and Meteor will
-reuse the old element in place while working in any HTML changes around
-it.
 
 DOM 노드를 유지하려면 템플릿의 엘리먼트에 일치하는 셀렉터 목록을 넘긴다. 넘긴 셀렉터는 템플릿이 다시 렌더링될 때 사용한다. Meteor는 HTML이 어떻게 변하든 해당 엘리먼트는 원래 엘리먼트를 재사용한다.
 
-A second form of `preserve` takes a labeling function for each selector
-and allows the selectors to match multiple nodes. The node-labeling
-function takes a node and returns a label string that is unique for each
-node, or `false` to exclude the node from preservation.
-
-그리고 labeling 함수도 preserve에 넘긴다. labeling 함수는 해당 셀렉터에 만족하는 엘리먼트가 여러개 일 때 사용한다. 노드 객체를 넘겨받고 그 노드를 식별하는 스트링을 리턴한다. 만약 `false`를 리턴하면 해당 노드는 유지하지 않는다.
-
-For example, to preserve all `<input>` elements with ids in template 'foo', use:
+딕셔너리 값으로 넘기는 labeling labeling 함수는 해당 셀렉터에 만족하는 엘리먼트가 여러개 일 때 사용한다. 노드 객체를 넘겨받고 그 노드를 식별하는 스트링을 리턴한다. 만약 `false`를 리턴하면 해당 노드는 유지하지 않는다.
 
 예를 들어, id로 식별하면서 `foo` 템플릿의 `<input>` 엘리먼트를 전부 유지하려면 다음과 같이 사용한다:
 
@@ -1478,35 +865,11 @@ For example, to preserve all `<input>` elements with ids in template 'foo', use:
       'input[id]': function (node) { return node.id; }
     });
 
-Selectors are interpreted as rooted at the top level of the template.
-Each occurrence of the template operates independently, so the selectors
-do not have to be unique on the entire page, only within one occurrence
-of the template.  Selectors will match nodes even if they are in
-sub-templates.
-
-셀렉터는 해당 템플릿 인스턴스 안에서만 적용된다. 템플릿 인스턴스마다 독립적이기 때문에 셀렉터는 템플릿 인스턴스 안에서만 식별할 수 있으면 된다. 전체 페이지에서 식별하지 않는다. 만약 하위 템플릿이 있으면 셀렉터는 그 하위 템플릿의 엘리먼트에도 적용된다.
-
-Preserving a node does *not* preserve its attributes or contents. They
-will be updated to reflect the new HTML. Text in input fields is not
-preserved unless the input field has focus, in which case the cursor and
-selection are left intact. Iframes retain their navigation state and
-animations continue to run as long as their parameters haven't changed.
+셀렉터는 해당 템플릿 인스턴스 안에서만 적용된다. 템플릿 인스턴스마다 독립적이기 때문에 셀렉터는 템플릿 인스턴스 안에서만 식별할 수 있으면 된다. 전체 페이지에서 식별하지 않는다. 만약 하위 템플릿이 있으면 셀렉터는 그 하위 템플릿의 엘리먼트에도 적용한다.
 
 엘리먼트를 유지한다고 해서 속성이나 내용까지 유지하지 않는다. 다시 렌더링할 때 업데이트가 필요하면 속성과 내용은 업데이트된다. input 엘리먼트에 포커스가 없으면 input 엘리먼트의 텍스트는 유지하지 않는다. 하지만 커서나 셀렉션은 그대로 유지된다. Iframe은 네비게이션 상태를 유지하고 애니메이션은 아무것도 변하지 않은 것처럼 계속 실행한다.
 
-There are some cases where nodes can not be preserved because of
-constraints inherent in the DOM API. For example, an element's tag name
-can't be changed, and it can't be moved relative to its parent or other
-preserved nodes.  For this reason, nodes that are re-ordered or
-re-parented by an update will not be preserved.
-
 DOM API의 한계때문에 어쩔 수 없이 유지 못할 수도 있다. 엘리먼트 태그의 이름은 변경할 수 없고 다른 부모 밑으로 옮길 수도 없다. 그러니까 노드가 재정 정렬돼야 한다거나 부모를 바꿔야 되면 유지되지 않는다.
-
-{{#note}}
-Previous versions of Meteor had an implicit page-wide `preserve`
-directive that labeled nodes by their "id" and "name" attributes.
-This has been removed in favor of the explicit, opt-in mechanism.
-{{/note}}
 
 {{#note}}
 이전 버전에서는 불명확하게 "id"와 "name" 속성을 Preserve 디렉티브로 사용했었다. 지금은 명시적으로 선택하는 방법으로 변경됐다.
@@ -1514,112 +877,47 @@ This has been removed in favor of the explicit, opt-in mechanism.
 
 <h2 id="template_inst"><span>Template instances</span></h2>
 
-A template instance object represents an occurrence of a template in
-the document.  It can be used to access the DOM and it can be
-assigned properties that persist across page re-renderings.
-
 템플릿을 사용할 때마다 템플릿 인스턴스가 생성된다. 템플릿 인스턴스를 통해 해당 DOM에 접근할 수 있을 뿐만 아니라 템플릿 인스턴스에 프로퍼티를 할당할 수도 있다. 그래서 다시 렌더링하는 동안에 데이터를 저장해둘 수 있다.
-
-Template instance objects are found as the value of `this` in the
-`created`, `rendered`, and `destroyed` template callbacks and as an
-argument to event handlers.
 
 `created`, `rendered`, `destroyed` 템플릿 콜백에서는 `this`가 템플릿 인스턴스를 가리키고 이벤트 핸들러에는 아규먼트로 넘겨진다.
 
-In addition to the properties and functions described below, you can
-assign additional properties of your choice to the object.  Property names
-starting with `_` are guaranteed to be available for your use.  Use
-the `created` and `destroyed` callbacks to perform initialization or
-clean-up on the object.
-
 아래에서 설명하는 함수와 프로퍼티말고 다른 프로퍼티와 함수는 마음대로 추가할 수 있다. 프로퍼티 이름만 `_`로 시작하게 지어서 사용자가 만들었음을 표시하라. 그리고 초기화나 객체를 해제하는 것은 `created`와 `destroyed` 콜백을 사용한다.
-
-You can only access `findAll`, `find`, `firstNode`, and `lastNode`
-from the `rendered` callback and event handlers, not from `created`
-and `destroyed`, because they require the template instance to be
-in the DOM.
 
 `findAll`, `find`, `firstNode`, `lastNode` 함수는 `rendered` 콜백과 이벤트 핸들러에서만 사용할 수 있다. 이 함수를 사용하려면 템플릿 인스턴스가 DOM안에 있어야 하기 때문에 `created`와 `destroyed` 콜백에서는 사용할 수 없다.
 
 {{> api_box template_findAll}}
 
-Returns an array of DOM elements matching `selector`.
-
 `selector`에 일치하는 DOM 엘리먼트를 배열에 담아 리턴한다.
 
-The template instance serves as the document root for the selector. Only
-elements inside the template and its sub-templates can match parts of
-the selector.
-
-셀렉터가 적용되는 도큐먼트 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
+셀렉터가 적용되는 DOM 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
 
 {{> api_box template_find}}
 
-Returns one DOM element matching `selector`, or `null` if there are no
-such elements.
-
 `selector`에 일치하는 DOM 엘리먼트 한 개를 리턴한다. 일치하는 엘리먼트가 없으면 `null`을 반환한다.
 
-The template instance serves as the document root for the selector. Only
-elements inside the template and its sub-templates can match parts of
-the selector.
-
-셀렉터가 적용되는 도큐먼트 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
+셀렉터가 적용되는 DOM 루트는 템플릿 인스턴스다. 하위 템플릿까지 포함해서 템플릿안에 있는 엘리먼트에만 질의한다.
 
 {{> api_box template_firstNode}}
 
-The two nodes `firstNode` and `lastNode` indicate the extent of the
-rendered template in the DOM.  The rendered template includes these
-nodes, their intervening siblings, and their descendents.  These two
-nodes are siblings (they have the same parent), and `lastNode` comes
-after `firstNode`, or else they are the same node.
-
-두 노드 `firstNode`와 `lastNode`는 템플릿을 DOM으로 렌더링했을 때 범위를 나타낸다. 렌더링한 템플릿은 이 두 노드와 사이의 다른 노드들 그리고 그외 자식(descendent) 노드로 구성된다. `firstNode`와 `lastNode`는 부모가 같고 `firstNode` 다음에 `lastNode`가 온다. 그게 아니면 두 노두가 같을 수 있다.
+`firstNode`와 `lastNode`는 템플릿을 DOM으로 렌더링했을 때 범위를 나타낸다. 렌더링한 템플릿은 이 두 노드와 사이의 다른 노드들 그리고 그외 자식(descendent) 노드로 구성된다. `firstNode`와 `lastNode`는 부모가 같고 `firstNode` 다음에 `lastNode`가 온다. 그게 아니면 두 노두가 같을 수 있다.
 
 {{> api_box template_lastNode}}
 
 {{> api_box template_data}}
 
-This property provides access to the data context at the top level of
-the template.  It is updated each time the template is re-rendered.
-Access is read-only and non-reactive.
-
-이 프로퍼티는 템플릿의 데이터 컨텍스트다. 템플릿이 렌더링될 때마다 변경되고 읽기만 가능하고 Reactive 데이터 소스가 아니다.
+이 프로퍼티는 템플릿의 데이터 컨텍스트다. 템플릿이 렌더링될 때마다 변경된다. 그리고 읽을 수만 있고 Reactive 데이터 소스도 아니다.
 
 {{> api_box render}}
 
-`Meteor.render` creates a `DocumentFragment` (a sequence of DOM nodes)
-that automatically updates in realtime. Most Meteor apps don't need to
-call this directly, they use templates and Meteor handles the rendering.
-
 `Meteor.render`는 실시간으로 자동 업데이트를 수행하는 `DocumentFragment`를 하나 생성한다. 대부분의 Meteor 앱은 이 함수를 직접호출 하지 않는다. 템플릿을 사용하면 Meteor가 렌더링하는 부분을 관리해준다.
-
-Pass in `htmlFunc`, a function that returns an HTML
-string. `Meteor.render` calls the function and turns the output into
-DOM nodes. Meanwhile, it tracks the data that was used when `htmlFunc`
-ran, and automatically wires up callbacks so that whenever any of the
-data changes, `htmlFunc` is re-run and the DOM nodes are updated in
-place.
 
 HTML 스트링을 리턴하는 함수 `htmlFunc`를 아규먼트로 넘긴다. `Meteor.render`는 그 함수를 실행해서 HTML 스트링을 얻어서 DOM 노드를 만든다. 이 때 자동으로 htmlFunc 함수에서 사용한 데이터를 추적하고 그 데이터와 콜백을 엮는다. 그래서 데이터가 변하면 htmlFunc 함수가 다시 실행돼서 DOM 노드가 바로 업데이트된다.
 
-You may insert the returned `DocumentFragment` directly into the DOM
-wherever you would like it to appear. The inserted nodes will continue
-to update until they are taken off the screen. Then they will be
-automatically cleaned up. For more details about clean-up, see
-[`Meteor.flush`](#meteor_flush).
-
 리턴한 `DocumentFragment`를 원하는 DOM 위치에 넣는다. 그 삽입된 노드는 화면에서 사라질(take off the screen)때까지 계속 업데이트된다. 사라지면 자동으로 정리된다. 자세한건 [`Meteor.flush`](#meteor_flush)를 봐라.
-
-`Meteor.render` tracks the data dependencies of `htmlFunc` by running
-it in a reactive context, so it can respond to changes in any reactive
-data sources used by that function. For more information, or to learn
-how to make your own reactive data sources, see
-[Reactivity](#reactivity).
 
 `Meteor.render`는 Reactive 컨텍스트에서 실행하는 것이라서 htmlFunc의 데이터 의존성의 추적한다. 그래서 `Meteor.render`는 htmlFunc 함수에서 사용한 Reactive 데이터 소스가 변경되는 것을 처리할 수 있다. Reactive 데이터 소스를 직접 만들려면 [Reactivity](#reactivity)를 봐라.
 
-Example:
+예제:
 
     // Show the number of users online.
     var frag = Meteor.render(function () {
@@ -1634,35 +932,15 @@ Example:
 
 {{> api_box renderList}}
 
-Creates a `DocumentFragment` that automatically updates as the results
-of a database query change. Most Meteor apps use `{{dstache}}#each}}` in
-a template instead of calling this directly.
-
 이 함수는 DB 쿼리 결과가 변경되면 자동으로 업데이트하는 `DocumentFragment`를 생성한다. 보통은 이 함수을 직접 호출하지 않고 템플릿에서 `{{dstache}}#each}}`를 사용하면 이 함수가 사용된다.
 
-`renderList` is more efficient than using `Meteor.render` to render HTML
-for a list of documents.  For example, if a new document is created in
-the database that matches the query, a new item will be rendered and
-inserted at the appropriate place in the DOM without re-rendering the
-other elements.  Similarly, if a document changes position in a sorted
-query, the DOM nodes will simply be moved and not re-rendered.
+DB 도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.render`보다 효율적이다. 예를 들어, 어떤 쿼리에 만족하는 도큐먼트가 DB에 새로 추가되면 전체가 아니라 그 도큐먼트에 해당하는 부분만 다시 렌더링된다. 다른 엘리먼트는 건드리지 않는다. 정렬하는 쿼리를 실행하고 있을 때 도큐먼트 순서가 바뀌면 다시 렌더링하는 것이 아니라 단순히 DOM 노드를 옮길뿐이다.
 
-도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.render`보다 효율적이다. 예를 들어, 어떤 쿼리에 만족하는 도큐먼트가 DB에 새로 추가되면 전체가 아니라 그 도큐먼트에 해당하는 부분만 다시 렌더링된다. 다른 엘리먼트는 건드리지 않는다. 정렬하는 쿼리를 실행하고 있을 때 도큐먼트 순서가 바뀌면 다시 렌더링하는 것이 아니라 단순히 DOM 노드를 옮길뿐이다.
-
-`docFunc` is called as needed to generate HTML for each document.  If
-you provide `elseFunc`, then whenever the query returns no results, it
-will be called to render alternate content. You might use this to show
-a message like "No records match your query."
-
-도큐먼트를 하나씩 HTML로 생성할 때마다 `docFunc`를 호출하고 쿼리 결과가 없을 때에는 `elseFunc`를 호출한다. 결과가 없을 때에는 다른 화면을 보여줄 수 있도록 호출한다. 예를 들어, "절대 결과가 없을리 없다" 같은 메시지를 보여줄 수 있다.
-
-Each call to `docFunc` or `elseFunc` is run in its own reactive
-context so that if it has other external data dependencies, it will be
-individually re-run when the data changes.
+도큐먼트를 하나씩 HTML로 생성할 때마다 `docFunc`를 호출하고 쿼리 결과가 없을 때에는 `elseFunc`를 호출한다. `elseFunc`는 결과가 없을 때에는 다른 화면을 보여주는 용도로 사용한다. 예를 들어, "절대 결과가 없을리 없다" 같은 메시지를 보여줄 수 있다.
 
 `docFunc`나 `elseFunc` 함수는 각각 다른 Reactive 컨텍스트에서 실행된다. 그래서 데이터가 변경되면 해당 Reactive 컨텍스트만 다시 렌더링 된다.
 
-Example:
+예제:
 
     // List the titles of all of the posts that have the tag
     // "frontpage". Keep the list updated as new posts are made, as tags
@@ -1683,28 +961,8 @@ Example:
 
 {{#api_box_inline eventmaps}}
 
-Several functions take event maps. An event map is an object where
-the properties specify a set of events to handle, and the values are
-the handlers for those events. The property can be in one of several
-forms:
-
 이벤트 맵은 객체다. 이 객체의 프로퍼티 이름은 처리할 이벤트이고
 그 값은 이벤트 핸들러다. 프로퍼티 이름은 다음과 같이 명시한다:
-
-<dl>
-{{#dtdd "<em>eventtype</em>"}}
-Matches a particular type of event, such as 'click'.
-{{/dtdd}}
-
-{{#dtdd "<em>eventtype selector</em>"}}
-Matches a particular type of event, but only when it appears on
-an element that matches a certain CSS selector.  
-{{/dtdd}}
-
-{{#dtdd "<em>event1, event2</em>"}}
-To handle more than one type of event with the same function, use a comma-separated list.
-{{/dtdd}}
-</dl>
 
 <dl>
 {{#dtdd "<em>eventtype</em>"}}
@@ -1720,18 +978,9 @@ To handle more than one type of event with the same function, use a comma-separa
 {{/dtdd}}
 </dl>
 
-The handler function receives two arguments: `event`, an object with
-information about the event, and `template`, a [template
-instance](#template_inst) for the template where the handler is
-defined.  The handler also receives some additional context data in
-`this`, depending on the context of the current element handling the
-event.  In a Handlebars template, an element's context is the
-Handlebars data context where that element occurs, which is set by
-block helpers such as `#with` and `#each`.
-
 핸들러 함수는 아규먼트를 두 개 받는다. `event` 아규먼트는 이벤트 객체이고 `template` 아규먼트는 핸들러를 정의한 해당 [템플릿 객체](#template_inst)이다. 그리고 핸들러는 `this`를 통해서 해당 엘리먼트에 대한 컨텍스트 데이터에도 접근할 수 있다. Handlebars 템플릿에서는 엘리먼트 컨텍스트가 곧 Handlebars 데이터 컨텍스트이고 `#with`나 `#each` 같은 블럭 헬퍼에 따라 데이터 컨텍스트가 변경된다.
 
-Example:
+예제:
 
     {
       // Fires when any element is clicked
@@ -1744,15 +993,8 @@ Example:
       'keydown, click .accept': function (event) { ... }
     }
 
-Most events bubble up the document tree from their originating
-element.  For example, `'click p'` catches a click anywhere in a
-paragraph, even if the click originated on a link, span, or some other
-element inside the paragraph.  The originating element of the event
-is available as the `target` property, while the element that matched
-the selector and is currently handling it is called `currentTarget`.
-
 대부분의 이벤트는 원래 이벤트가 발생한 엘리먼트에서 DOM 트리를 따라
-전파된다(bubble up). 예를 들어 `'click p'`는 단락 태그인 `<p>` 블럭에서
+전파된다(bubble up). 예를 들어 `click p`는 단락 태그인 `<p>` 블럭에서
 발생한 click 이벤트를 캐치한다. 심지어 그 단락안에 있는 `<a>`, `<span>`
 등등의 엘리먼트에서 발생한 click 이벤트도 캐치한다. 원래 이벤트가 발생한
 엘리먼트는 `target` 프로퍼티로 알 수 있고 Selector와 일치한 엘리먼트는
@@ -1765,43 +1007,20 @@ the selector and is currently handling it is called `currentTarget`.
       }
     }
 
-If a selector matches multiple elements that an event bubbles to, it
-will be called multiple times, for example in the case of `'click
-div'` or `'click *'`.  If no selector is given, the handler
-will only be called once, on the original target element.
-
 이벤트가 전파하는 엘리먼트에 따라서 일치하는 Selector가 여러개이면 핸들러는
-그 수만큼 호출된다. `'click div'`이나 `'click *'`은 아마 여러번 호출될
+그 수만큼 호출된다. `click div`이나 `click *`은 아마 여러번 호출될
 것이다. Selector가 없으면 Handler는 원래 이벤트가 발생한 target
 엘리먼트에서 한번만 호출된다.
-
-The following properties and methods are available on the event object
-passed to handlers:
 
 핸들러에 넘어오는 이벤트 객체에 있는 프로퍼티와 메소드는 다음과 같다:
 
 <dl class="objdesc">
 {{#dtdd "type" "String"}}
-The event's type, such as "click", "blur" or "keypress".
-{{/dtdd}}
-
-{{#dtdd "type" "String"}}
 "click", "blur", "keypress" 같은 이벤트 타입
 {{/dtdd}}
 
 {{#dtdd "target" "DOM Element"}}
-The element that originated the event.
-{{/dtdd}}
-
-{{#dtdd "target" "DOM Element"}}
 이벤트가 최초 발생한 DOM 엘리먼트
-{{/dtdd}}
-
-{{#dtdd "currentTarget" "DOM Element"}}
-The element currently handling the event.  This is the element that
-matched the selector in the event map.  For events that bubble, it may
-be `target` or an ancestor of `target`, and its value changes as the
-event bubbles.
 {{/dtdd}}
 
 {{#dtdd "currentTarget" "DOM Element"}}
@@ -1810,30 +1029,13 @@ Selector와 일치하는 엘리먼트다. 이벤트가 전파하는 엘리먼트
 {{/dtdd}}
 
 {{#dtdd "which" "Number"}}
-For mouse events, the number of the mouse button (1=left, 2=middle, 3=right).
-For key events, a character or key code.
-{{/dtdd}}
-
-{{#dtdd "which" "Number"}}
 마우스 이벤트일 때는 어떤 마우스 버튼이 눌린 것인지를 나타낸다(1=left, 2=middle, 3=right).
 키 이벤트 일때는 캐릭터나 키코드를 의미한다.
 {{/dtdd}}
 
 {{#dtdd "stopPropagation()"}}
-Prevent the event from propagating (bubbling) up to other elements.
-Other event handlers matching the same element are still fired, in
-this and other event maps.
-{{/dtdd}}
-
-{{#dtdd "stopPropagation()"}}
 이벤트가 다른 엘리먼트에 전파되지 못하게 한다. 이 엘리먼트와 일치하는
 핸들러가 또 있으면 그 핸들러는 호출된다. 핸들러가 속한 이벤트 맵은 상관없다.
-{{/dtdd}}
-
-{{#dtdd "stopImmediatePropagation()"}}
-Prevent all additional event handlers from being run on this event,
-including other handlers in this event map, handlers reached by
-bubbling, and handlers in other event maps.
 {{/dtdd}}
 
 {{#dtdd "stopImmediatePropagation()"}}
@@ -1843,19 +1045,9 @@ bubbling, and handlers in other event maps.
 {{/dtdd}}
 
 {{#dtdd "preventDefault()"}}
-Prevents the action the browser would normally take in response to this
-event, such as following a link or submitting a form.  Further handlers
-are still called, but cannot reverse the effect.
-{{/dtdd}}
-
-{{#dtdd "preventDefault()"}}
 브라우저가 이 이벤트에 대해 동작하지 못하게 한다. 링크를 따라가거나
 폼 데이터를 전송하는 일을 중지시킨다. 그래도 핸들러는 계속 호출되지만
 결과를 취소할 수 없다.
-{{/dtdd}}
-
-{{#dtdd "isPropagationStopped()"}}
-Returns whether `stopPropagation()` has been called for this event.
 {{/dtdd}}
 
 {{#dtdd "isPropagationStopped()"}}
@@ -1863,15 +1055,7 @@ Returns whether `stopPropagation()` has been called for this event.
 {{/dtdd}}
 
 {{#dtdd "isImmediatePropagationStopped()"}}
-Returns whether `stopImmediatePropagation()` has been called for this event.
-{{/dtdd}}
-
-{{#dtdd "isImmediatePropagationStopped()"}}
 이 이벤트에 대해서 `stopImmediatePropagation()`을 호출한 적이 있는지 리턴한다.
-{{/dtdd}}
-
-{{#dtdd "isDefaultPrevented()"}}
-Returns whether `preventDefault()` has been called for this event.
 {{/dtdd}}
 
 {{#dtdd "isDefaultPrevented()"}}
@@ -1879,23 +1063,12 @@ Returns whether `preventDefault()` has been called for this event.
 {{/dtdd}}
 </dl>
 
-Returning `false` from a handler is the same as calling
-both `stopImmediatePropagation` and `preventDefault` on the event.
-
 핸들러 함수가 `false`를 리턴하면 해당 이벤트에 `stopImmediatePropagation`과
 `preventDefault`를 호출한 것과 같다.
-
-Event types and their uses include:
 
 이벤트 타입과 용법:
 
 <dl class="objdesc">
-{{#dtdd "<code>click</code>"}}
-Mouse click on any element, including a link, button, form control, or div.
-Use `preventDefault()` to prevent a clicked link from being followed.
-Some ways of activating an element from the keyboard also fire `click`.
-{{/dtdd}}
-
 {{#dtdd "<code>click</code>"}}
 마우스 click 이벤트. 이 click 이벤트에 따라 브라우저가 동작하는 것을
 중단시키려면 `preventDefault()`를 사용한다. 키보드로 엘리먼트를 활성화해서
@@ -1907,13 +1080,6 @@ Double-click.
 {{/dtdd}}
 
 {{#dtdd "<code>focus, blur</code>"}}
-A text input field or other form control gains or loses focus.  You
-can make any element focusable by giving it a `tabindex` property.
-Browsers differ on whether links, checkboxes, and radio buttons are
-natively focusable.  These events do not bubble.
-{{/dtdd}}
-
-{{#dtdd "<code>focus, blur</code>"}}
 텍스트 입력 필드나 다른 폼 컨트롤이 포커스를 얻거나 잃으면 발생한다.
 `tabindex` 프로퍼티를 주면 포커스를 가질 수 있는 엘리먼트가 된다.
 브라우저는 링크, 체크박스, 라이오 버튼과 같이 태생적으로(natively)
@@ -1921,17 +1087,8 @@ natively focusable.  These events do not bubble.
 {{/dtdd}}
 
 {{#dtdd "<code>change</code>"}}
-A checkbox or radio button changes state.  For text fields, use
-`blur` or key events to respond to changes.
-{{/dtdd}}
-
-{{#dtdd "<code>change</code>"}}
 체크박스나 라디오 버튼의 상태가 변할 때 발생한다.
 텍스트 필드에서는 `blur`나 키 이벤트를 사용하라.
-{{/dtdd}}
-
-{{#dtdd "<code>mouseenter, mouseleave</code>"}} The pointer enters or
-leaves the bounds of an element.  These events do not bubble.
 {{/dtdd}}
 
 {{#dtdd "<code>mouseenter, mouseleave</code>"}}
@@ -1940,17 +1097,7 @@ leaves the bounds of an element.  These events do not bubble.
 {{/dtdd}}
 
 {{#dtdd "<code>mousedown, mouseup</code>"}}
-The mouse button is newly down or up.
-{{/dtdd}}
-
-{{#dtdd "<code>mousedown, mouseup</code>"}}
 마우스 버튼을 누르거나 뗄 때 발생한다.
-{{/dtdd}}
-
-{{#dtdd "<code>keydown, keypress, keyup</code>"}}
-The user presses a keyboard key.  `keypress` is most useful for
-catching typing in text fields, while `keydown` and `keyup` can be
-used for arrow keys or modifier keys.
 {{/dtdd}}
 
 {{#dtdd "<code>keydown, keypress, keyup</code>"}}
@@ -1960,10 +1107,6 @@ used for arrow keys or modifier keys.
 {{/dtdd}}
 </dl>
 
-Other DOM events are available as well, but for the events above,
-Meteor has taken some care to ensure that they work uniformly in all
-browsers.
-
 다른 DOM 이벤트도 이용할 수 있지만 위의 이벤트에 대해서는
 브라우저마다 똑같이 동작하게 만들기 위해 노력했다.
 
@@ -1971,62 +1114,20 @@ browsers.
 
 {{#api_box_inline constant}}
 
-You can mark a region of a template as "constant" and not subject to
-re-rendering using the
-`{{dstache}}#constant}}...{{dstache}}/constant}}` block helper.
-Content inside the `#constant` block helper is preserved exactly as-is
-even if the enclosing template is re-rendered.  Changes to other parts
-of the template are patched in around it in the same manner as
-`preserve`.  Unlike individual node preservation, a constant region
-retains not only the identities of its nodes but also their attributes
-and contents.  The contents of the block will only be evaluated once
-per occurrence of the enclosing template.
-
 다시 렌더링하지 않을 Constant 영역임을 표시할 수 있다. `{{dstache}}#constant}}...{{dstache}}/constant}}` 블럭 헬퍼로 표시하면 된다. 템플릿이 다시 렌더링될 때 `#constant` 블럭 헬퍼에 들어 있는 내용은 그대로 유지된다. Preserve 엘리먼트 처럼 해당 엘리먼트 근처에 있는 템플릿 엘리먼트만 패치된다. 노드를 선택적으로 유지하는 것과는 달리 이렇게 Constant 영역을 정의하면 해당 노드의 ID 뿐만아니라 속성과 내용까지 유지된다. 이 영역의 내용은 템플릿이 처음 렌더링될 때 딱 한번 생성된다.
 
-Constant regions allow non-Meteor content to be embedded in a Meteor
-template.  Many third-party widgets create and manage their own DOM
-nodes programmatically. Typically, you put an empty element in your
-template, which the widget or library will then populate with
-children. Normally, when Meteor re-renders the enclosing template it
-would remove the new children, since the template says it should be
-empty. If the container is wrapped in a `#constant` block, however, it
-is left alone; whatever content is currently in the DOM remains.
-
-Constant 영역은 Meteor 템플릿에 Meteor 답지 않은(non-Meteor) 내용을 넣을 때 사용한다. 개발자가 직접 다른 제 3의 위젯을 사용해서 화면을 만들고 관리할 때 사용하면 좋다. 보통 템플릿에 빈 엘리먼트를 넣는다. 템플릿을 하나 만들고 그 안에는 별 내용 없이 비워두었고 다른 위젯과 라이브러리로 그 템플릿 안에 엘리먼트를 채워 넣었었다고 하자. Meteor가 그 템플릿을 다시 랜더링할 때 원래 그 템플릿은 비워져 있었으므로 나중에 만들어 넣은 엘리먼트를 제거해버린다. 그런데 `#constant` 블럭을 이용해서 감싸 놓으면 그대로 유지된다. 그 안에 어떤 DOM이 들어 있던지 상관없이 유지된다.
+Constant 영역은 Meteor 템플릿에 Meteor 답지 않은(non-Meteor) 컨텐트을 넣을 때 사용한다. 개발자가 직접 다른 제 3의 위젯을 사용해서 화면을 만들고 관리할 때 사용하면 좋다. 보통 템플릿에 빈 엘리먼트를 넣는다. 템플릿을 하나 만들고 그 안에는 별 내용 없이 비워두었고 다른 위젯과 라이브러리로 그 템플릿 안에 엘리먼트를 채워 넣었었다고 하자. Meteor가 그 템플릿을 다시 랜더링할 때 원래 그 템플릿은 비워져 있었으므로 나중에 만들어 넣은 엘리먼트를 제거해버린다. 그런데 `#constant` 블럭을 이용해서 감싸 놓으면 그대로 유지된다. 그 안에 어떤 DOM이 들어 있던지 상관없이 유지된다.
 
 {{#note}}
-Constant regions are intended for embedding non-Meteor content.
-Event handlers and reactive dependencies don't currently work
-correctly inside constant regions.
-{{/note}}
-
-{{#note}}
-Constant 영역은 non-Metor 내용을 넣기 위해 사용한다. 이 Constant 영역 안에서는 이벤트 핸들러와 Reactive 의존성이 동작하지 않는다.
+Constant 영역은 non-Meteor 컨텐트를 넣기 위해 사용한다. 이 Constant 영역 안에서는 이벤트 핸들러와 Reactive 의존성이 동작하지 않는다.
 {{/note}}
 
 {{/api_box_inline}}
 
 {{#api_box_inline isolate}}
 
-Each template runs in its own reactive context.  When the template
-accesses a reactive data source, such as by calling `Session.get` or
-making a database query, this establishes a data dependency that will
-cause the whole template to be re-rendered when the data changes.
-This means that the amount of re-rendering for a particular change
-is affected by how you've divided your HTML into templates.
-
 템플릿은 각각 별도의 Reactive 컨텍스트에서 실행한다. 템플릿이 Reactive 데이터 소스에 접근할 때 데이터 의존성이 만들어진다.
 그래서 데이터가 변하면 템플릿은 통째로 다시 렌더링된다. 이 말은 어떻게 템플릿을 구성했는지에 따라 렌더링하는 단위가 결정된다는 뜻이다.
-
-Typically, the exact extent of re-rendering is not crucial, but if you
-want more control, such as for performance reasons, you can use the
-`{{dstache}}#isolate}}...{{dstache}}/isolate}}` helper.  Data
-dependencies established inside an `#isolate` block are localized to
-the block and will not in themselves cause the parent template to be
-re-rendered.  This block helper essentially conveys the reactivity
-benefits you would get by pulling the content out into a new
-sub-template.
 
 보통 렌더링 범위는 그렇게 중요한게 아니다. 하지만 꼼꼼하게 튜닝해서 최적화해야 한다면 `{{dstache}}#isolate}}...{{dstache}}/isolate}}`를 사용할 수 있다. 데이터 의존성은 `#isolate` 블럭에만 국한되며 이 블럭에서 데이터가 변경되도 부모 템플릿까지 다시 렌더링하지 않는다. 이 블럭 헬퍼를 사용하면 별도의 템플릿으로 정의한 것과 같은 효과를 낼 수 있다.
 
@@ -2034,18 +1135,9 @@ sub-template.
 
 <h2 id="timers"><span>Timers</span></h2>
 
-Meteor uses global environment variables
-to keep track of things like the current request's user.  To make sure
-these variables have the right values, you need to use
-`Meteor.setTimeout` instead of `setTimeout` and `Meteor.setInterval`
-instead of `setInterval`.
-
 Meteor는 현 요청의 사용자 같은 정보를 전역 변수에 저장한다.
 그래서 제 값이 사용되게 하려면 `setTimeout`과 `setInterval`말고
 `Meteor.setTimeout`과 `Meteor.setInterval`을 사용해야 한다.
-
-These functions work just like their native JavaScript equivalents.
-You'll get an error if you call the native function.
 
 이 함수들은 Javascript의 네이티브 함수와 똑같이 동작한다.
 만약 네이티브 함수를 호출하면 오동작할 것이다.
@@ -2057,21 +1149,8 @@ You'll get an error if you call the native function.
 
 <h2 id="meteor_deps"><span>Meteor.deps</span></h2>
 
-Meteor has a simple dependency tracking system, so that it it can
-automatically rerender templates and such when [`Session`](#session)
-variables are modified, or database queries change.
-
 Meteor에는 의존성 추적 시스템이 있어서 [`Session`](#session) 변수가
 수정되거나 DB 질의 결과가 달라지면 자동으로 템플릿을 다시 렌더링한다. 
-
-Unlike most other systems, you don't have to manually declare these
-dependencies &mdash; it "just works". The mechanism is simple and
-efficient. When you call a function that supports reactive updates
-(say, a database query), it automatically saves the current
-"invalidation context" object if any (say, the current template being
-rendered.) Later, when the data changes, it can "invalidates" this
-context (tell the template to rerender itself.) The whole
-implementation is about 50 lines of code.
 
 다른 추적 시스템과 다르게 이 시스템은 손으로 의존성을 정의하지 않아도
 그냥 동작한다. 메커니즘은 단순하지만 효과적이다. DB 쿼리처럼
@@ -2080,35 +1159,15 @@ Reactive 업데이트를 지원하는 함수를 호출할 때 자동으로 "무�
 나중에 데이터가 변경되면 저장한 컨텍스트를 무효화한다.
 그래서 템플릿은 다시 렌더링된다. 이 기능은 기껏해야 50 라인 정도 뿐이다.
 
-Developers, particularly package authors, can use *invalidation
-contexts* to implement additional reactive data sources or to write
-functions that automatically register dependencies on reactive data
-sources.
-
 개발자는나 패키지 제작자는 *무효화 컨텍스트*를 사용해서 Reactive
 데이터 소스를 추가하고 Reactive 데이터 소스의 의존성을 자동으로
 등록하는 함수도 구현할 수 있다.
 
 {{> api_box Context }}
 
-Create an invalidation context by calling this constructor, then run
-some code inside the context with [`run`](#run). Finally, register a
-callback with [`on_invalidate`](#on_invalidate) that will get called
-when the code you run wants to signal that it should be rerun.
-
 이 생성자로 무효화 컨텍스트를 만들고 [`run`](#run) 함수로 무효화 컨텍스트
 안에서 코드를 실행한다. 그리고 [`on_invalidate`](#on_invalidate)로 콜백을
 등록하면 다시 실행돼야 할 때 그 콜백이 실행된다.
-
-Code can see if it's running inside an invalidation context by reading
-the [`Meteor.deps.Context.current`](#current) global variable, which
-will be the currently active context, or `null` if it's not being run
-from inside a context.  If it wants to participate in the reactivity
-system, it should save this context away, and later call the
-[`invalidate`](#invalidate) method on the context when it wants to
-signal that something has changed. If it does this, it should also use
-[`on_invalidate`](#on_invalidate) to set up a cleanup function so that
-it can know when to stop listening for changes.
 
 전역 변수 [`Meteor.deps.Context.current`](#current)을 확인하면 무효화 컨텍스트
 안에서 실행하는 건지 아닌지 알 수 있다. 컨텍스트 밖에서 그 변수의 값은 `null`이
@@ -2117,67 +1176,34 @@ it can know when to stop listening for changes.
 컨텍스트를 다시 실행할 수 있다. 이렇게 하면 [`on_invalidate`](#on_invalidate)으로
 cleanup 함수를 설정해서 추적을 언제 멈추는지 알 수 있다.
 
-Invalidation contexts have an attribute `id` which is a unique positive
-integer. You're free to add any other attributes you like to the
-invalidation context for your own convenience, as long as they don't
-start with an underscore.
-
 무효화 컨텍스트에는 양의 정수인 id가 부여된다. 편한대로 아무데나
 저장해서 사용할 수 있다. 무효화 컨텍스트 프로퍼티에 저장해도 된다.
 굳이 `_`를 이름 앞뒤로 붙일 필요도 없다.
 
 {{> api_box run }}
 
-This function simply sets [`Meteor.deps.Context.current`](#current) to
-this invalidation context, runs `func`, and then restores it to its
-previous value. It returns the result of calling `func`.
-
 이 함수는 단순히 [`Meteor.deps.Context.current`](#current)가 현 무효화
 컨텍스트를 가리키게하고, `func`를 실행하고, 이전 값으로 다시 되돌릴 뿐이다.
 이 함수는 `func`가 리턴하는 값을 리턴한다.
-
-It's fine for `run` to be called recursively. `current` will return the
-innermost context.
 
 run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 컨텍스트를 가리킨다.
 
 {{> api_box on_invalidate }}
 
-If this context hasn't been invalidated yet, adds `callback` to the list
-of callbacks that will be called when [`invalidate`](#invalidate) is
-called. If the context has already been invalidated, call `callback`
-immediately.
-
 이 컨텍스트가 아직 무효화되지 않았으면 `callback`을 [`invalidate`](#invalidate)가
 호출될 때 호출되는 함수 목록에 추가한다.
 컨텍스트가 이미 무효화 됐으면 `callback`은 즉시 호출된다.
 
-Typically this function will have two kinds of callers:
-
 다음과 같은 유형의 Caller가 이 함수를 호출한다:
-
-* The function that creates the invalidation context will use the
-  `on_invalidate` callback as a signal to rerun the code in the context,
-  to see what new value it returns. In order to rerun the code, it'll
-  create a fresh invalidation context and reregister its `on_invalidate`
-  callback on that new context. When that context is invalidated the
-  cycle will repeat.
 
 * 무효화 컨텍스트를 만드는 함수는 `on_invalidate` 콜백을 사용해서 컨텍스트에서
   코드를 재실행하도록 신호를 준다. 코드를 재실행하려면 무효화 컨텍스트를 새로
   만들고 `on_invalidate` 콜백을 다시 등록해야 한다.
   컨텍스트가 무효화될 때마다 이 과정이 반복된다.
 
-* Functions that are sources of reactive data will save
-  [`Meteor.deps.Context.current`](#current) into some kind of list of
-  listeners. They'll use the `on_invalidate` callback to remove the
-  context from their listener list.
-
 * Reactive 데이터 소스인 함수는 [`Meteor.deps.Context.current`](#current)를
   일종의 리스너 목록에 저장한다. 그리고 그 함수는 `on_invalidate` 콜백을
   사용해서 리스트 목록에서 컨텍스트를 제거한다.
-
-Example:
 
 예제:
 
@@ -2206,33 +1232,17 @@ Example:
 
 {{> api_box invalidate }}
 
-If this function has already been called on this context, it does
-nothing (a mathematician would say that it is "idempotent.") Otherwise
-it calls each [`on_invalidate`](#on_invalidate) function registered on
-the context.
-
-무효화 상태에서는 `invalidate` 함수가 호출한들 아무일도 일어나지 않는다
-(수학적으로 "멱등(idempotent)"이라고 부른다). 무효화 상태가 아니면
-[`on_invalidate`](#on_invalidate)로 해당 컨텍스트에 등록한 함수를 모두 실행한다.
-
-The functions aren't called immediately &mdash; instead, they will be
-called the next time you call [`Meteor.flush`](#meteor_flush). This function
-just adds the context to the flush list and is guaranteed to do nothing
-else just yet.
+무효화 상태에서는 `invalidate` 함수를 호출한들 아무일도 일어나지 않는다
+(수학적으로 "멱등(idempotent)"이라고 부른다). 무효화 상태가 아니면 
+해당 컨텍스트에 [`on_invalidate`](#on_invalidate)로 등록한 함수를 모두 실행한다.
 
 `invalidate` 함수가 호출되자마자 [`on_invalidate`](#on_invalidate) 함수가
 바로 실행되는 것이 아니라 [`Meteor.flush`](#meteor_flush)가 실행할 때 호출된다.
 `invalidate` 함수는 컨텍스트를 flush 목록에 추가하고 그외에 별로 하는 게 없다.
 
-If you don't call [`Meteor.flush`](#meteor_flush) explicitly, it will be called
-for you automatically when your code is done running (by setting a
-`setTimeout` timer with a delay of zero.)
-
 [`Meteor.flush`](#meteor_flush)는 직접 호출하지 않아도 하던 일을 다 마치면
 (다음 tick에) 자동으로 호출된다. delay 값을 0으로 주고 `setTimeout`
 함수를 호출해서 다음 tick에 실행되는 것이다.
-
-Example:
 
 예제:
 
@@ -2285,14 +1295,7 @@ Example:
 
 {{> api_box current }}
 
-This is a global variable that is set by [`run`](#run).
-
 이 변수는 [`run`](#run) 함수가 설정하는 전역 변수다.
-
-If you have a background in Lisp or programming language theory, you
-might think of it as a dynamically scoped ("special") variable. (That
-just means that [`run`](#run) sets it, runs some user-supplied code, and
-then restores its previous value.)
 
 이 변수는 Lisp이나 프로그래밍 언어 이론에 나오는 dynamically scoped
 변수라고 생각하면 된다. [`run`](#run)이 할당하고, 사용자 코드를
@@ -2300,22 +1303,9 @@ then restores its previous value.)
 
 {{> api_box flush }}
 
-Normally, when you make changes (like writing to the database),
-their impact (like updating the DOM) is delayed until the system is
-idle. This keeps things predictable &mdash; you can know that the DOM
-won't go changing out from under your code as it runs. It's also one
-of the things that makes Meteor fast.
-
 일반적으로 데이터를 변경하고 DOM이 업데이트되려면 시스템이 idle이 될 때까지
 기다려야 한다. 그래서 코드가 실행되자 마자 DOM이 바뀌지 않는다.
 이 전략은 Meteor를 더 빠르게 만들어준다.
-
-`Meteor.flush` forces all of the pending reactive updates to complete
-(for example, it ensures the DOM has been updated with your recent
-database changes.)  Call `flush` to apply those pending changes
-immediately. The main use for this is to make sure the DOM has been
-brought up to date with your latest changes, so you can manually
-manipulate it with jQuery or the like.
 
 `Meteor.flush`는 대기하고 있는 Reactive 업데이트를 강제로 완료시킨다
 (DB의 변경된 내용을 DOM에 모두 적용시킨다). `flush`를 호출하면
@@ -2323,27 +1313,11 @@ manipulate it with jQuery or the like.
 시키기는데 사용한다. 그래야 jQuery 같은 라이브러리를 써서 DOM을
 수동으로 관리할 수 있다.
 
-When you call `flush`, any auto-updating DOM elements that are not on
-the screen may be cleaned up (meaning that Meteor will stop tracking
-and updating the elements, so that the browser's garbage collector can
-delete them.) So, if you manually call `flush`, you need to make sure
-that any auto-updating elements that you have created by calling
-[`Meteor.ui.render`](#meteor_ui_render) have already been inserted in the main
-DOM tree.
-
 `flush`를 호출할 때, 화면에 없는 Reactive DOM 엘리먼트는 삭제된다.
 Meteor가 엘리먼트를 추적하고 업데이트하는 것을 멈추기 때문에 브라우저의
 Garbage Collector는 그 엘리먼트를 제거해버린다. 수동으로 `flush`를 호출하려면
 [`Meteor.ui.render`](#meteor_ui_render)를 호출해서 만든 엘리먼트가
 DOM 트리에 모두 넣어졌는지 꼭 확인해야 한다.
-
-Technically speaking, `flush` calls the [invalidation
-callbacks](#on_invalidate) on every [reactive context](#context) that
-has been [invalidated](#invalidate), but hasn't yet has its callbacks
-called. If the invalidation callbacks invalidate still more contexts,
-flush keeps flushing until everything is totally settled. The DOM
-elements are cleaned up because of logic in
-[`Meteor.ui.render`](#meteor_ui_render) that works through invalidations.
 
 구체적으로 말해서, `flush`는 무효화된 [Reactive 컨텍스트](#context)의
 [무효화 콜백](#on_invalidate)을 모두 호출한다. 모든
@@ -2354,44 +1328,18 @@ flush는 실행해야 할 무효화 콜백이 전부 실행할 때까지 계속 
 
 <h2 id="meteor_http"><span>Meteor.http</span></h2>
 
-`Meteor.http` provides an HTTP API on the client and server.  To use
-these functions, add the HTTP package to your project with `meteor add
-http`.
-
 `Meteor.http`는 클라이언트와 서버에 둘다 있는 HTTP API이다.
 `meteor add http` 명령으로 프로젝트에 HTTP 패키지를 추가하면 사용할 수 있다.
 
 {{> api_box httpcall}}
 
-This function initiates an HTTP request to a remote server. It returns
-a result object with the contents of the HTTP response.  The result
-object is detailed below.
-
 이 함수는 원격 서버에 HTTP Request를 보내는 함수이고 HTTP Response
 컨텐트가 들어 있는 객체를 리턴한다. 리턴 받은 객체에 대한 설명은 아래에 이어진다.
-
-On the server, this function can be run either synchronously or
-asynchronously.  If the callback is omitted, it runs synchronously,
-and the results are returned once the request completes. This is
-useful when making server-to-server HTTP API calls from within Meteor
-methods, as the method can succeed or fail based on the results of the
-synchronous HTTP call.  In this case, consider using
-[`this.unblock()`](#method_unblock) to allow other methods to run in
-the mean time.  On the client, this function must be used
-asynchronously by passing a callback.
 
 서버에서는 이 함수를 비동기로도 사용할 수 있고 동기로도 사용할 수 있다.
 콜백을 생략하면 동기로 호출돼서 요청이 완료돼야 결과를 리턴한다.
 Meteor Method는 동기로 HTTP를 호출한 결과에 따라 성공할 수도 실패할
 수도 있기 때문에 Method에서 서버에서 다른 서버의 HTTP API를 호출할 때 유용하다. 
-
-Both HTTP and HTTPS protocols are supported.  The `url` argument must be
-an absolute URL including protocol and host name on the server, but may be
-relative to the current host on the client.  The `query` option
-replaces the query string of `url`.  Parameters specified in `params`
-that are put in the URL are appended to any query string.
-For example, with a `url` of `"/path?query"` and
-`params` of `{foo:"bar"}`, the final URL will be `"/path?query&foo=bar"`.
 
 HTTP와 HTTPS 프로토콜을 모두 지원한다. `url`을 아규먼트로 넘길 때
 프로토콜과 호스트 이름이 모두 포함된 전체 URL을 넘겨야 한다. 그렇지만,
@@ -2400,33 +1348,16 @@ HTTP와 HTTPS 프로토콜을 모두 지원한다. `url`을 아규먼트로 넘�
 추가되서 결국 URL에 덧 붙여진다. 예를 들어, `url`은 `"/path?query"`이고
 `params`이 `{foo:"bar"}`이면 결국 URL은 `"/path?query&foo=bar"`가 된다.
 
-The `params` are put in the URL or the request body, depending on the
-type of request.  In the case of request with no bodies, like GET and
-HEAD, the parameters will always go in the URL.  For a POST or other
-type of request, the parameters will be encoded into the body with a
-standard `x-www-form-urlencoded` content type, unless the `content`
-or `data` option is used to specify a body, in which case the
-parameters will be appended to the URL instead.
-
 `params`은 Request 타입에 따라서 URL이나 Request 바디에 들어 간다.
 GET이나 HEAD 같이 바디가 없는 Request에서는 파라미터가 URL에 들어간다.
 POST나 그외 다른 Request 타입에서는 파라미터가 `x-www-form-urlencoded`
 컨텐트 타입으로 인코딩되서 바디에 들어간다. 바디에 들어가는 `content`나
 `data` 옵션이 주어지면 파라미터는 바디가 아니라 URL에 들어간다.
 
-The callback receives two arguments, `error` and `result`.  The `error`
-argument will contain an Error if the request fails in any way,
-including a network error, time-out, or an HTTP status code in the 400
-or 500 range.  The result object is always
-defined. When run in synchronous mode, the `result` is returned from the
-function, and the `error` value is a stored as a property in `result`.
-
 콜백에는 `error`와 `result` 아규먼트가 있다. Request가 실패하면 `error`
 아규먼트에 Error가 들어 간다. HTTP 상태 코드가 400나 500이거나, 네트워크
 에러, 타임아웃일 때 모두 동일하다. `result`에는 항상 객체가 리턴된다.
 동기 모드로 호출했으면 `rusult` 객체가 리턴되고 `error`는 `result`의 프로퍼티로 저장된다.
-
-Contents of the result object:
 
 result 객체의 내용:
 
@@ -2434,15 +1365,7 @@ result 객체의 내용:
 
 <dt><span class="name">statusCode</span>
   <span class="type">Number</span></dt>
-<dd>Numeric HTTP result status code, or null on error.</dd>
-
-<dt><span class="name">statusCode</span>
-  <span class="type">Number</span></dt>
 <dd>HTTP 상태 코드, 에러가 있으면 null이다.</dd>
-
-<dt><span class="name">content</span>
-  <span class="type">String</span></dt>
-<dd>The body of the HTTP response as a string.</dd>
 
 <dt><span class="name">content</span>
   <span class="type">String</span></dt>
@@ -2450,15 +1373,7 @@ result 객체의 내용:
 
 <dt><span class="name">data</span>
   <span class="type">Object or null</span></dt>
-<dd>If the response headers indicate JSON content, this contains the body of the document parsed as a JSON object.</dd>
-
-<dt><span class="name">data</span>
-  <span class="type">Object or null</span></dt>
 <dd>response의 컨텐트 타입이 JSON이면 바디의 내용이 JSON 객체로 파싱된다.</dd>
-
-<dt><span class="name">headers</span>
-  <span class="type">Object</span></dt>
-<dd>A dictionary of HTTP headers from the response.</dd>
 
 <dt><span class="name">headers</span>
   <span class="type">Object</span></dt>
@@ -2466,15 +1381,9 @@ result 객체의 내용:
 
 <dt><span class="name">error</span>
   <span class="type">Error</span></dt>
-<dd>Error object if the request failed. Matches the `error` callback parameter.</dd>
-
-<dt><span class="name">error</span>
-  <span class="type">Error</span></dt>
 <dd>Request가 실패하면 Error 객체가 할당되고 콜백의 `error` 파리미터와 같다.</dd>
 
 </dl>
-
-Example server method:
 
 서버 Method의 예:
 
@@ -2486,8 +1395,6 @@ Example server method:
          return true
       return false;
     }});
-
-Example asynchronous HTTP call:
 
 비동기 HTTP 호출의 예:
 
