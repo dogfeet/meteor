@@ -2,13 +2,7 @@
 {{#better_markdown}}
 ## `absolute-url`
 
-This package allows constructing absolute URLs pointing back to the
-application. The server reads from the `ROOT_URL` environment variable
-to determine where it is running. This is taken care of automatically
-for apps deployed with `meteor deploy`, but must be provided when using
-`meteor bundle`.
-
-이 패키지는 애플리케이션의 절대 URL을 구하는 것을 도와준다. `ROOT_URL` 환경 변수를 읽어서 절대 URL을 계산한다. `meteor deploy` 명령으로 배포할 때는 Meteor가 알아서 해주지만 `meteor bundle` 명령을 사용할 때는 직접 `ROOT_URL`를 정의해 줘야 한다.
+이 패키지는 애플리케이션의 절대 URL을 쉽게 구하도록 도와준다. 절대 URL은 `ROOT_URL` 환경 변수를 읽어서 계산한다. `meteor deploy` 명령으로 배포할 때는 Meteor가 알아서 해주지만 `meteor bundle` 명령을 사용할 때는 직접 `ROOT_URL`을 정의해 줘야 한다.
 
 {{/better_markdown}}
 
