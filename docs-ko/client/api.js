@@ -2,7 +2,7 @@ Template.api.is_client = {
   id: "meteor_is_client",
   name: "Meteor.is_client",
   locus: "Anywhere",
-  descr: ["Boolean 변수.  클라이언트 환경이면 true."]
+  descr: ["Boolean 변수. 클라이언트 환경이면 true."]
 };
 
 Template.api.is_server = {
@@ -20,7 +20,7 @@ Template.api.startup = {
   args: [
     {name: "func",
      type: "Function",
-     descr: "시작시 실행할 코드."}
+     descr: "시작 시 실행할 코드."}
   ]
 };
 
@@ -32,10 +32,10 @@ Template.api.publish = {
   args: [
     {name: "name",
      type: "String",
-     descr: "애트리뷰트의 이름. 만약 `null`이면 집합에 이름이 없는 것이고 자동으로 연결된 모든 클라이언트에 전송한다."},
+     descr: "애트리뷰트의 이름. 만약 `null`이면 레코드에 이름이 없다는 의미고 자동으로 연결된 모든 클라이언트에 전송한다."},
     {name: "func",
      type: "Function",
-     descr: "클라이언트가 subscribe할 때마다 서버에서 호출하는 함수. 함수 안에서 `this`는 publish 핸들러 객체이다. 클라이언트에서 `subscribe`을 호출할 때 아규먼트를 주면 이 함수가 호출될 때 아규먼트로 넘어진다."}
+     descr: "클라이언트가 subscribe할 때마다 서버에서 호출하는 함수. 함수 안에서 `this`는 publish 핸들러 객체이다. 클라이언트에서 `subscribe`를 호출할 때 아규먼트를 주면 이 함수가 호출될 때 아규먼트로 넘어진다."}
   ]
 };
 
@@ -129,7 +129,7 @@ Template.api.subscribe = {
      descr: "옵션. 서버의 publish 함수에 넘겨지는 아규먼트."},
     {name: "onComplete",
      type: "Function",
-     descr: "서버가 Subscription 처리을 완료했다고 알려주면 이 함수가 호출된다. 이 함수는 아규먼트가 없다."}
+     descr: "서버가 Subscription 처리를 완료했다고 알려주면 이 함수가 호출된다. 이 함수는 아규먼트가 없다."}
   ]
 };
 
@@ -267,7 +267,7 @@ Template.api.meteor_collection = {
      descr: "컬렉션의 이름. null이면 Unmanaged 로컬 컬렉션을 만든다."},
     {name: "manager",
      type: "Object",
-     descr: "해당 컬렉션을 관리하는 meteor 커넥션. null이면 기본값인 `Meteor`가 사용된다. Unmanaged 컬렉션을 만들 때는 이 아규먼트를 사용할 수 없다."
+     descr: "해당 컬렉션을 관리하는 meteor 커넥션. null이면 기본 값인 `Meteor`가 사용된다. Unmanaged 컬렉션을 만들 때는 이 아규먼트를 사용할 수 없다."
     }
     // driver
   ]
@@ -403,7 +403,7 @@ Template.api.insert = {
      descr: "추가할 도큐먼트. 추가할 도큐먼트에 _id 어트리뷰트가 없어야 한다."},
     {name: "callback",
      type: "Function",
-     descr: "옵션. 이 콜백함수의 첫 아규먼트는 에러 객체이고 에러가 없으면 두번째 아규먼트에 _id가 넘어온다."}
+     descr: "옵션. 이 콜백함수의 첫 아규먼트는 에러 객체이고 에러가 없으면 두 번째 아규먼트에 _id가 넘어온다."}
   ]
 };
 
@@ -428,7 +428,7 @@ Template.api.update = {
   options: [
     {name: "multi",
      type: "Boolean",
-     descr: "모든 도큐먼트를 수정할거면 true. 하나만 수정할 거면 false. 기본값은 false."}
+     descr: "모든 도큐먼트를 수정할 거면 true. 하나만 수정할 거면 false. 기본값은 false."}
   ]
 };
 
@@ -472,7 +472,7 @@ Template.api.Context = {
   id: "context",
   name: "new Meteor.deps.Context",
   locus: "Client",
-  descr: ["무효화 컨텍스트를 만든다. 무효화 컨텍스트는 특정 코드를 실행하고 의존성을 기록하는데 쓰인다. 나중에 입력값이 바뀌면 해당 코드가 재실행된다.", "하나의 무효화 컨텍스트는 기본적으로 딱 한 번만 실행되는 콜백 함수의 모음이다. [`on_invalidate`](#on_invalidate) 메소드를 이용해 그 모음에 콜백 함수를 추가한다. [`invalidate`](#invalidate)는 이벤트를 발생시켜 콜백 함수를 실행한다."]
+  descr: ["무효화 컨텍스트를 만든다. 무효화 컨텍스트는 특정 코드를 실행하고 의존성을 기록하는 데 쓰인다. 나중에 입력값이 바뀌면 해당 코드가 재실행된다.", "하나의 무효화 컨텍스트는 기본적으로 딱 한 번만 실행되는 콜백 함수의 모음이다. [`on_invalidate`](#on_invalidate) 메소드를 이용해 그 모음에 콜백 함수를 추가한다. [`invalidate`](#invalidate)는 이벤트를 발생시켜 콜백 함수를 실행한다."]
 };
 
 Template.api.run = {
@@ -531,7 +531,7 @@ Template.api.render = {
   args: [
     {name: "htmlFunc",
      type: "HTML 스트링을 리턴하는 Function",
-     descr: "렌더링할 HTML을 생성하는 함수. 호출하면 즉시 실행되고 데이터가 변경될때마다 다시 실행된다. HTML을 리턴하는 함수 대신에 HTML 스트링을 넘겨도 된다."}
+     descr: "렌더링할 HTML을 생성하는 함수. 호출하면 즉시 실행되고 데이터가 변경될 때마다 다시 실행된다. HTML을 리턴하는 함수 대신에 HTML 스트링을 넘겨도 된다."}
   ]
 };
 
@@ -539,7 +539,7 @@ Template.api.renderList = {
   id: "meteor_renderlist",
   name: "Meteor.renderList(observable, docFunc, [elseFunc])",
   locus: "Client",
-  descr: ["DB 쿼리 결과에 따라서 자동으로 업데이트하는 DOM 노드를 여러개 생성한다."],
+  descr: ["DB 쿼리 결과에 따라서 자동으로 업데이트하는 DOM 노드를 여러 개 생성한다."],
   args: [
     {name: "observable",
      type: "Cursor",
@@ -556,7 +556,7 @@ Template.api.renderList = {
     {name: "events",
      type: "Object &mdash; event map",
      type_link: "eventmaps",
-     descr: "화면에 그려지는 엘리먼트에 적용할 이벤트. 생략가능"}
+     descr: "화면에 그려지는 엘리먼트에 적용할 이벤트. 생략 가능"}
   ]
 };
 
@@ -579,7 +579,7 @@ Template.api.setTimeout = {
   id: "meteor_settimeout",
   name: "Meteor.setTimeout",
   locus: "Anywhere",
-  descr: ["일정 시간 동안 기다린 뒤에 함수를 호출한다."],
+  descr: ["일정 시간 동안 기다리고 나서 함수를 호출한다."],
   args: [
     {
       name: "func",
@@ -692,11 +692,11 @@ Template.api.set = {
   id: "session_set",
   name: "Session.set(key, value)",
   locus: "Client",
-  descr: ["쎄션에 변수을 넣는다. 변수의 값이 변하면 그 사실이 리스너에 통보된다. (예: 해당 `key`에 대해서 [`Session.get`](#session_get)이 호출되고 팀플릿이 다시 그려진다. 즉, [`Meteor.autosubscribe`](#meteor_autosubscribe) 블럭 재실행이 일어난다."],
+  descr: ["세션에 변수를 넣는다. 변수의 값이 변하면 그 사실이 리스너에 통보된다. (예: 해당 `key`에 대해서 [`Session.get`](#session_get)이 호출되고 팀플릿이 다시 그려진다. 즉, [`Meteor.autosubscribe`](#meteor_autosubscribe) 블럭 재실행이 일어난다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "값을 넣을 쎄션 변수의 이름. 예를 들자면, `selected_item`"},
+     descr: "값을 넣을 세션 변수의 이름. 예를 들자면, `selected_item`"},
     {name: "value",
      type: "Any type",
      descr: "`key`의 새로운 값."}
@@ -707,11 +707,11 @@ Template.api.get = {
   id: "session_get",
   name: "Session.get(key)",
   locus: "Client",
-  descr: ["쎄션 변수 값을 가져온다. [`Meteor.deps`](#meteor_deps) 안에서는 [`Session.set`](#session_set)으로 쎄션 변수를 변경하면 그 컨텍스트가 무효화된다."],
+  descr: ["세션 변수 값을 가져온다. [`Meteor.deps`](#meteor_deps) 안에서는 [`Session.set`](#session_set)으로 세션 변수를 변경하면 그 컨텍스트가 무효화된다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "쎄션 변수의 이름"}
+     descr: "세션 변수의 이름"}
   ]
 };
 
@@ -719,11 +719,11 @@ Template.api.equals = {
   id: "session_equals",
   name: "Session.equals(key, value)",
   locus: "Client",
-  descr: ["쎄션 변수의 값과 value`가 같은지 비교한다. [`Meteor.deps`](#meteor_deps) 안에서는 쎄션 변수를 변경하면 컨텍스트가 무효화된다."],
+  descr: ["세션 변수의 값과 value`가 같은지 비교한다. [`Meteor.deps`](#meteor_deps) 안에서는 세션 변수를 변경하면 컨텍스트가 무효화된다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "쎄션 변수의 이름"},
+     descr: "세션 변수의 이름"},
     {name: "value",
      type: "String, Number, Boolean, null, undefined",
      descr: "비교할 값"}
@@ -764,7 +764,7 @@ Template.api.httpcall = {
     },
     {name: "auth",
      type: "String",
-     descr: '`"사용자이름:비밀번호"` 형식의  HTTP basic authentication 스트링'},
+     descr: '`"사용자이름:패스워드"` 형식의  HTTP basic authentication 스트링'},
     {name: "headers",
      type: "Object",
      descr: "HTTP 요청에 추가할 헤더를 스트링 형태로 저장한 딕셔너리."},
@@ -802,7 +802,7 @@ Template.api.http_del = {
   id: "meteor_http_del",
   name: "Meteor.http.del(url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["HTTP DELETE 요청을 보낸다. `Meteor.http.call(\"DELETE\", ...)`과 같다. (JavaScript의 `delete` 키워드와 충돌을 피하기위해 `del`이라는 이름을 사용했다.)"]
+  descr: ["HTTP DELETE 요청을 보낸다. `Meteor.http.call(\"DELETE\", ...)`과 같다. (JavaScript의 `delete` 키워드와 충돌을 피하고자 `del`이라는 이름을 사용했다.)"]
 };
 
 // XXX move these up to right place
@@ -814,7 +814,7 @@ Template.api.template_call = {
   args: [
     {name: "data",
      type: "Object",
-     descr: "데이터 컴텍스트 객체. 템플릿에서 사용한다."}
+     descr: "데이터 컨텍스트 객체. 템플릿에서 사용한다."}
   ]
 };
 
@@ -848,7 +848,7 @@ Template.api.template_events = {
     {name: "eventMap",
      type: "Object: event map",
      type_link: "eventmaps",
-     descr: "이 템플릿과 연결시킬 이벤트 핸들러."}
+     descr: "이 템플릿에 연결할 이벤트 핸들러."}
   ]
 };
 
@@ -856,7 +856,7 @@ Template.api.template_helpers = {
   id: "template_helpers",
   name: "Template.<em>myTemplate</em>.helpers(helpers)",
   locus: "Client",
-  descr: ["템플릿 헬퍼를 등룍한다."],
+  descr: ["템플릿 헬퍼를 등록한다."],
   args: [
     {name: "helpers",
      type: "Object",
@@ -872,7 +872,7 @@ Template.api.template_preserve = {
   args: [
     {name: "selectors",
      type: "Array or Object",
-     descr: "`['.thing1', '.thing2']`처럼 딱 한 엘리먼트에 매치하는 셀렉터를 배열로 넘긴다. 셀렉터와 labeling 함수를 딕셔너리형태로 넘기는 방법도 있다."}
+     descr: "`['.thing1', '.thing2']`처럼 딱 한 엘리먼트에 매치하는 셀렉터를 배열로 넘긴다. 셀렉터와 labeling 함수를 딕셔너리 형태로 넘기는 방법도 있다."}
   ]
 };
 
