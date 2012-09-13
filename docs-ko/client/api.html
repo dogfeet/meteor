@@ -5,7 +5,7 @@
 
 Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
 클라이언트는 브라우저이고 서버는 Node.js 컨테이너이다.
-이 API 레퍼런스에서는 함수를 설명할 때 그 함수가 클라이언트용인지 서버용인지 명시했다.
+이 API 레퍼런스에서는 함수를 설명할 때 그 함수가 클라이언트용인지 서버용인지 명시한다.
 
 <h2 id="core"><span>Meteor Core</span></h2>
 
@@ -96,8 +96,8 @@ DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하�
     console.log("Current room has " + Counts.findOne().count + " messages.");
 
 {{#warning}}
-`autopublish` 패키지를 사용하고 있는 프로젝트에서 `Meteor.publish`를 호출하면
-현재 Publish 중이라는 경고 메시지를 보여주지만 Publish는 정상적으로 동작한다.
+`autopublish` 패키지를 사용한 프로젝트에서 `Meteor.publish`를 호출하면
+현재 Publish 중이라는 경고 메시지를 보여주지만, Publish는 정상적으로 동작한다.
 {{/warning}}
 
 {{> api_box subscription_set}}
@@ -107,7 +107,7 @@ DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하�
 
 {{> api_box subscription_onStop}}
 
-Publish 핸들러에서 [`observe`](#observe)를 호출 했으면 그 핸들러 안에서 멈춰야 한다.
+Publish 핸들러에서 [`observe`](#observe)를 호출했으면 그 핸들러 안에서 멈춰야 한다.
 
 {{> api_box subscription_stop}}
 
@@ -115,7 +115,7 @@ Publish 핸들러에서 [`observe`](#observe)를 호출 했으면 그 핸들러 
 
 Subscribe하는 것은 레코드를 클라이언트로 보내라고 서버에 알리는 것이다.
 클라이언트는 이 레코드를 로컬에 있는 Minimongo 컬렉션에 저장한다. 이 때
-컬렉션 이름이 같아야 한다. Meteor는 해당 이름으로된 `Meteor.Collection`이
+컬렉션 이름이 같아야 한다. Meteor는 해당 이름으로 된 `Meteor.Collection`이
 만들어질 때까지 들어오는 데이터를 큐에 넣는다.
 
     // okay to subscribe (and possibly receive data) before declaring
@@ -141,7 +141,7 @@ Document의 속성이 모두 삭제되면 Document도 삭제된다.
 [`Session.get`](#session_get)과 [`collection.find`](#find)를 호출해서
 데이터를 가져온다.
 
-데이터가 변경될 때 마다 Subscribe한 것은 취소하고 `func`를 다시 실행해서
+데이터가 변경될 때마다 Subscribe한 것은 취소하고 `func`를 다시 실행해서
 다시 Subscribe해야 한다. `Meteor.autosubscribe`는 기존의 Subscribe한 것을
 자동으로 중단한다. 그래서 `Meteor.autosubscribe` 안에서는 수동으로
 Subscribe를 중단하지 않아도 된다.
@@ -176,7 +176,7 @@ Method는 Meteor 클라이언트가 실행하는 원격 함수다.
       }
     });
 
-서버에서 `methods` 함수를 호출해서 클라이언트 클라이언트가 원격으로 실행할 수 있는 함수를 정의한다. 여기서 정의하는 함수는 값을 리턴하고 예외를 던질 수 있다. `this`는 메소드를 실행하는 객채를 가리키고 그 객체에는 다음과 같은 게 들어 있다:
+서버에서 `methods` 함수를 호출해서 클라이언트 클라이언트가 원격에서 실행할 수 있는 함수를 정의한다. 여기서 정의하는 함수는 값을 리턴하고 예외를 던질 수 있다. `this`는 메소드를 실행하는 객채를 가리키고 그 객체에는 다음과 같은 게 들어 있다:
 
 * `is_simulation`: Boolean 값, stub 함수일 때 true
 * `unblock`: 이 함수를 호출하면 다음 Method는 해당 Method가 
@@ -188,20 +188,20 @@ stub 함수는 필요할 때만 정의해서 사용할 수 있다. stub 함수�
 
 stub을 정의하면 클라이언트가 서버 Method를 실행할 때 stub 함수도 병렬로 실행된다.
 클라이언트에서는 stub이 리턴하는 값은 무시된다. stub은 서버 메소드의 결과를
-*흉내(simulate)*내는 것 뿐이고 서버를 거치지 않기 때문에 지연도 없다.
+*흉내(simulate)*내는 것뿐이고 서버를 거치지 않기 때문에 지연도 없다.
 Stub이 예외를 던지면 console에 로그가 출력된다.
 
 {{> api_box method_invocation_is_simulation}}
 
 {{> api_box method_invocation_unblock}}
 
-서버에서, 클라이언트가 원격 메소드를 동시에 호출해도 서버에서는 한번에 하나씩 호출된다.
-N+1번째 실행한 메소드는 N번째 실행이 끝날 때까지 시작하지 않는다. 하지만 `this.unblock`을 호출하면 바꿀 수 있다. 이 함수를 호출하면 N+1번째 메소드는 다른 Fiber에서 실행된다.
+서버에서, 클라이언트가 원격 메소드를 동시에 호출해도 서버에서는 한 번에 하나씩 호출된다.
+N+1번째 실행한 메소드는 N 번째 실행이 끝날 때까지 시작하지 않는다. 하지만 `this.unblock`을 호출하면 바꿀 수 있다. 이 함수를 호출하면 N+1번째 메소드는 다른 Fiber에서 실행된다.
 
 {{> api_box error}}
 
-Method가 에러를 리턴하려면 예외를 던져야 한다. 클라이언트에 전송되는 에러는
-`Meteor.Error` 뿐이다. 다른 예외를 던지면 `Meteor.Error(500, "Internal server error")`가
+Method는 예외를 던져서 에러를 리턴한다. 클라이언트에 전송되는 에러는
+`Meteor.Error`뿐이다. 다른 예외를 던지면 `Meteor.Error(500, "Internal server error")`가
 클라이언트에 전송된다.
 
 {{> api_box meteor_call}}
@@ -210,8 +210,8 @@ Method가 에러를 리턴하려면 예외를 던져야 한다. 클라이언트�
 
 마지막 아규먼트로 콜백 함수를 넘기면 비동기로 호출된다(함수는 Serializeable하지
 않기 때문에 원격에 전송할 수 없다). 비동기로 호출하면 아무것도 리턴하지 않고 예외를
-던지지도 않는다. Method가 완료되면 콜백이 호출되는데 이 때 `error`와 `result`가
-아규먼트로 넘어 온다. 에러가 있으면 `error`는 예외 객체가 넘어 오고 에러가
+던지지도 않는다. Method가 완료되면 콜백이 호출되는데 이때 `error`와 `result`가
+아규먼트로 넘어온다. 에러가 있으면 `error`는 예외 객체가 넘어오고 에러가
 없으면 `error`는 undefined가 되고 `result`에 결과가 리턴된다.
 
     // async call
@@ -219,7 +219,7 @@ Method가 에러를 리턴하려면 예외를 던져야 한다. 클라이언트�
 
 콜백을 넘기지 않으면 해당 Method가 완료될 때까지 블럭된다. 이 메소드는 서버의
 Method가 리턴한 값을 리턴하거나 서버가 던진 예외를 그대로 던진다. 서버 Method가
-명시적으로 `Meteor.Error`를 던진게 아니면 500 서버 에러를 던진다.
+명시적으로 `Meteor.Error`를 던진 게 아니면 500 서버 에러를 던진다.
 
     // sync call
     var result = Meteor.call('foo', 1, 2);
@@ -238,7 +238,7 @@ Fibers가 없어서 서버 Method가 리턴할 때까지 블럭 시킬 방법이
 DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문에 우리는 항상 이
 기능을 사용하게 된다. 클라이언트에서 DB 함수를 호출하면 Stub 버전이 실행돼서
 클라이언트 로컬 캐시가 수정된다. 어떤 함수에서 호출하든 최상위에서 호출하든 호출하는 위치는
-상관 없다. 서버 DB를 수정하는 실제 버전을 수정하지 않고 계정이나 권한 같은
+상관없다. 서버 DB를 수정하는 실제 버전을 수정하지 않고 계정이나 권한 같은
 정보는(credentials) 서버에서만 사용할 수 있다.
 
 {{> api_box meteor_apply}}
@@ -247,7 +247,7 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 
 <h2 id="connections"><span>Server connections</span></h2>
 
-이 함수는 Meteor 클라이언트와 서버 간의 네트워크 연결을 살펴보고 관리하는데 사용한다.
+이 함수는 Meteor 클라이언트와 서버 간의 네트워크 연결을 살펴보고 관리하는 데 사용한다.
 
 {{> api_box status}}
 
@@ -256,8 +256,8 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 <dl class="objdesc">
 <dt><span class="name">connected</span>
   <span class="type">Boolean</span></dt>
-<dd>서버에 연결돼 있으면 True다. 연결이 끊겨 있으면 다시 연결될 때까지 모든 변경 내역과
-  메소드 실행은 큐에 담겨진다.</dd>
+<dd>서버에 연결돼 있으면 True다. 연결이 끊기면 다시 연결될 때까지 모든 변경 내역과
+  메소드 실행은 큐에 담긴다.</dd>
 
 <dt><span class="name">status</span>
   <span class="type">String</span></dt>
@@ -289,7 +289,7 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 `Meteor.connect`를 호출한다. `Meteor.connect`는 다음과 같은 메소드가 있는 객체를 리턴한다:
 
 * `subscribe`
-* `methods` (Stub을 정의하는데 사용함)
+* `methods` (Stub을 정의하는 데 사용함)
 * `call`
 * `apply`
 * `status`
@@ -312,7 +312,7 @@ Meteor는 데이터를 *컬렉션*에 저장한다. `new Meteor.Collection`으�
 이 함수는 ORM(Object-Relation Mapper)에서 모델을 정의하는 것과 비슷하게 호출한다.
 사용자, 글, 점수, todo 아이템 같은 정보를 저장하는 *컬렉션*을 만든다.
 사실 아무 데이터나 다 저장할 수 있다. 도큐먼트는 JSON 객체이고 `_id` 프로퍼티가 있어서
-그 값으로 컬렉 션에서 해당 도큐먼트를 식별한다.
+그 값으로 컬렉션에서 해당 도큐먼트를 식별한다.
 Meteor는 도큐먼트를 만들 때 이 `_id` 값을 생성한다.
 
     // common code on client and server declares livedata-managed mongo
@@ -356,8 +356,8 @@ DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하�
 
 컬렉션 이름을 `null`로 주면 로컬 컬렉션을 생성한 것이고 서버와 동기화하지 않는다.
 이 컬렉션은 일종의 연습장이라서 Mongo 스타일의 [`find`](#find), [`insert`](#insert),
-[`update`](#update), [`remove`](#remove) 명령어를 맘 껏 사용할 수 있다.
-Minimongo가 제공하는 이 연습장은 클라이언트에서도 사용할 수 있지만 서버에서도 사용할 수 있다.
+[`update`](#update), [`remove`](#remove) 명령어를 맘껏 사용할 수 있다.
+Minimongo가 제공하는 이 연습장은 클라이언트에서도 사용할 수 있지만, 서버에서도 사용할 수 있다.
 
 Meteor는 자동으로 컬렉션에 있는 모든 도큐먼트를 모든 클라이언트에 Publish한다.
 이 기능을 끄려면 다음과 같이 `autopublish` 패키지를 제거해준다:
@@ -367,7 +367,7 @@ Meteor는 자동으로 컬렉션에 있는 모든 도큐먼트를 모든 클라�
 {{#warning}}
 현재 클라이언트는 모든 쓰기 권한을 가지고 있다. 그래서 클라이언트에서 멋대로 Mongo 쓰기
 명령을 실행할 수 있다. 우리는 인증 패키지를 만들어 클라이언트에서 insert, update, remove
-명령을 맘대로 실행하지 못 하도록 Validator나 ORM의 것과 비슷한 것을 구현하려고 마음먹고 있다.
+명령을 맘대로 실행하지 못하도록 Validator나 ORM의 것과 비슷한 것을 구현하려고 마음먹고 있다.
 {{/warning}}
 
     // Create a collection called Posts and put a document in it. The
@@ -394,27 +394,27 @@ Meteor는 자동으로 컬렉션에 있는 모든 도큐먼트를 모든 클라�
 
 {{#warning}}
 
-이번 버전의 Minimongo는 몇가지 부족한 부분이 있다:
+이번 버전의 Minimongo는 몇 가지 부족한 부분이 있다:
 
 * 셀렉터에 `$elemMatch`가 지원되지 않는다.
 * `$pull` Modifier는 특정 셀렉터에만 사용할 수 있다.
-* 셀렉터에서 점(.) 노테이션과 인덱스가 제대로 동작하지 않는다.
+* 셀렉터에서 닷(.) 노테이션과 인덱스가 제대로 동작하지 않는다.
 * 서브키에 대한 정렬을 지원하지 않는다. `a`에 대해서는 가능하지만 `a.b`는 지원하지 않는다.
 * `findAndModify`, upsert, aggregate 함수, map/reduce는 지원하지 않는다.
 * 형식은 String, Number, Boolean, Array, Object만 지원한다.
 
-여기서 언급한 것은 향후에 뭔가 조치가 있을 것이다. 저장소에 있는 
+여기서 언급한 것은 앞으로 뭔가 조치가 있을 것이다. 저장소에 있는 
 packages/minimongo/NOTES 파일이 Minimongo 릴리즈 노트이며 자세한 내용은 이 파일을 확인하자.
 {{/warning}}
 
 {{#warning}}
-Minimongo는 현재 index가 없다. 하지만 곧 구현할 것이다. 클라이언트에는 데이터가 많지
+Minimongo는 현재 index가 없다. 하지만, 곧 구현할 것이다. 클라이언트에는 데이터가 많지
 않아서 보통 이슈가 안된다. 어쨌든 클라이언트에서 index가 필요한 일은 드물다.
 {{/warning}}
 
 {{> api_box find}}
 
-`find`는 커서를 리턴한다. 커서는 DB에 접근 하는 것도 아니고 실제 도큐먼트가
+`find`는 커서를 리턴한다. 커서는 DB에 접근하는 것도 아니고 실제 도큐먼트가
 들어 있지도 않다. 커서는 조건에 만족하는 도큐먼트를 `fetch`하거나, `iterate`하거나,
 `map`하거나, `forEach`하거나, 콜백을 등록해서 `observe`하는 기능을 제공한다.
 
@@ -428,7 +428,7 @@ Minimongo는 현재 index가 없다. 하지만 곧 구현할 것이다. 클라�
 커서는 Reactive 데이터 소스다. Reactive 컨텍스트에서(eg,
 [`Meteor.render`](#meteor_render), [`Meteor.autosubscribe`](#meteor_autosubscribe)
 커서의 `fetch`, `map`, `forEach` 메소드로 도큐먼트를 가져오면 Meteor는 데이터 의존성을
-등록한다. 커서에 있는 도큐먼트가 수정되면 무효화되서 다시 렌더링된다.
+등록한다. 커서에 있는 도큐먼트가 수정되면 무효화 돼서 다시 렌더링된다.
 find에 `{reactive: false}` 옵션을 주고 이 동작을 끌 수 있다.
 
 {{> api_box findone}}
@@ -445,7 +445,7 @@ true, false'를 말한다.
 
 서버에서는 콜백 없이 `insert`를 실행하면 블럭되며 DB에서 쓰기가 끝났다고
 알려주거나 뭔가 문제가 있어서 예외가 발생하면 풀린다. 콜백을 주고 `insert`를 실행하면
-즉시 ID를 리턴한다. insert가 성공했든 실패했든지 간에 콜백으로 `error`, `result`
+즉시 ID를 리턴한다. insert가 성공했든 실패했던지 간에 콜백으로 `error`, `result`
 아규먼트를 넘긴다. 에러가 있으면 `result`에는 undefined를 넘긴다.
 성공하면 `error`에 undefined를 넘기고 `result`에는 도큐먼트 ID를 넘긴다.
 
@@ -465,7 +465,7 @@ true, false'를 말한다.
 
 selector 말고 스트링을 넘길 수도 있는데, 넘긴 스트링은 `_id`의 값으로 간주한다.
 
-서버에서는 `update`를 콜백없이 호출하면 DB가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어 온다.
+서버에서는 `update`를 콜백 없이 호출하면 DB가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어온다.
 
 클라이언트에서는 `update`가 절대 블럭하지 않는다. 콜백 없이 호출했는데 update가 서버에서 실패하면 Meteor는 console에 로그를 남긴다. 콜백을 주고 호출하면 Mereor는 에러가 있을 때 `error` 아규먼트를 넘기면서 콜백을 호출하고 에러가 없으면 아규먼트 없이 호출한다.
 
@@ -490,7 +490,7 @@ Mongo의 `upsert` 기능은 구현하지 않았다.
 
 서버에서는 콜백 없이 `remove`를 호출하면 DB가 ACK를 주거나 예외가
 날 때까지 블럭한다. 콜백을 주고 호출하면 `remove`는 바로 리턴한다. remove가 완료되면
-콜백이 호출되는데 에러가 있으면 error가 아규먼트로 넘어오고 에러가 없으면
+콜백이 호출될 때 에러가 있으면 error가 아규먼트로 넘어오고 에러가 없으면
 아규먼트 없이 호출한다.
 
 클라이언트에서는 `remove`를 절대 블럭하지 않는다. 콜백 없이 호출했는데
@@ -508,7 +508,7 @@ remove메소드가 서버에서 실패하면 Meteor는 console에 로그를 남�
 
 <h2 id="meteor_collection_cursor"><span>Cursors</span></h2>
 
-[`find`](#find)를 사용하면 커서가 만들어 진다. 커서에서 [`forEach`](#foreach),
+[`find`](#find)를 사용하면 커서가 만들어진다. 커서에서 [`forEach`](#foreach),
 [`map`](#map), [`fetch`](#fetch)를 사용해서 도큐먼트에 접근할 수 있다.
 
 {{> api_box cursor_foreach}}
@@ -549,7 +549,7 @@ Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의�
 
 {{> api_box cursor_rewind}}
 
-커서에서 `forEach`, `map`, `fetch` 메소드는 딱 한번만 호출할 수 있다.
+커서에서 `forEach`, `map`, `fetch` 메소드는 딱 한 번만 호출할 수 있다.
 한번 호출하고 또 호출하려면 `rewind` 함수로 커서를 리셋해야 한다.
 
 {{> api_box cursor_observe}}
@@ -561,18 +561,18 @@ Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의�
 <dl class="callbacks">
 {{#dtdd "added(document, before_index)"}}
 도큐먼트가 새로 추가되면 호출된다. 이 도큐먼트는 `before_index` 위치에 있던 도큐먼트
-바로 앞에 삽입된다. 이 도큐먼트가 리스트의 맨끝에 삽입되면 `before_index`는 삽입하기전
+바로 앞에 삽입된다. 이 도큐먼트가 리스트의 맨 끝에 삽입되면 `before_index`는 삽입하기 전
 리스트의 길이와 같다.
 {{/dtdd}}
 
 {{#dtdd "changed(new_document, at_index, old_document)"}}
 `at_index` 위치에 있는 도큐먼트가 변경될 때 호출된다. 도큐먼트의 내용이 원래는
-old_document이였고 `new_document`로 변경됐다는 의미다.
+old_document이었고 `new_document`로 변경됐다는 의미다.
 {{/dtdd}}
 
 {{#dtdd "moved(document, old_index, new_index)"}}
 도큐먼트의 위치가 변경될 때 호출된다. `old_index`에서 `new_index`로 위치가 변경된다.
-그리고 편의상 도큐먼트의 내용도 `document`에 넘어 온다. 이 콜백은 `changed`가 호출된
+그리고 편의상 도큐먼트의 내용도 `document`에 넘어온다. 이 콜백은 `changed`가 호출된
 후에 곧바로 호출된다.
 {{/dtdd}}
 
@@ -584,9 +584,9 @@ old_document이였고 `new_document`로 변경됐다는 의미다.
 
 쿼리 결과에 영향을 주기 때문에 `added`는 즉시 호출된다.
 
-`observe`는 라이브 쿼리의 핸들를 리턴하고 그 핸들에는 `stop` 메소드가 있다.
-아규먼트 없이 stop 메소드를 호출하면 더이상 콜백은 호출되지 않고 쿼리 객체도 해제된다.
-**라이브 쿼리는 `stop` 함수가 호출될 때까지 영원하다**
+`observe`는 라이브 쿼리의 핸들을 리턴하고 그 핸들에는 `stop` 메소드가 있다.
+아규먼트 없이 stop 메소드를 호출하면 더는 콜백이 호출되지 않고 쿼리 객체도 해제된다.
+**라이브 쿼리는 `stop` 함수가 호출될 때까지 영원하다.**
 
 예제:
 
@@ -687,7 +687,7 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
     // Users.find({}, {fields: {firstname: 1, lastname: 1}})
 
-하지만, 이 두 표현을 섞어쓸 수는 없다.
+하지만, 이 두 표현을 섞어 쓸 수는 없다.
 
 {{/api_box_inline}}
 
@@ -698,7 +698,7 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 `Session`도 Reactive라는 것이 중요하다. 템플릿에
 [`Session.get`](#session_get)`("current_list")`라고 호출하는 코드가 있으면
-[`Session.set`](#session_set)이 호출될 때마다 템플릿이 다시 렌더링된다.
+[`Session.set`](#session_set)이 호출될 때마다 템플릿을 다시 렌더링한다.
 
 {{> api_box set}}
 
@@ -737,7 +737,7 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
     (1) Session.get("key") === value
     (2) Session.equals("key", value)
 
-하지만 두 번째가 더 낫다. 무효화를 더 적게 발생시켜서 더 효율적인 프로그램이 된다.
+하지만, 두 번째가 더 낫다. 무효화를 더 드물게 발생시켜서 더 효율적인 프로그램이 된다.
 
 예제:
 
@@ -782,9 +782,9 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 `<{{! }}template name="foo"> ... </{{! }}template>` 으로 정의한 템플릿은 `Template.foo` 함수를 통해서 접근할 수 있고 호출하면 HTML 스트링을 리턴한다.
 
-같은 템플릿을 여러번 사용할 수 있는데 그때마다 템플릿 인스턴스가 생긴다. 템플릿 인스턴스의 라이프싸이클은 생성되서, DOM에 넣어지고, 나중에 DOM에서 제거되고, 메모리에서 해제되는 순이다. 이 라이프싸이클은 Meteor가 알아서 관리해준다. 템플릿 인스턴스를 언제 제거할지, 언제 교체할지, 언제 메모리에서 해제할지도 Meteor 결정해준다. 사용자는 템플릿 인스턴스와 데이터와 엮어 주기만 하며 되고 바로 DOM 노드에 접근해서 사용할 수 있다.
+같은 템플릿을 여러 번 사용할 수 있는데 그때마다 템플릿 인스턴스가 생긴다. 템플릿 인스턴스의 라이프싸이클은 생성돼서, DOM에 넣어지고, 나중에 DOM에서 제거되고, 메모리에서 해제되는 순이다. 이 라이프싸이클은 Meteor가 알아서 관리해준다. 템플릿 인스턴스를 언제 제거할지, 언제 교체할지, 언제 메모리에서 해제할지도 Meteor 결정해준다. 사용자는 템플릿 인스턴스와 데이터와 엮어 주기만 하며 되고 바로 DOM 노드에 접근해서 사용할 수 있다.
 
-뿐만아니라 템플릿 인스턴스가 새로운 DOM 노드로 다시 렌더링된다고 해도 Meteor는 해당 템플릿 인스턴스와 상태를 관리해준다. 같은 방법으로 템플릿을 호출할 수 있으니까 Meteor는 인스턴스가 해제되고 다시 생성됐다고 여기지 않는다. 그리고 `preserve`와 `constant`를 사용하면 Meteor는 DOM 노드를 새로 만들지 않고 그대로 유지한다.
+그뿐만 아니라 템플릿 인스턴스가 새로운 DOM 노드로 다시 렌더링된다고 해도 Meteor는 해당 템플릿 인스턴스와 상태를 관리해준다. 같은 방법으로 템플릿을 호출할 수 있으니까 Meteor는 인스턴스가 해제되고 다시 생성됐다고 여기지 않는다. 그리고 `preserve`와 `constant`를 사용하면 Meteor는 DOM 노드를 새로 만들지 않고 그대로 유지한다.
 
 템플릿과 템플릿 인스턴스에 사용하는 콜백과 옵션이 많다. 어떤 콜백과 옵션이 있는지 살펴보자.
 
@@ -796,7 +796,7 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 {{> api_box template_rendered}}
 
-이 함수는 Template.*myTemplate* 인스턴스가 렌더링될 때 호출된다. 템플릿이 DOM 노드로 생성되서 DOM 트리에 넣어질 때마다 호출되는 것이라서 다시 렌더링될 때도 호출된다.
+이 함수는 Template.*myTemplate* 인스턴스가 렌더링될 때 호출된다. 템플릿이 DOM 노드로 생성돼서 DOM 트리에 넣어질 때마다 호출되는 것이라서 다시 렌더링될 때도 호출된다.
 
 콜백 안에서 `this`는 [템플릿 인스턴스](#template_inst) 객체를 가리킨다. 그래서 정확하게 템플릿이 사용된 위치를 식별할 수 있어서 렌더링될 때 데이터를 저장할 수도 있다. 템플릿 인스턴스가 만들어질 때나 해제될 때를 원한다면 `created`와 `destroyed` 콜백을 사용하라 
 
@@ -804,22 +804,22 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 이 콜백은 *myTemplate* 템플릿 인스턴스가 새로 생성될 때 호출된다. 기존의 템플릿 인스턴스를 다시 랜더링할 때는 호출되지 않는다. 이 콜백에서 `this`는 [템플릿 인스턴스](#template_inst) 객체다. 객체에 프로퍼티를 추가하면 나중에 `rendered`와 `destroyed` 콜백에서도 접근할 수 있다.
 
-이 콜백은 딱 한번 호출되며 다른 여러 콜백 중에서 가장 먼저 호출된다. `created` 콜백과 `destroyed` 콜백은 한 쌍이다. `create` 콜백에서 초기화하고 `destoryed` 콜백에서 해제한다.
+이 콜백은 딱 한 번 호출되며 다른 여러 콜백 중에서 가장 먼저 호출된다. `created` 콜백과 `destroyed` 콜백은 한 쌍이다. `create` 콜백에서 초기화하고 `destoryed` 콜백에서 해제한다.
 
 {{> api_box template_destroyed}}
 
-이 콜백은 템플릿 인스턴스가 페이지에서 떼어져서 다시 렌더링되지 않을 때 발생한다. 떼어진 이유는 중요치 않다. 이 콜박 안에서 `this`는 해제될 [템플릿 인스턴스](#template_inst) 객체다.
+이 콜백은 템플릿 인스턴스가 페이지에서 떼어져서 다시 렌더링되지 않을 때 발생한다. 떼어진 이유는 중요치 않다. 이 콜백 안에서 `this`는 해제될 [템플릿 인스턴스](#template_inst) 객체다.
 
-`created` 콜백에서 만든 쓰레기를 청소하기엔 `destroyed`가 최적의 장소다. 이 콜백은 여러 콜백 중에서 가장 마지막에 딱 한번만 호출된다.
+`created` 콜백에서 만든 쓰레기를 청소하기엔 `destroyed`가 최적의 장소다. 이 콜백은 여러 콜백 중에서 가장 마지막에 딱 한 번만 호출된다.
 
 {{> api_box template_events}}
 
-이 함수로 템플릿 인스턴스에 사용될 이벤트 핸들러를 등록한다. 여러번 호출하면 호출하는 만큼 새로운 이벤트 핸들러로 등록된다.
+이 함수로 템플릿 인스턴스에 사용될 이벤트 핸들러를 등록한다. 여러 번 호출하면 호출하는 만큼 새로운 이벤트 핸들러로 등록된다.
 
-어떤 형식으로 [이벤트 맵](#eventmaps)을 넘겨야하고 어떻게 핸들링해야 하는지는 [이벤트 맵](#eventmaps) 설명하는 부분을 보라.
+어떤 형식으로 [이벤트 맵](#eventmaps)을 넘겨야 하고 어떻게 핸들링해야 하는지는 [이벤트 맵](#eventmaps) 설명하는 부분을 보라.
 
 {{#note}}
-이전 버전까지는 `Template.myTemplate.events = {...}` 형식으로 사용했어야 했다. 아직까지는 이 예전 문법을 지원하긴 한다.
+이전 버전까지는 `Template.myTemplate.events = {...}` 형식으로 사용했어야 했다. 아직은 이 예전 문법을 지원하긴 한다.
 {{/note}}
 
 {{> api_box template_helpers}}
@@ -834,9 +834,9 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
       }
     });
 
-Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출한다.
+Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출할 수 있다.
 
-다음과 같이 정의하는 것도 가능하다. 하지만 heplers 같은 특수한 프로퍼티는 사용할 수 없다.
+다음과 같이 정의하는 것도 가능하다. 하지만, heplers 같은 특수한 프로퍼티는 사용할 수 없다.
 
     Template.myTemplate.foo = function () {
       return Session.get("foo");
@@ -844,20 +844,20 @@ Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출한다.
 
 {{> api_box template_preserve}}
 
-DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싸고 있는 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지한다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링된 후에도 유지된다. 
+DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싼 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지한다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링된 후에도 유지된다. 
 
-DOM 엘리먼트를 같지만 새로운 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음과 같은 경우에 매우 유용하다:
+DOM 엘리먼트를 같지만 새로운 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음 같은 경우에 매우 유용하다:
 
 * 텍스트 Input 필드 같은 폼 컨트롤
 * CSS 에니메이션이 있는 엘리먼트
 * Iframes
-* JavaScript 코드에서 참조하고 있는 엘리먼트
+* JavaScript 코드에서 참조하는 엘리먼트
 
 엘리먼트와 그 자식을 포함한 DOM 전체나 Meteor가 렌더링하지 않은 노드까지 유지하고 싶으면 [constant](#constant)를 사용하라.
 
 DOM 노드를 유지하려면 템플릿의 엘리먼트에 일치하는 셀렉터 목록을 넘긴다. 넘긴 셀렉터는 템플릿이 다시 렌더링될 때 사용한다. Meteor는 HTML이 어떻게 변하든 해당 엘리먼트는 원래 엘리먼트를 재사용한다.
 
-딕셔너리 값으로 넘기는 labeling labeling 함수는 해당 셀렉터에 만족하는 엘리먼트가 여러개 일 때 사용한다. 노드 객체를 넘겨받고 그 노드를 식별하는 스트링을 리턴한다. 만약 `false`를 리턴하면 해당 노드는 유지하지 않는다.
+딕셔너리 값으로 넘기는 labeling 함수는 해당 셀렉터에 만족하는 엘리먼트가 여러 개일 때 사용한다. 노드 객체를 넘겨받고 그 노드를 식별하는 스트링을 리턴한다. 만약 `false`를 리턴하면 해당 노드는 유지하지 않는다.
 
 예를 들어, id로 식별하면서 `foo` 템플릿의 `<input>` 엘리먼트를 전부 유지하려면 다음과 같이 사용한다:
 
@@ -867,9 +867,9 @@ DOM 노드를 유지하려면 템플릿의 엘리먼트에 일치하는 셀렉�
 
 셀렉터는 해당 템플릿 인스턴스 안에서만 적용된다. 템플릿 인스턴스마다 독립적이기 때문에 셀렉터는 템플릿 인스턴스 안에서만 식별할 수 있으면 된다. 전체 페이지에서 식별하지 않는다. 만약 하위 템플릿이 있으면 셀렉터는 그 하위 템플릿의 엘리먼트에도 적용한다.
 
-엘리먼트를 유지한다고 해서 속성이나 내용까지 유지하지 않는다. 다시 렌더링할 때 업데이트가 필요하면 속성과 내용은 업데이트된다. input 엘리먼트에 포커스가 없으면 input 엘리먼트의 텍스트는 유지하지 않는다. 하지만 커서나 셀렉션은 그대로 유지된다. Iframe은 네비게이션 상태를 유지하고 애니메이션은 아무것도 변하지 않은 것처럼 계속 실행한다.
+엘리먼트를 유지한다고 해서 속성이나 내용까지 유지하지 않는다. 다시 렌더링할 때 업데이트가 필요하면 속성과 내용은 업데이트된다. input 엘리먼트에 포커스가 없으면 input 엘리먼트의 텍스트는 유지하지 않는다. 하지만, 커서나 셀렉션은 그대로 유지된다. Iframe은 네비게이션 상태를 유지하고 애니메이션은 아무것도 변하지 않은 것처럼 계속 실행한다.
 
-DOM API의 한계때문에 어쩔 수 없이 유지 못할 수도 있다. 엘리먼트 태그의 이름은 변경할 수 없고 다른 부모 밑으로 옮길 수도 없다. 그러니까 노드가 재정 정렬돼야 한다거나 부모를 바꿔야 되면 유지되지 않는다.
+DOM API의 한계 때문에 어쩔 수 없이 유지 못 할 수도 있다. 엘리먼트 태그의 이름은 변경할 수 없고 다른 부모 밑으로 옮길 수도 없다. 그러니까 노드가 다시 정렬돼야 한다거나 부모를 바꿔야 하면 유지되지 않는다.
 
 {{#note}}
 이전 버전에서는 불명확하게 "id"와 "name" 속성을 Preserve 디렉티브로 사용했었다. 지금은 명시적으로 선택하는 방법으로 변경됐다.
@@ -883,7 +883,7 @@ DOM API의 한계때문에 어쩔 수 없이 유지 못할 수도 있다. 엘리
 
 아래에서 설명하는 함수와 프로퍼티말고 다른 프로퍼티와 함수는 마음대로 추가할 수 있다. 프로퍼티 이름만 `_`로 시작하게 지어서 사용자가 만들었음을 표시하라. 그리고 초기화나 객체를 해제하는 것은 `created`와 `destroyed` 콜백을 사용한다.
 
-`findAll`, `find`, `firstNode`, `lastNode` 함수는 `rendered` 콜백과 이벤트 핸들러에서만 사용할 수 있다. 이 함수를 사용하려면 템플릿 인스턴스가 DOM안에 있어야 하기 때문에 `created`와 `destroyed` 콜백에서는 사용할 수 없다.
+`findAll`, `find`, `firstNode`, `lastNode` 함수는 `rendered` 콜백과 이벤트 핸들러에서만 사용할 수 있다. 이 함수를 사용하려면 템플릿 인스턴스가 DOM 안에 있어야 하기 때문에 `created`와 `destroyed` 콜백에서는 사용할 수 없다.
 
 {{> api_box template_findAll}}
 
@@ -899,23 +899,23 @@ DOM API의 한계때문에 어쩔 수 없이 유지 못할 수도 있다. 엘리
 
 {{> api_box template_firstNode}}
 
-`firstNode`와 `lastNode`는 템플릿을 DOM으로 렌더링했을 때 범위를 나타낸다. 렌더링한 템플릿은 이 두 노드와 사이의 다른 노드들 그리고 그외 자식(descendent) 노드로 구성된다. `firstNode`와 `lastNode`는 부모가 같고 `firstNode` 다음에 `lastNode`가 온다. 그게 아니면 두 노두가 같을 수 있다.
+`firstNode`와 `lastNode`는 템플릿을 DOM으로 렌더링했을 때 범위를 나타낸다. 렌더링한 템플릿은 이 두 노드와 사이의 다른 노드들 그리고 그 외 자식(descendent) 노드로 구성된다. `firstNode`와 `lastNode`는 부모가 같고 `firstNode` 다음에 `lastNode`가 온다. 그게 아니면 두 노두가 같을 수 있다.
 
 {{> api_box template_lastNode}}
 
 {{> api_box template_data}}
 
-이 프로퍼티는 템플릿의 데이터 컨텍스트다. 템플릿이 렌더링될 때마다 변경된다. 그리고 읽을 수만 있고 Reactive 데이터 소스도 아니다.
-
+이 프로퍼티는 템플릿의 데이터 컨텍스트다. 템플릿이 렌더링될 때마다 변경된다. 그리고 Reactive 데이터 소스가 아니고 읽을 수만 있다.
+????
 {{> api_box render}}
 
 `Meteor.render`는 실시간으로 자동 업데이트를 수행하는 `DocumentFragment`를 하나 생성한다. 대부분의 Meteor 앱은 이 함수를 직접호출 하지 않는다. 템플릿을 사용하면 Meteor가 렌더링하는 부분을 관리해준다.
 
-HTML 스트링을 리턴하는 함수 `htmlFunc`를 아규먼트로 넘긴다. `Meteor.render`는 그 함수를 실행해서 HTML 스트링을 얻어서 DOM 노드를 만든다. 이 때 자동으로 htmlFunc 함수에서 사용한 데이터를 추적하고 그 데이터와 콜백을 엮는다. 그래서 데이터가 변하면 htmlFunc 함수가 다시 실행돼서 DOM 노드가 바로 업데이트된다.
+HTML 스트링을 리턴하는 함수 `htmlFunc`를 아규먼트로 넘긴다. `Meteor.render`는 그 함수를 실행해서 HTML 스트링을 얻어서 DOM 노드를 만든다. 이때 자동으로 htmlFunc 함수에서 사용한 데이터를 추적하고 그 데이터와 콜백을 엮는다. 그래서 데이터가 변하면 htmlFunc 함수가 다시 실행돼서 DOM 노드가 바로 업데이트된다.
 
-리턴한 `DocumentFragment`를 원하는 DOM 위치에 넣는다. 그 삽입된 노드는 화면에서 사라질(take off the screen)때까지 계속 업데이트된다. 사라지면 자동으로 정리된다. 자세한건 [`Meteor.flush`](#meteor_flush)를 봐라.
+리턴한 `DocumentFragment`를 원하는 DOM 위치에 넣는다. 그 삽입된 노드는 화면에서 사라질(take off the screen)때까지 계속 업데이트된다. 사라지면 자동으로 정리된다. 자세한 건 [`Meteor.flush`](#meteor_flush)를 봐라.
 
-`Meteor.render`는 Reactive 컨텍스트에서 실행하는 것이라서 htmlFunc의 데이터 의존성의 추적한다. 그래서 `Meteor.render`는 htmlFunc 함수에서 사용한 Reactive 데이터 소스가 변경되는 것을 처리할 수 있다. Reactive 데이터 소스를 직접 만들려면 [Reactivity](#reactivity)를 봐라.
+`Meteor.render`는 Reactive 컨텍스트에서 실행하는 것이라서 htmlFunc의 데이터 의존성을 추적한다. 그래서 `Meteor.render`는 htmlFunc 함수에서 사용한 Reactive 데이터 소스가 변경되는 것을 처리할 수 있다. Reactive 데이터 소스를 직접 만들려면 [Reactivity](#reactivity)를 봐라.
 
 예제:
 
@@ -934,9 +934,9 @@ HTML 스트링을 리턴하는 함수 `htmlFunc`를 아규먼트로 넘긴다. `
 
 이 함수는 DB 쿼리 결과가 변경되면 자동으로 업데이트하는 `DocumentFragment`를 생성한다. 보통은 이 함수을 직접 호출하지 않고 템플릿에서 `{{dstache}}#each}}`를 사용하면 이 함수가 사용된다.
 
-DB 도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.render`보다 효율적이다. 예를 들어, 어떤 쿼리에 만족하는 도큐먼트가 DB에 새로 추가되면 전체가 아니라 그 도큐먼트에 해당하는 부분만 다시 렌더링된다. 다른 엘리먼트는 건드리지 않는다. 정렬하는 쿼리를 실행하고 있을 때 도큐먼트 순서가 바뀌면 다시 렌더링하는 것이 아니라 단순히 DOM 노드를 옮길뿐이다.
+DB 도큐먼트를 여러 개 렌더링할 때에는 `renderList`가 `Meteor.render`보다 효율적이다. 예를 들어, 어떤 쿼리에 만족하는 도큐먼트가 DB에 새로 추가되면 전체가 아니라 그 도큐먼트에 해당하는 부분만 다시 렌더링된다. 다른 엘리먼트는 건드리지 않는다. 정렬하는 쿼리를 실행하고 있을 때 도큐먼트 순서가 바뀌면 다시 렌더링하는 것이 아니라 단순히 DOM 노드를 옮길 뿐이다.
 
-도큐먼트를 하나씩 HTML로 생성할 때마다 `docFunc`를 호출하고 쿼리 결과가 없을 때에는 `elseFunc`를 호출한다. `elseFunc`는 결과가 없을 때에는 다른 화면을 보여주는 용도로 사용한다. 예를 들어, "절대 결과가 없을리 없다" 같은 메시지를 보여줄 수 있다.
+도큐먼트를 하나씩 HTML로 생성할 때마다 `docFunc`를 호출하고 쿼리 결과가 없을 때에는 `elseFunc`를 호출한다. `elseFunc`는 결과가 없을 때에는 다른 화면을 보여주는 용도로 사용한다. 예를 들어, "절대 결과가 없을 리 없다." 같은 메시지를 보여줄 수 있다.
 
 `docFunc`나 `elseFunc` 함수는 각각 다른 Reactive 컨텍스트에서 실행된다. 그래서 데이터가 변경되면 해당 Reactive 컨텍스트만 다시 렌더링 된다.
 
@@ -993,9 +993,9 @@ DB 도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.rend
       'keydown, click .accept': function (event) { ... }
     }
 
-대부분의 이벤트는 원래 이벤트가 발생한 엘리먼트에서 DOM 트리를 따라
+이벤트는 원래 이벤트가 발생한 엘리먼트에서 DOM 트리를 따라
 전파된다(bubble up). 예를 들어 `click p`는 단락 태그인 `<p>` 블럭에서
-발생한 click 이벤트를 캐치한다. 심지어 그 단락안에 있는 `<a>`, `<span>`
+발생한 click 이벤트를 캐치한다. 심지어 그 단락 안에 있는 `<a>`, `<span>`
 등등의 엘리먼트에서 발생한 click 이벤트도 캐치한다. 원래 이벤트가 발생한
 엘리먼트는 `target` 프로퍼티로 알 수 있고 Selector와 일치한 엘리먼트는
 `currentTarget` 프로퍼티로 알 수 있다.
@@ -1007,10 +1007,10 @@ DB 도큐먼트를 여러개 렌더링할 때에는 `renderList`가 `Meteor.rend
       }
     }
 
-이벤트가 전파하는 엘리먼트에 따라서 일치하는 Selector가 여러개이면 핸들러는
-그 수만큼 호출된다. `click div`이나 `click *`은 아마 여러번 호출될
+이벤트가 전파하는 엘리먼트에 따라서 일치하는 Selector가 여러 개면 핸들러는
+그 수만큼 호출된다. `click div`이나 `click *`은 아마 여러 번 호출될
 것이다. Selector가 없으면 Handler는 원래 이벤트가 발생한 target
-엘리먼트에서 한번만 호출된다.
+엘리먼트에서 한 번만 호출된다.
 
 핸들러에 넘어오는 이벤트 객체에 있는 프로퍼티와 메소드는 다음과 같다:
 
@@ -1030,7 +1030,7 @@ Selector와 일치하는 엘리먼트다. 이벤트가 전파하는 엘리먼트
 
 {{#dtdd "which" "Number"}}
 마우스 이벤트일 때는 어떤 마우스 버튼이 눌린 것인지를 나타낸다(1=left, 2=middle, 3=right).
-키 이벤트 일때는 캐릭터나 키코드를 의미한다.
+키 이벤트일 때는 캐릭터나 키 코드를 의미한다.
 {{/dtdd}}
 
 {{#dtdd "stopPropagation()"}}
@@ -1092,7 +1092,7 @@ Double-click.
 {{/dtdd}}
 
 {{#dtdd "<code>mouseenter, mouseleave</code>"}}
-엘리먼트 영역에 마우스 포인터가 들어가거나 나올때 발생한다.
+엘리먼트 영역에 마우스 포인터가 들어가거나 나올 때 발생한다.
 이 이벤트는 전파되지 않는다.
 {{/dtdd}}
 
@@ -1107,19 +1107,19 @@ Double-click.
 {{/dtdd}}
 </dl>
 
-다른 DOM 이벤트도 이용할 수 있지만 위의 이벤트에 대해서는
-브라우저마다 똑같이 동작하게 만들기 위해 노력했다.
+다른 DOM 이벤트도 이용할 수 있지만, 위의 이벤트에 대해서는
+브라우저마다 똑같이 동작하게 하려고 노력했다.
 
 {{/api_box_inline}}
 
 {{#api_box_inline constant}}
 
-다시 렌더링하지 않을 Constant 영역임을 표시할 수 있다. `{{dstache}}#constant}}...{{dstache}}/constant}}` 블럭 헬퍼로 표시하면 된다. 템플릿이 다시 렌더링될 때 `#constant` 블럭 헬퍼에 들어 있는 내용은 그대로 유지된다. Preserve 엘리먼트 처럼 해당 엘리먼트 근처에 있는 템플릿 엘리먼트만 패치된다. 노드를 선택적으로 유지하는 것과는 달리 이렇게 Constant 영역을 정의하면 해당 노드의 ID 뿐만아니라 속성과 내용까지 유지된다. 이 영역의 내용은 템플릿이 처음 렌더링될 때 딱 한번 생성된다.
+다시 렌더링하지 않는 Constant 영역임을 표시할 수 있다. `{{dstache}}#constant}}...{{dstache}}/constant}}` 블럭 헬퍼로 표시하면 된다. 템플릿이 다시 렌더링될 때 `#constant` 블럭 헬퍼에 들어 있는 내용은 그대로 유지된다. Preserve 엘리먼트처럼 해당 엘리먼트 근처에 있는 템플릿 엘리먼트만 패치한다. 노드를 선택적으로 유지하는 것과는 달리 이렇게 Constant 영역을 정의하면 해당 노드의 ID뿐만 아니라 속성과 내용까지 유지된다. 이 영역의 내용은 템플릿이 처음 렌더링될 때 딱 한 번 생성된다.
 
 Constant 영역은 Meteor 템플릿에 Meteor 답지 않은(non-Meteor) 컨텐트을 넣을 때 사용한다. 개발자가 직접 다른 제 3의 위젯을 사용해서 화면을 만들고 관리할 때 사용하면 좋다. 보통 템플릿에 빈 엘리먼트를 넣는다. 템플릿을 하나 만들고 그 안에는 별 내용 없이 비워두었고 다른 위젯과 라이브러리로 그 템플릿 안에 엘리먼트를 채워 넣었었다고 하자. Meteor가 그 템플릿을 다시 랜더링할 때 원래 그 템플릿은 비워져 있었으므로 나중에 만들어 넣은 엘리먼트를 제거해버린다. 그런데 `#constant` 블럭을 이용해서 감싸 놓으면 그대로 유지된다. 그 안에 어떤 DOM이 들어 있던지 상관없이 유지된다.
 
 {{#note}}
-Constant 영역은 non-Meteor 컨텐트를 넣기 위해 사용한다. 이 Constant 영역 안에서는 이벤트 핸들러와 Reactive 의존성이 동작하지 않는다.
+Constant 영역은 non-Meteor 컨텐트를 넣으려고 사용한다. 이 Constant 영역 안에서는 이벤트 핸들러와 Reactive 의존성이 동작하지 않는다.
 {{/note}}
 
 {{/api_box_inline}}
@@ -1129,7 +1129,7 @@ Constant 영역은 non-Meteor 컨텐트를 넣기 위해 사용한다. 이 Const
 템플릿은 각각 별도의 Reactive 컨텍스트에서 실행한다. 템플릿이 Reactive 데이터 소스에 접근할 때 데이터 의존성이 만들어진다.
 그래서 데이터가 변하면 템플릿은 통째로 다시 렌더링된다. 이 말은 어떻게 템플릿을 구성했는지에 따라 렌더링하는 단위가 결정된다는 뜻이다.
 
-보통 렌더링 범위는 그렇게 중요한게 아니다. 하지만 꼼꼼하게 튜닝해서 최적화해야 한다면 `{{dstache}}#isolate}}...{{dstache}}/isolate}}`를 사용할 수 있다. 데이터 의존성은 `#isolate` 블럭에만 국한되며 이 블럭에서 데이터가 변경되도 부모 템플릿까지 다시 렌더링하지 않는다. 이 블럭 헬퍼를 사용하면 별도의 템플릿으로 정의한 것과 같은 효과를 낼 수 있다.
+보통 렌더링 범위는 그렇게 중요한 게 아니다. 하지만, 꼼꼼하게 튜닝해서 최적화해야 한다면 `{{dstache}}#isolate}}...{{dstache}}/isolate}}`를 사용할 수 있다. 데이터 의존성은 `#isolate` 블럭에만 국한되며 이 블럭에서 데이터가 변경돼도 부모 템플릿까지 다시 렌더링하지 않는다. 이 블럭 헬퍼를 사용하면 별도의 템플릿으로 정의한 것과 같은 효과를 낼 수 있다.
 
 {{/api_box_inline}}
 
@@ -1157,9 +1157,9 @@ Meteor에는 의존성 추적 시스템이 있어서 [`Session`](#session) 변�
 Reactive 업데이트를 지원하는 함수를 호출할 때 자동으로 "무효화 컨텍스트"
 객체를 전부 저장한다. 템플릿을 렌더링할 때에도 그 함수가 호출된다.
 나중에 데이터가 변경되면 저장한 컨텍스트를 무효화한다.
-그래서 템플릿은 다시 렌더링된다. 이 기능은 기껏해야 50 라인 정도 뿐이다.
+그래서 템플릿은 다시 렌더링된다. 이 기능은 기껏해야 50라인 정도뿐이다.
 
-개발자는나 패키지 제작자는 *무효화 컨텍스트*를 사용해서 Reactive
+개발자나 패키지 제작자는 *무효화 컨텍스트*를 사용해서 Reactive
 데이터 소스를 추가하고 Reactive 데이터 소스의 의존성을 자동으로
 등록하는 함수도 구현할 수 있다.
 
@@ -1171,19 +1171,19 @@ Reactive 업데이트를 지원하는 함수를 호출할 때 자동으로 "무�
 
 전역 변수 [`Meteor.deps.Context.current`](#current)을 확인하면 무효화 컨텍스트
 안에서 실행하는 건지 아닌지 알 수 있다. 컨텍스트 밖에서 그 변수의 값은 `null`이
-된다. Reactivity 시스템을 만들 때는 컨텍스트를 저장하도록 만들어야 한다.
+된다. Reactivity 시스템을 만들 때는 컨텍스트를 저장하게 하여야 한다.
 그래야 나중에 뭔가 변경이 생겨서 [`invalidate`](#invalidate)를 호출할 때 그
 컨텍스트를 다시 실행할 수 있다. 이렇게 하면 [`on_invalidate`](#on_invalidate)으로
 cleanup 함수를 설정해서 추적을 언제 멈추는지 알 수 있다.
 
-무효화 컨텍스트에는 양의 정수인 id가 부여된다. 편한대로 아무데나
+무효화 컨텍스트에는 양의 정수인 id가 부여된다. 편한 대로 아무 데나
 저장해서 사용할 수 있다. 무효화 컨텍스트 프로퍼티에 저장해도 된다.
 굳이 `_`를 이름 앞뒤로 붙일 필요도 없다.
 
 {{> api_box run }}
 
 이 함수는 단순히 [`Meteor.deps.Context.current`](#current)가 현 무효화
-컨텍스트를 가리키게하고, `func`를 실행하고, 이전 값으로 다시 되돌릴 뿐이다.
+컨텍스트를 가리키게 하고, `func`를 실행하고, 이전 값으로 다시 되돌릴 뿐이다.
 이 함수는 `func`가 리턴하는 값을 리턴한다.
 
 run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 컨텍스트를 가리킨다.
@@ -1232,13 +1232,13 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
 {{> api_box invalidate }}
 
-무효화 상태에서는 `invalidate` 함수를 호출한들 아무일도 일어나지 않는다
+무효화 상태에서는 `invalidate` 함수를 호출한들 아무 일도 일어나지 않는다
 (수학적으로 "멱등(idempotent)"이라고 부른다). 무효화 상태가 아니면 
 해당 컨텍스트에 [`on_invalidate`](#on_invalidate)로 등록한 함수를 모두 실행한다.
 
 `invalidate` 함수가 호출되자마자 [`on_invalidate`](#on_invalidate) 함수가
 바로 실행되는 것이 아니라 [`Meteor.flush`](#meteor_flush)가 실행할 때 호출된다.
-`invalidate` 함수는 컨텍스트를 flush 목록에 추가하고 그외에 별로 하는 게 없다.
+`invalidate` 함수는 컨텍스트를 flush 목록에 추가하고 그 외에 별로 하는 게 없다.
 
 [`Meteor.flush`](#meteor_flush)는 직접 호출하지 않아도 하던 일을 다 마치면
 (다음 tick에) 자동으로 호출된다. delay 값을 0으로 주고 `setTimeout`
@@ -1304,13 +1304,13 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 {{> api_box flush }}
 
 일반적으로 데이터를 변경하고 DOM이 업데이트되려면 시스템이 idle이 될 때까지
-기다려야 한다. 그래서 코드가 실행되자 마자 DOM이 바뀌지 않는다.
+기다려야 한다. 그래서 코드가 실행되자마자 DOM이 바뀌지 않는다.
 이 전략은 Meteor를 더 빠르게 만들어준다.
 
-`Meteor.flush`는 대기하고 있는 Reactive 업데이트를 강제로 완료시킨다
+`Meteor.flush`는 대기 중인 Reactive 업데이트를 강제로 완료시킨다
 (DB의 변경된 내용을 DOM에 모두 적용시킨다). `flush`를 호출하면
-대기중인 변경사항이 즉시 적용된다. 이 함수는 최신 데이터에 DOM을 동기화
-시키기는데 사용한다. 그래야 jQuery 같은 라이브러리를 써서 DOM을
+대기 중인 변경사항이 즉시 적용된다. 이 함수는 최신 데이터에 DOM을 동기화
+시키는 데 사용한다. 그래야 jQuery 같은 라이브러리를 써서 DOM을
 수동으로 관리할 수 있다.
 
 `flush`를 호출할 때, 화면에 없는 Reactive DOM 엘리먼트는 삭제된다.
@@ -1328,7 +1328,7 @@ flush는 실행해야 할 무효화 콜백이 전부 실행할 때까지 계속 
 
 <h2 id="meteor_http"><span>Meteor.http</span></h2>
 
-`Meteor.http`는 클라이언트와 서버에 둘다 있는 HTTP API이다.
+`Meteor.http`는 클라이언트와 서버에 둘 다 있는 HTTP API이다.
 `meteor add http` 명령으로 프로젝트에 HTTP 패키지를 추가하면 사용할 수 있다.
 
 {{> api_box httpcall}}
@@ -1345,17 +1345,17 @@ HTTP와 HTTPS 프로토콜을 모두 지원한다. `url`을 아규먼트로 넘�
 프로토콜과 호스트 이름이 모두 포함된 전체 URL을 넘겨야 한다. 그렇지만,
 현재 호스트의 URL이면 상대 URL을 넘겨도 된다. `query` 옵션을 주면 `url`의
 쿼리 스트링을 교체해버린다. `params` 옵션의 파라미터는 쿼리 스트링에
-추가되서 결국 URL에 덧 붙여진다. 예를 들어, `url`은 `"/path?query"`이고
+추가돼서 결국 URL에 덧붙여진다. 예를 들어, `url`은 `"/path?query"`이고
 `params`이 `{foo:"bar"}`이면 결국 URL은 `"/path?query&foo=bar"`가 된다.
 
-`params`은 Request 타입에 따라서 URL이나 Request 바디에 들어 간다.
-GET이나 HEAD 같이 바디가 없는 Request에서는 파라미터가 URL에 들어간다.
-POST나 그외 다른 Request 타입에서는 파라미터가 `x-www-form-urlencoded`
-컨텐트 타입으로 인코딩되서 바디에 들어간다. 바디에 들어가는 `content`나
-`data` 옵션이 주어지면 파라미터는 바디가 아니라 URL에 들어간다.
+`params`은 Request 타입에 따라서 URL이나 Request 바디에 들어간다.
+GET이나 HEAD같이 바디가 없는 Request에서는 파라미터가 URL에 들어간다.
+POST나 그 외 다른 Request 타입에서는 파라미터가 `x-www-form-urlencoded`
+컨텐트 타입으로 인코딩돼서 바디에 들어간다. 바디에 들어가는 `content`나
+`data` 옵션을 주면 파라미터는 바디가 아니라 URL에 들어간다.
 
 콜백에는 `error`와 `result` 아규먼트가 있다. Request가 실패하면 `error`
-아규먼트에 Error가 들어 간다. HTTP 상태 코드가 400나 500이거나, 네트워크
+아규먼트에 Error가 들어간다. HTTP 상태 코드가 400나 500이거나, 네트워크
 에러, 타임아웃일 때 모두 동일하다. `result`에는 항상 객체가 리턴된다.
 동기 모드로 호출했으면 `rusult` 객체가 리턴되고 `error`는 `result`의 프로퍼티로 저장된다.
 
@@ -1472,5 +1472,4 @@ result 객체의 내용:
 <template name="api_section_helper">
 <h2 id="{{id}}"><a href="#{{id}}" class="selflink"><span>{{name}}</span></a></h2>
 </template>
-
 
