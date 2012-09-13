@@ -2,25 +2,25 @@ Template.api.is_client = {
   id: "meteor_is_client",
   name: "Meteor.is_client",
   locus: "Anywhere",
-  descr: ["Boolean variable.  True if running in client environment."]
+  descr: ["Boolean 변수. 클라이언트 환경이면 true."]
 };
 
 Template.api.is_server = {
   id: "meteor_is_server",
   name: "Meteor.is_server",
   locus: "Anywhere",
-  descr: ["Boolean variable.  True if running in server environment."]
+  descr: ["Boolean 변수. 서버 환경이면 true."]
 };
 
 Template.api.startup = {
   id: "meteor_startup",
   name: "Meteor.startup(func)",
   locus: "Anywhere",
-  descr: ["Run code when a client or a server starts."],
+  descr: ["클라이언트나 서버가 시작할 때 실행되는 코드."],
   args: [
     {name: "func",
      type: "Function",
-     descr: "A function to run on startup."}
+     descr: "시작 시 실행할 코드."}
   ]
 };
 
@@ -28,14 +28,14 @@ Template.api.publish = {
   id: "meteor_publish",
   name: "Meteor.publish(name, func)",
   locus: "Server",
-  descr: ["Publish a record set."],
+  descr: ["레코드를 Publish함."],
   args: [
     {name: "name",
      type: "String",
-     descr: "Name of the attribute set.  If `null`, the set has no name, and the record set is automatically sent to all connected clients."},
+     descr: "애트리뷰트의 이름. 만약 `null`이면 레코드에 이름이 없다는 의미고 자동으로 연결된 모든 클라이언트에 전송한다."},
     {name: "func",
      type: "Function",
-     descr: "Function called on the server each time a client subscribes.  Inside function, `this` is the publish handler object, described below.  If the client passed arguments to `subscribe`, the function is called with the same arguments."}
+     descr: "클라이언트가 subscribe할 때마다 서버에서 호출하는 함수. 함수 안에서 `this`는 publish 핸들러 객체이다. 클라이언트에서 `subscribe`를 호출할 때 아규먼트를 주면 이 함수가 호출될 때 아규먼트로 넘어진다."}
   ]
 };
 
@@ -43,19 +43,19 @@ Template.api.subscription_set = {
   id: "publish_set",
   name: "<i>this</i>.set(collection, id, attributes)",
   locus: "Server",
-  descr: ["Call inside publish function.  Queues a command to set attributes."],
+  descr: ["publish 함수 안에서 호출한다. 애트리뷰트를 세팅하는 명령을 큐에 넣는다."],
   args: [
     {name: "collection",
      type: "String",
-     descr: "The name of the collection that should be affected."
+     descr: "컬렉션의 이름."
     },
     {name: "id",
      type: "String",
-     descr: "The ID of the document that should be affected."
+     descr: "문서의 ID."
     },
     {name: "attributes",
      type: "Object",
-     descr: "Dictionary of attribute keys and their values."
+     descr: "키-밸류 형태의 애트리뷰트 딕셔너리"
     }
   ]
 };
@@ -64,19 +64,19 @@ Template.api.subscription_unset = {
   id: "publish_unset",
   name: "<i>this</i>.unset(collection, id, keys)",
   locus: "Server",
-  descr: ["Call inside publish function.  Queues a command to unset attributes."],
+  descr: ["publish 함수 내에서 호출한다. 애트리뷰트를 unset하는 명령어를 큐에 집어넣는다."],
   args: [
     {name: "collection",
      type: "String",
-     descr: "The name of the collection that should be affected."
+     descr: "컬렉션의 이름"
     },
     {name: "id",
      type: "String",
-     descr: "The ID of the document that should be affected."
+     descr: "도큐먼트의 ID"
     },
     {name: "keys",
      type: "Array",
-     descr: "Array of attribute keys."
+     descr: "애트리뷰트 키의 배열"
     }
   ]
 };
@@ -85,32 +85,32 @@ Template.api.subscription_complete = {
   id: "publish_complete",
   name: "<i>this</i>.complete()",
   locus: "Server",
-  descr: ["Call inside publish function.  Queues a command to mark this subscription as complete (initial attributes are set)."]
+  descr: ["publish 함수 안에서 호출한다. 해당 구독이 완료됐음을 알리는 명령을 큐에 넣는다.(초기 애트리뷰트이 세팅된다)"]
 };
 
 Template.api.subscription_flush = {
   id: "publish_flush",
   name: "<i>this</i>.flush()",
   locus: "Server",
-  descr: ["Call inside publish function.  Sends all the pending set, unset, and complete messages to the client."]
+  descr: ["publish 함수 안에서 호출한다. 보류 중인 모든 set, unset, complete메세지를 클라이언트로 보낸다."]
 };
 
 Template.api.subscription_stop = {
   id: "publish_stop",
   name: "<i>this</i>.stop()",
   locus: "Server",
-  descr: ["Call inside publish function.  Stops this client's subscription."]
+  descr: ["publish 함수 안에서 호출한다. 클라이언트의 subscription을 중지시킨다."]
 };
 
 Template.api.subscription_onStop = {
   id: "publish_onstop",
   name: "<i>this</i>.onStop(func)",
   locus: "Server",
-  descr: ["Call inside publish function.  Registers a callback function to run when the subscription is stopped."],
+  descr: ["publish 함수 안에서 호출한다. subscription이 중지되었을 때 실행할 콜백 함수를 등록한다."],
   args: [
     {name: "func",
      type: "Function",
-     descr: "The callback function"
+     descr: "콜백 함수"
     }
   ]
 };
@@ -119,17 +119,17 @@ Template.api.subscribe = {
   id: "meteor_subscribe",
   name: "Meteor.subscribe(name [, arg1, arg2, ... ] [, onComplete])",
   locus: "Client",
-  descr: ["Subscribe to a record set.  Returns a handle that provides a stop() method, which will stop the subscription."],
+  descr: ["레코드에 Subscribe하고 Subscription 핸들을 리턴한다. 핸들에는 Subscribe한 것을 중단하는 stop() 메소드가 있다."],
   args: [
     {name: "name",
      type: "String",
-     descr: "Name of the subscription.  Matches name of server's publish() call."},
+     descr: "Subscription의 이름. 서버에서 publish()를 호출할 때 사용하는 이름과 같아야 한다."},
     {name: "arg1, arg2, ...",
      type: "Any",
-     descr: "Optional arguments passed to publisher function on server."},
+     descr: "옵션. 서버의 publish 함수에 넘겨지는 아규먼트."},
     {name: "onComplete",
      type: "Function",
-     descr: "If the last argument is a Function, it is called without arguments when the server marks the subscription as complete."}
+     descr: "서버가 Subscription 처리를 완료했다고 알려주면 이 함수가 호출된다. 이 함수는 아규먼트가 없다."}
   ]
 };
 
@@ -137,11 +137,11 @@ Template.api.autosubscribe = {
   id: "meteor_autosubscribe",
   name: "Meteor.autosubscribe(func)",
   locus: "Client",
-  descr: ["Automatically set up and tear down subscriptions."],
+  descr: ["자동으로 subscription을 연결하고 끊는다."],
   args: [
     {name: "func",
      type: "Function",
-     descr: "A [`reactive`](#reactivity) function that sets up some subscriptions by calling [`Meteor.subscribe`](#meteor_subscribe). It will automatically be re-run when its dependencies change."}
+     descr: "[`Meteor.subscribe`](#meteor_subscribe)을 이용해 subscribe하는 [`Reactive`](#reactivity) 함수이다. 이 함수는 의존성이 변하면 자동으로 재실행된다."}
     ]
 };
 
@@ -149,11 +149,11 @@ Template.api.methods = {
   id: "meteor_methods",
   name: "Meteor.methods(methods)",
   locus: "Anywhere",
-  descr: ["Defines functions that can be invoked over the network by clients."],
+  descr: ["클라이언트가 호출하는 Meteor 메소드를 정의한다."],
   args: [
     {name: "methods",
      type: "Object",
-     descr: "Dictionary whose keys are method names and values are functions."}
+     descr: "키가 메소드의 이름이고 값이 함수인 딕셔너리"}
   ]
 };
 
@@ -161,31 +161,31 @@ Template.api.method_invocation_unblock = {
   id: "method_unblock",
   name: "<i>this</i>.unblock()",
   locus: "Server",
-  descr: ["Call inside method invocation.  Allow subsequent method from this client to begin running in a new fiber."]
+  descr: ["Meteor 메소드 안에서 호출한다. 다음 실행하는 메소드가 다른 fiber에서 실행되게 한다."]
 };
 
 Template.api.method_invocation_is_simulation = {
   id: "method_is_simulation",
   name: "<i>this</i>.is_simulation",
   locus: "Anywhere",
-  descr: ["Access inside method invocation.  Boolean value, true if this invocation is a stub."]
+  descr: ["Meteor 메소드 안에서 호출한다. Stub이면 true를 리턴한다."]
 };
 
 Template.api.error = {
   id: "meteor_error",
   name: "new Meteor.Error(error, reason, details)",
   locus: "Anywhere",
-  descr: ["This class represents a symbolic error thrown by a method."],
+  descr: ["Meteor 메소드가 던진 에러를 나타낸다."],
   args: [
     {name: "error",
      type: "Number",
-     descr: "A numeric error code, likely similar to a HTTP code (eg, 404, 500)."},
+     descr: "HTTP 코드 같은 에러 코드(eg, 404, 500)."},
     {name: "reason",
      type: "String",
-     descr: "Optional.  A short human-readable summary of the error, like 'Not Found'."},
+     descr: "옵션. 'Not Found'같이 사람이 읽을 수 있는 에러 메시지."},
     {name: "details",
      type: "String",
-     descr: "Optional.  Additional information about the error, like a textual stack trace."}
+     descr: "옵션. 에러에 대한 자세한 정보. 스택 트레이스 같은 게 들어 있다."}
   ]
 };
 
@@ -193,17 +193,17 @@ Template.api.meteor_call = {
   id: "meteor_call",
   name: "Meteor.call(func, arg1, arg2, ... [, asyncCallback])",
   locus: "Anywhere",
-  descr: ["Invokes a method passing any number of arguments."],
+  descr: ["Meteor 메소드를 호출한다."],
   args: [
     {name: "func",
      type: "String",
-     descr: "Name of method to invoke"},
+     descr: "Meteor 메소드 이름"},
     {name: "arg1, arg2, ...",
      type: "JSON",
-     descr: "Optional method arguments"},
+     descr: "옵션. 메소드 아규먼트"},
     {name: "asyncCallback",
      type: "Function",
-     descr: "Optional callback.  If passed, the method runs asynchronously, instead of synchronously, and calls asyncCallback passing either the error or the result."}
+     descr: "옵션. 이 함수를 넘기면 meteor 메소드는 비동기로 동작한다. 정상적으로 끝나든 에러가 발생하든 이 콜백이 호출된다."}
   ]
 };
 
@@ -211,17 +211,17 @@ Template.api.meteor_apply = {
   id: "meteor_apply",
   name: "Meteor.apply(name, params [, asyncCallback])",
   locus: "Anywhere",
-  descr: ["Invoke a method passing an array of arguments."],
+  descr: ["아규먼트를 배열로 넘기면서 Meteor 메소드를 호출한다."],
   args: [
     {name: "name",
      type: "String",
-     descr: "Name of method to invoke"},
+     descr: "호출할 Meteor 메소드 이름"},
     {name: "params",
      type: "Array",
-     descr: "Method arguments"},
+     descr: "메소드의 아규먼트"},
     {name: "asyncCallback",
      type: "Function",
-     descr: "Optional callback.  If passed, the method runs asynchronously, instead of synchronously, and calls asyncCallback passing either the error or the result."}
+     descr: "옵션. 이 함수를 넘기면 meteor 메소드는 비동기로 동작한다. 정상적으로 끝나든 에러가 발생하든 이 콜백이 호출된다."}
   ]
 };
 
@@ -229,7 +229,7 @@ Template.api.status = {
   id: "meteor_status",
   name: "Meteor.status()",
   locus: "Client",
-  descr: ["Get the current connection status. A reactive data source."]
+  descr: ["현재 연결 상태를 가져온다. 이 객체는 Reactive 데이터 소스이다."]
 };
 
 Template.api.reconnect = {
@@ -237,19 +237,19 @@ Template.api.reconnect = {
   name: "Meteor.reconnect()",
   locus: "Client",
   descr: [
-    "Force an immediate reconnection attempt if the client is not connected to the server.",
-    "This method does nothing if the client is already connected."]
+    "서버에 접속하지 않은 상태면 바로 접속을 시도한다.",
+    "이미 접속한 상태면 아무것도 하지 않는다."]
 };
 
 Template.api.connect = {
   id: "meteor_connect",
   name: "Meteor.connect(url)",
   locus: "Client",
-  descr: ["Connect to the server of a different Meteor application to subscribe to its document sets and invoke its remote methods."],
+  descr: ["다른 Meteor 서버에 접속한다. 다른 서버에 접속하면 Subscribe하거나 메소드를 호출할 수 있다."],
   args: [
     {name: "url",
      type: "String",
-     descr: "The URL of another Meteor application."}
+     descr: "다른 Meteor 앱의 URL"}
   ]
 };
 
@@ -260,14 +260,14 @@ Template.api.meteor_collection = {
   id: "meteor_collection",
   name: "new Meteor.Collection(name, manager)", // driver undocumented
   locus: "Anywhere",
-  descr: ["Constructor for a Collection"],
+  descr: ["컬렉션을 생성한다."],
   args: [
     {name: "name",
      type: "String",
-     descr: "The name of the collection.  If null, creates an unmanaged (unsynchronized) local collection."},
+     descr: "컬렉션의 이름. null이면 Unmanaged 로컬 컬렉션을 만든다."},
     {name: "manager",
      type: "Object",
-     descr: "The Meteor connection that will manage this collection, defaults to `Meteor` if null.  Unmanaged (`name` is null) collections cannot specify a manager."
+     descr: "해당 컬렉션을 관리하는 meteor 커넥션. null이면 기본 값인 `Meteor`가 사용된다. Unmanaged 컬렉션을 만들 때는 이 아규먼트를 사용할 수 없다."
     }
     // driver
   ]
@@ -277,31 +277,31 @@ Template.api.find = {
   id: "find",
   name: "<em>collection</em>.find(selector, [options])",
   locus: "Anywhere",
-  descr: ["Find the documents in a collection that match the selector."],
+  descr: ["컬렉션에서 셀렉터에 일치하는 도큐먼트를 찾는다."],
   args: [
     {name: "selector",
      type: "Object: Mongo selector, or String",
      type_link: "selectors",
-     descr: "The query"}
+     descr: "쿼리"}
   ],
   options: [
     {name: "sort",
-     type: "Object: sort specifier",
+     type: "Object: sort 지정자",
      type_link: "sortspecifiers",
-     descr: "Sort order (default: natural order)"},
+     descr: "정렬 순서 (기본값: 정렬하지 않음)"},
     {name: "skip",
      type: "Number",
-     descr: "Number of result to skip at the beginning"},
+     descr: "결과에서 건너뛰는 도큐먼트의 개수"},
     {name: "limit",
      type: "Number",
-     descr: "Maximum number of results to return"},
+     descr: "리턴할 도큐먼트의 최대 개수"},
     {name: "fields",
-     type: "Object: field specifier",
+     type: "Object: field 지정자",
      type_link: "fieldspecifiers",
-     descr: "Dictionary of fields to return or exclude."},
+     descr: "포함할지 말지 명시하는 필드 딕셔너리"},
     {name: "reactive",
      type: "Boolean",
-     descr: "Default true; pass false to disable reactivity"}
+     descr: "기본값은 true이다. false면 Reactive가 꺼진다."}
   ]
 };
 
@@ -309,28 +309,28 @@ Template.api.findone = {
   id: "findone",
   name: "<em>collection</em>.findOne(selector, [options])",
   locus: "Anywhere",
-  descr: ["Finds the first document that matches the selector, as ordered by sort and skip options."],
+  descr: ["옵션이 적용된 결과에서 첫 도큐먼트만 리턴한다."],
   args: [
     {name: "selector",
      type: "Object: Mongo selector, or String",
      type_link: "selectors",
-     descr: "The query"}
+     descr: "쿼리"}
   ],
   options: [
     {name: "sort",
-     type: "Object: sort specifier",
+     type: "Object: sort 지정자",
      type_link: "sortspecifiers",
-     descr: "Sort order (default: natural order)"},
+     descr: "정렬 순서 (기본값: 정렬하지 않음)"},
     {name: "skip",
      type: "Number",
-     descr: "Number of result to skip at the beginning"},
+     descr: "결과에서 건너뛰는 도큐먼트의 개수"},
     {name: "fields",
-     type: "Object: field specifier",
+     type: "Object: field 지정자",
      type_link: "fieldspecifiers",
-     descr: "Dictionary of fields to return or exclude."},
+     descr: "포함할지 말지 명시하는 필드 딕셔너리"},
     {name: "reactive",
      type: "Boolean",
-     descr: "Default true; pass false to disable reactivity"}
+     descr: "기본값은 true이다. false면 Reactive가 꺼진다."}
   ]
 };
 
@@ -338,25 +338,25 @@ Template.api.cursor_count = {
   id: "count",
   name: "<em>cursor</em>.count()",
   locus: "Anywhere",
-  descr: ["Returns the number of documents that match a query."]
+  descr: ["쿼리에 만족하는 리턴된 도큐먼트의 개수를 리턴한다."]
 };
 
 Template.api.cursor_fetch = {
   id: "fetch",
   name: "<em>cursor</em>.fetch()",
   locus: "Anywhere",
-  descr: ["Return all matching documents as an Array."]
+  descr: ["일치하는 모든 도큐먼트를 배열로 리턴한다."]
 };
 
 Template.api.cursor_foreach = {
   id: "foreach",
   name: "<em>cursor</em>.forEach(callback)",
   locus: "Anywhere",
-  descr: ["Call the callback function once for each matching document."],
+  descr: ["일치하는 도큐먼트마다 콜백 함수를 한 번씩 호출한다."],
   args: [
     {name: "callback",
      type: "Function",
-     descr: "Function to call."}
+     descr: "호출할 함수"}
   ]
 };
 
@@ -364,11 +364,11 @@ Template.api.cursor_map = {
   id: "map",
   name: "<em>cursor</em>.map(callback)",
   locus: "Anywhere",
-  descr: ["Map callback over all matching documents.  Returns an Array."],
+  descr: ["매치하는 모든 도큐먼트에 맵 콜백을 적용시킨다. 결과를 배열로 리턴한다."],
   args: [
     {name: "callback",
      type: "Function",
-     descr: "Function to call."}
+     descr: "호출할 함수"}
   ]
 };
 
@@ -376,19 +376,19 @@ Template.api.cursor_rewind = {
   id: "rewind",
   name: "<em>cursor</em>.rewind()",
   locus: "Anywhere",
-  descr: ["Resets the query cursor."],
+  descr: ["커서를 리셋한다."],
   args: [ ]
 };
 
 Template.api.cursor_observe = {
   id: "observe",
   name: "<em>cursor</em>.observe(callbacks)",
-  locus: "Client",
-  descr: ["Watch a query.  Receive callbacks as the result set changes."],
+  locus: "Anywhere",
+  descr: ["쿼리를 지켜본다. 데이터가 변하면 호출할 콜백 함수를 아규먼트로 받는다."],
   args: [
     {name: "callbacks",
-     type: "Object (may include added, changed, moved, removed callbacks)",
-     descr: "Functions to call to deliver the result set as it changes"}
+     type: "Object (added, changed, moved, removed 콜백 함수)",
+     descr: "데이터가 변경되면 호출하는 함수"}
   ]
 };
 
@@ -396,14 +396,14 @@ Template.api.insert = {
   id: "insert",
   name: "<em>collection</em>.insert(doc, [callback])",
   locus: "Anywhere",
-  descr: ["Insert a document in the collection.  Returns its unique _id."],
+  descr: ["도큐먼트를 해당 컬렉션에 추가한다. 추가한 도큐먼트의 _id를 리턴한다."],
   args: [
     {name: "doc",
      type: "Object",
-     descr: "The document to insert. Should not yet have an _id attribute."},
+     descr: "추가할 도큐먼트. 추가할 도큐먼트에 _id 어트리뷰트가 없어야 한다."},
     {name: "callback",
      type: "Function",
-     descr: "Optional.  If present, called with an error object as the first argument and, if no error, the _id as the second."}
+     descr: "옵션. 이 콜백함수의 첫 아규먼트는 에러 객체이고 에러가 없으면 두 번째 아규먼트에 _id가 넘어온다."}
   ]
 };
 
@@ -411,24 +411,24 @@ Template.api.update = {
   id: "update",
   name: "<em>collection</em>.update(selector, modifier, [options], [callback])",
   locus: "Anywhere",
-  descr: ["Modify one or more documents in the collection"],
+  descr: ["컬렉션의 도큐먼트를 수정한다."],
   args: [
     {name: "selector",
      type: "Object: Mongo selector, or String",
      type_link: "selectors",
-     descr: "Specifies which documents to modify"},
+     descr: "어떤 도큐먼트를 수정할지 명시한다."},
     {name: "modifier",
      type: "Object: Mongo modifier",
      type_link: "modifiers",
-     descr: "Specifies how to modify the documents"},
+     descr: "도큐먼트를 어떻게 수정할지 명시한다."},
     {name: "callback",
      type: "Function",
-     descr: "Optional.  If present, called with an error object as its argument."}
+     descr: "옵션. 에러가 나면 호출된다."}
   ],
   options: [
     {name: "multi",
      type: "Boolean",
-     descr: "True to modify all matching documents; false to only modify one of the matching documents (the default)."}
+     descr: "모든 도큐먼트를 수정할 거면 true. 하나만 수정할 거면 false. 기본값은 false."}
   ]
 };
 
@@ -436,15 +436,15 @@ Template.api.remove = {
   id: "remove",
   name: "<em>collection</em>.remove(selector, [callback])",
   locus: "Anywhere",
-  descr: ["Remove documents from the collection"],
+  descr: ["컬렉션의 도큐먼트를 삭제한다."],
   args: [
     {name: "selector",
      type: "Object: Mongo selector, or String",
      type_link: "selectors",
-     descr: "Specifies which documents to remove"},
+     descr: "삭제할 도큐먼트"},
     {name: "callback",
      type: "Function",
-     descr: "Optional.  If present, called with an error object as its argument."}
+     descr: "옵션. 에러가 나면 호출된다."}
   ]
 };
 
@@ -472,25 +472,18 @@ Template.api.Context = {
   id: "context",
   name: "new Meteor.deps.Context",
   locus: "Client",
-  descr: ["Create an invalidation context. Invalidation contexts are used to run a piece of code, and record its dependencies so it can be rerun later if one of its inputs changes.", "An invalidation context is basically just a list of callbacks for an event that can fire only once. The [`on_invalidate`](#on_invalidate) method adds a callback to the list, and the [`invalidate`](#invalidate) method fires the event."]
-};
-
-Template.api.current = {
-  id: "current",
-  name: "Meteor.deps.Context.current",
-  locus: "Client",
-  descr: ["The current [`invalidation context`](#context), or `null` if not being called from inside [`run`](#run)."]
+  descr: ["무효화 컨텍스트를 만든다. 무효화 컨텍스트는 특정 코드를 실행하고 의존성을 기록하는 데 쓰인다. 나중에 입력값이 바뀌면 해당 코드가 재실행된다.", "하나의 무효화 컨텍스트는 기본적으로 딱 한 번만 실행되는 콜백 함수의 모음이다. [`on_invalidate`](#on_invalidate) 메소드를 이용해 그 모음에 콜백 함수를 추가한다. [`invalidate`](#invalidate)는 이벤트를 발생시켜 콜백 함수를 실행한다."]
 };
 
 Template.api.run = {
   id: "run",
   name: "<em>context</em>.run(func)",
   locus: "Client",
-  descr: ["Run some code inside an evaluation context."],
+  descr: ["컨텍스트 안에서 어떤 코드를 실행한다."],
   args: [
     {name: "func",
      type: "Function",
-     descr: "The code to run"}
+     descr: "실행할 코드"}
   ]
 };
 
@@ -498,11 +491,11 @@ Template.api.on_invalidate = {
   id: "on_invalidate",
   name: "<em>context</em>.on_invalidate(callback)",
   locus: "Client",
-  descr: ["Registers `callback` to be called when this context is invalidated. `callback` will be run exactly once."],
+  descr: ["해당 컨텍스트가 무효화 됐을 때 호출할 `callback`을 등록한다. `callback`는 정확히 한 번만 실행된다."],
   args: [
     {name: "callback",
      type: "Function",
-     descr: "Function to be called on invalidation. Receives one argument, the context that was invalidated"}
+     descr: "무효화되면 호출하는 함수. 해당 컨텍스트를 아규먼트로 받는다."}
   ]
 };
 
@@ -510,87 +503,61 @@ Template.api.invalidate = {
   id: "invalidate",
   name: "<em>context</em>.invalidate()",
   locus: "Client",
-  descr: ["Add this context to the list of contexts that will have their `on_invalidate|on_invalidate` callbacks called by the next call to [`Meteor.flush`](#meteor_flush)."]
+  descr: ["해당 컨텍스트를 무효화 목록에 추가시킨다. 그래서 [`Meteor.flush`](#meteor_flush)가 호출되면 해당 컨텍스트의 `on_invalidate|on_invalidate` 콜백 함수들이 호출된다."]
 };
 
-
-// writeFence
-// invalidationCrossbar
-
-Template.api.render = {
-  id: "meteor_ui_render",
-  name: "Meteor.ui.render(html_func, [options])",
+Template.api.current = {
+  id: "current",
+  name: "Meteor.deps.Context.current",
   locus: "Client",
-  descr: ["Create DOM nodes that automatically update themselves as data changes."],
-  args: [
-    {name: "html_func",
-     type: "Function returning a string of HTML",
-     descr: "Render function to be called, initially and whenever data changes"}
-  ],
-  options: [
-    {name: "events",
-     type: "Object &mdash; event map",
-     type_link: "eventmaps",
-     descr: "Events to hook up to the rendered elements"},
-    {name: "event_data",
-     type: "Any value",
-     descr: "Value to bind to `this` in event handlers"
-    }
-  ]
-};
-
-Template.api.chunk = {
-  id: "meteor_ui_chunk",
-  name: "Meteor.ui.chunk(html_func, [options])",
-  locus: "Client",
-  descr: ["Inside [`Meteor.ui.render`](#meteor_ui_render), give special behavior to a range of HTML."],
-  args: [
-    {name: "html_func",
-     type: "Function returning a string of HTML",
-     descr: "Render function to be called, initially and whenever data changes"}
-  ],
-  options: [
-    {name: "events",
-     type: "Object &mdash; event map",
-     type_link: "eventmaps",
-     descr: "Events to hook up to the rendered elements"},
-    {name: "event_data",
-     type: "Any value",
-     descr: "Value to bind to `this` in event handlers"
-    }
-  ]
-};
-
-Template.api.listChunk = {
-  id: "meteor_ui_listchunk",
-  name: "Meteor.ui.listChunk(observable, doc_func, [else_func], [options])",
-  locus: "Client",
-  descr: ["Observe a database query and create annotated HTML that will be reactively updated when rendered with [`Meteor.ui.render`](#meteor_ui_render)."],
-  args: [
-    {name: "observable",
-     type: "Cursor",
-     type_link: "meteor_collection_cursor",
-     descr: "Query cursor to observe, as a reactive source of ordered documents"},
-    {name: "doc_func",
-     type: "Function taking a document and returning HTML",
-     descr: "Render function to be called for each document"},
-    {name: "else_func",
-     type: "Function returning HTML",
-     descr: "Render function to be called when query is empty"}
-  ],
-  options: [
-    {name: "events",
-     type: "Object &mdash; event map",
-     type_link: "eventmaps",
-     descr: "Events to hook up to the rendered elements"}
-  ]
+  descr: ["현재 [`무효화 컨텍스트`](#context). [`run`](#run) 함수 밖에서는 `null`이다."]
 };
 
 Template.api.flush = {
   id: "meteor_flush",
   name: "Meteor.flush()",
   locus: "Client",
-  descr: ["Ensure that any reactive updates have finished. Allow auto-updating DOM element to be cleaned up if they are offscreen."]
+  descr: ["무효화된 Reactive 컨텍스트를 즉시 업데이트한다. 화면에서 떼어진 DOM 엘레먼트가 있으면 삭제한다."]
+};
+
+// writeFence
+// invalidationCrossbar
+
+Template.api.render = {
+  id: "meteor_render",
+  name: "Meteor.render(htmlFunc)",
+  locus: "Client",
+  descr: ["데이터가 변경되면 자동으로 업데이트되는 DOM 노드를 만든다."],
+  args: [
+    {name: "htmlFunc",
+     type: "HTML 스트링을 리턴하는 Function",
+     descr: "렌더링할 HTML을 생성하는 함수. 호출하면 즉시 실행되고 데이터가 변경될 때마다 다시 실행된다. HTML을 리턴하는 함수 대신에 HTML 스트링을 넘겨도 된다."}
+  ]
+};
+
+Template.api.renderList = {
+  id: "meteor_renderlist",
+  name: "Meteor.renderList(observable, docFunc, [elseFunc])",
+  locus: "Client",
+  descr: ["DB 쿼리 결과에 따라서 자동으로 업데이트하는 DOM 노드를 여러 개 생성한다."],
+  args: [
+    {name: "observable",
+     type: "Cursor",
+     type_link: "meteor_collection_cursor",
+     descr: "정렬된 도큐먼트인 DB 쿼리 커서. Reactive 데이터 소스임 "},
+    {name: "docFunc",
+     type: "아규먼트로 도큐먼트를 하나 받고, HTML을 리턴하는 Function",
+     descr: "각 도큐먼트를 아규먼트로 넣어 호출하는 렌더 함수"},
+    {name: "elseFunc",
+     type: "HTML을 리턴하는 Function",
+     descr: "쿼리의 결과가 없을 때 호출되는 렌더 함수"}
+  ],
+  options: [
+    {name: "events",
+     type: "Object &mdash; event map",
+     type_link: "eventmaps",
+     descr: "화면에 그려지는 엘리먼트에 적용할 이벤트. 생략 가능"}
+  ]
 };
 
 Template.api.eventmaps = {
@@ -598,21 +565,31 @@ Template.api.eventmaps = {
   name: "Event Maps"
 };
 
+Template.api.constant = {
+  id: "constant",
+  name: "Constant regions"
+};
+
+Template.api.isolate = {
+  id: "isolate",
+  name: "Reactivity isolation"
+};
+
 Template.api.setTimeout = {
   id: "meteor_settimeout",
   name: "Meteor.setTimeout",
   locus: "Anywhere",
-  descr: ["Call a function in the future after waiting for a specified delay."],
+  descr: ["일정 시간 동안 기다리고 나서 함수를 호출한다."],
   args: [
     {
       name: "func",
       type: "Function",
-      descr: "The function to run"
+      descr: "실행할 함수"
     },
     {
       name: "delay",
       type: "Number",
-      descr: "Number of milliseconds to wait before calling function"
+      descr: "함수 호출하려고 기다리는 시간. 밀리초 단위"
     }
   ]
 };
@@ -621,17 +598,17 @@ Template.api.setInterval = {
   id: "meteor_setinterval",
   name: "Meteor.setInterval",
   locus: "Anywhere",
-  descr: ["Call a function repeatedly, with a time delay between calls."],
+  descr: ["함수를 반복해서 호출한다. 각 호출 사이에는 일정한 시간 간격이 있다."],
   args: [
     {
       name: "func",
       type: "Function",
-      descr: "The function to run"
+      descr: "실행할 함수."
     },
     {
       name: "delay",
       type: "Number",
-      descr: "Number of milliseconds to wait between each function call."
+      descr: "각 함수 호출 사이의 시간 간격. 밀리초 단위"
     }
   ]
 };
@@ -640,12 +617,12 @@ Template.api.clearTimeout = {
   id: "meteor_cleartimeout",
   name: "Meteor.clearTimeout",
   locus: "Anywhere",
-  descr: ["Cancel a function call scheduled by `Meteor.setTimeout`."],
+  descr: ["`Meteor.setTimeout`로 시작한 호출 스케쥴링을 중지한다."],
   args: [
     {
       name: "id",
       type: "Number",
-      descr: "The handle returned from setTimeout"
+      descr: "setTimeout에서 리턴받은 핸들"
     }
   ]
 };
@@ -654,12 +631,12 @@ Template.api.clearInterval = {
   id: "meteor_clearinterval",
   name: "Meteor.clearInterval",
   locus: "Anywhere",
-  descr: ["Cancel a repeating function call scheduled by `Meteor.setInterval`."],
+  descr: ["`Meteor.setInterval`로 시작한 반복 호출 스케쥴링을 중지한다."],
   args: [
     {
       name: "id",
       type: "Number",
-      descr: "The handle returned from setInterval"
+      descr: "setInterval에서 리턴받은 핸들"
     }
   ]
 };
@@ -668,28 +645,28 @@ Template.api.EnvironmentVariable = {
   id: "meteor_environmentvariable",
   name: "new Meteor.EnvironmentVariable()",
   locus: "Anywhere",
-  descr: ["Construct a Meteor environment variable."]
+  descr: ["Meteor의 환경 변수를 생성한다."]
 };
 
 Template.api.environmentVariable_get = {
   id: "env_var_get",
   name: "<i>env_var</i>.get()",
   locus: "Anywhere",
-  descr: ["Return the current value of an EnvironmentVariable."]
+  descr: ["EnvironmentVariable의 현재 값을 리턴한다."]
 };
 
 Template.api.environmentVariable_withValue = {
   id: "env_var_withvalue",
   name: "<i>env_var</i>.withValue(value, func)",
   locus: "Anywhere",
-  descr: ["Run `func` with the `env_var`'s value set to `value`."],
+  descr: ["`value`를 `env_var`에 할당하고 `func`를 실행한다."],
   args: [
     {name: "value",
      type: "Anything",
-     descr: "Desired value of the environment variable."},
+     descr: "환경 변수의 값"},
     {name: "func",
      type: "Function",
-     descr: "Function to call"}
+     descr: "호출할 함수"}
   ]
 };
 
@@ -715,14 +692,14 @@ Template.api.set = {
   id: "session_set",
   name: "Session.set(key, value)",
   locus: "Client",
-  descr: ["Set a variable in the session. Notify any listeners that the value has changed (eg: redraw templates, and rerun any [`Meteor.autosubscribe`](#meteor_autosubscribe) blocks, that called [`Session.get`](#session_get) on this `key`.)"],
+  descr: ["세션에 변수를 넣는다. 변수의 값이 변하면 그 사실이 리스너에 통보된다. (예: 해당 `key`에 대해서 [`Session.get`](#session_get)이 호출되고 팀플릿이 다시 그려진다. 즉, [`Meteor.autosubscribe`](#meteor_autosubscribe) 블럭 재실행이 일어난다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "The key to set, eg, `selected_item`"},
+     descr: "값을 넣을 세션 변수의 이름. 예를 들자면, `selected_item`"},
     {name: "value",
      type: "Any type",
-     descr: "The new value for `key`"}
+     descr: "`key`의 새로운 값."}
   ]
 };
 
@@ -730,11 +707,11 @@ Template.api.get = {
   id: "session_get",
   name: "Session.get(key)",
   locus: "Client",
-  descr: ["Get the value of a session variable. If inside a [`Meteor.deps`](#meteor_deps) context, invalidate the context the next time the value of the variable is changed by [`Session.set`](#session_set)."],
+  descr: ["세션 변수 값을 가져온다. [`Meteor.deps`](#meteor_deps) 안에서는 [`Session.set`](#session_set)으로 세션 변수를 변경하면 그 컨텍스트가 무효화된다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "The name of the session variable to return"}
+     descr: "세션 변수의 이름"}
   ]
 };
 
@@ -742,14 +719,14 @@ Template.api.equals = {
   id: "session_equals",
   name: "Session.equals(key, value)",
   locus: "Client",
-  descr: ["Test if a session variable is equal to a value. If inside a [`Meteor.deps`](#meteor_deps) context, invalidate the context the next time the variable changes to or from the value."],
+  descr: ["세션 변수의 값과 value`가 같은지 비교한다. [`Meteor.deps`](#meteor_deps) 안에서는 세션 변수를 변경하면 컨텍스트가 무효화된다."],
   args: [
     {name: "key",
      type: "String",
-     descr: "The name of the session variable to test"},
+     descr: "세션 변수의 이름"},
     {name: "value",
-     type: "String, Number, Boolean, null, or undefined",
-     descr: "The value to test against"}
+     type: "String, Number, Boolean, null, undefined",
+     descr: "비교할 값"}
   ]
 };
 
@@ -757,46 +734,46 @@ Template.api.httpcall = {
   id: "meteor_http_call",
   name: "Meteor.http.call(method, url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["Perform an outbound HTTP request."],
+  descr: ["HTTP 요청을 보낸다."],
   args: [
     {name: "method",
      type: "String",
-     descr: 'The HTTP method to use: "`GET`", "`POST`", "`PUT`", or "`DELETE`".'},
+     descr: '사용할 HTTP 메소드. "`GET`", "`POST`", "`PUT`", "`DELETE`"를 사용할 수 있다.'},
     {name: "url",
      type: "String",
-     descr: 'The URL to retrieve.'},
+     descr: '전송할 URL 주소'},
     {name: "asyncCallback",
      type: "Function",
-     descr: "Optional callback.  If passed, the method runs asynchronously, instead of synchronously, and calls asyncCallback.  On the client, this callback is required."
+     descr: "옵션. 이 콜백 함수를 넘기면 메소드는 비동기로 동작하고 asyncCallback가 호출된다. 클라이언트에서는 이 함수를 생략할 수 없다."
     }
   ],
   options: [
     {name: "content",
      type: "String",
-     descr: "String to use as the HTTP request body."
+     descr: "HTTP 요청의 body로 쓰일 스트링."
 },
     {name: "data",
      type: "Object",
-     descr: "JSON-able object to stringify and use as the HTTP request body. Overwrites `content`."},
+     descr: "JSON 스트링로 표현 가능한 객체. HTTP 요청의 body로 사용된다. `content`를 덮어쓴다."},
     {name: "query",
      type: "String",
-     descr: "Query string to go in the URL. Overwrites any query string in `url`."},
+     descr: "URL에 추가될 쿼리 스트링. `url`의 쿼리 부분을 완전히 덮어쓴다."},
     {name: "params",
      type: "Object",
-     descr: "Dictionary of request parameters to be encoded and placed in the URL (for GETs) or request body (for POSTs).  If `content` or `data` is specified, `params` will always be placed in the URL."
+     descr: "요청 파라미터의 딕셔너리. 인코딩돼서 URL이나(GET방식) 요청의 body에(PUT방식) 들어간다. `content`나 `data` 아규먼트가 있으면 `params`는 반드시 URL에 들어간다."
     },
     {name: "auth",
      type: "String",
-     descr: 'HTTP basic authentication string of the form `"username:password"`'},
+     descr: '`"사용자이름:패스워드"` 형식의  HTTP basic authentication 스트링'},
     {name: "headers",
      type: "Object",
-     descr: "Dictionary of strings, headers to add to the HTTP request."},
+     descr: "HTTP 요청에 추가할 헤더를 스트링 형태로 저장한 딕셔너리."},
     {name: "timeout",
      type: "Number",
-     descr: "Maximum time in milliseconds to wait for the request before failing.  There is no timeout by default."},
+     descr: "요청을 기다리는 최대 시간(밀리초). timeout은 기본값이 없다."},
     {name: "followRedirects",
      type: "Boolean",
-     descr: "If true, transparently follow HTTP redirects.  Cannot be set to false on the client."}
+     descr: "만약 true면 투명하게 HTTP 리다이렉션을 수행한다. 클라이언트에서는 false로 설정할 수 없다."}
   ]
 };
 
@@ -804,28 +781,142 @@ Template.api.http_get = {
   id: "meteor_http_get",
   name: "Meteor.http.get(url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["Send an HTTP GET request.  Equivalent to `Meteor.http.call(\"GET\", ...)`."]
+  descr: ["HTTP GET 요청을 보낸다. `Meteor.http.call(\"GET\", ...)`과 같다."]
 };
 
 Template.api.http_post = {
   id: "meteor_http_post",
   name: "Meteor.http.post(url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["Send an HTTP POST request.  Equivalent to `Meteor.http.call(\"POST\", ...)`."]
+  descr: ["HTTP POST 요청을 보낸다. `Meteor.http.call(\"POST\", ...)`과 같다."]
 };
 
 Template.api.http_put = {
   id: "meteor_http_put",
   name: "Meteor.http.put(url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["Send an HTTP PUT request.  Equivalent to `Meteor.http.call(\"PUT\", ...)`."]
+  descr: ["HTTP PUT 요청을 보낸다. `Meteor.http.call(\"PUT\", ...)`과 같다."]
 };
 
 Template.api.http_del = {
   id: "meteor_http_del",
   name: "Meteor.http.del(url, [options], [asyncCallback])",
   locus: "Anywhere",
-  descr: ["Send an HTTP DELETE request.  Equivalent to `Meteor.http.call(\"DELETE\", ...)`.  (Named `del` to avoid conflict with JavaScript's `delete`."]
+  descr: ["HTTP DELETE 요청을 보낸다. `Meteor.http.call(\"DELETE\", ...)`과 같다. (JavaScript의 `delete` 키워드와 충돌을 피하고자 `del`이라는 이름을 사용했다.)"]
 };
 
+// XXX move these up to right place
+Template.api.template_call = {
+  id: "template_call",
+  name: "Template.<em>myTemplate</em>([data])",
+  locus: "Client",
+  descr: ["HTML을 생성하는 템플릿 함수를 호출한다."],
+  args: [
+    {name: "data",
+     type: "Object",
+     descr: "데이터 컨텍스트 객체. 템플릿에서 사용한다."}
+  ]
+};
 
+Template.api.template_rendered = {
+  id: "template_rendered",
+  name: "Template.<em>myTemplate</em>.rendered = function ( ) { ... }",
+  locus: "Client",
+  descr: ["템플릿 인스턴스가 렌더될 때 호출되는 콜백 함수."]
+};
+
+Template.api.template_created = {
+  id: "template_created",
+  name: "Template.<em>myTemplate</em>.created = function ( ) { ... }",
+  locus: "Client",
+  descr: ["템플릿 인스턴스가 생성될 때 호출되는 콜백 함수."]
+};
+
+Template.api.template_destroyed = {
+  id: "template_destroyed",
+  name: "Template.<em>myTemplate</em>.destroyed = function ( ) { ... }",
+  locus: "Client",
+  descr: ["템플릿 인스턴스를 해제할(destroy) 때 호출되는 콜백 함수."]
+};
+
+Template.api.template_events = {
+  id: "template_events",
+  name: "Template.<em>myTemplate</em>.events(eventMap)",
+  locus: "Client",
+  descr: ["이벤트 핸들러를 등록한다"],
+  args: [
+    {name: "eventMap",
+     type: "Object: event map",
+     type_link: "eventmaps",
+     descr: "이 템플릿에 연결할 이벤트 핸들러."}
+  ]
+};
+
+Template.api.template_helpers = {
+  id: "template_helpers",
+  name: "Template.<em>myTemplate</em>.helpers(helpers)",
+  locus: "Client",
+  descr: ["템플릿 헬퍼를 등록한다."],
+  args: [
+    {name: "helpers",
+     type: "Object",
+     descr: "헬퍼 함수가 있는 딕셔너리"}
+  ]
+};
+
+Template.api.template_preserve = {
+  id: "template_preserve",
+  name: "Template.<em>myTemplate</em>.preserve(selectors)",
+  locus: "Client",
+  descr: ["다시 렌더링 될 때 어떤 DOM 엘리먼트를 유지할지(preserve) 명시한다."],
+  args: [
+    {name: "selectors",
+     type: "Array or Object",
+     descr: "`['.thing1', '.thing2']`처럼 딱 한 엘리먼트에 매치하는 셀렉터를 배열로 넘긴다. 셀렉터와 labeling 함수를 딕셔너리 형태로 넘기는 방법도 있다."}
+  ]
+};
+
+Template.api.template_findAll = {
+  id: "template_findAll",
+  name: "<em>this</em>.findAll(selector)",
+  locus: "Client",
+  descr: ["템플릿 인스턴스에서 `selector`에 매치하는 엘리먼트를 찾는다."],
+  args: [
+    {name: "selector",
+     type: "String",
+     descr: 'CSS 셀렉터. 해당 템플릿 인스턴스에서만 적용된다.'}
+  ]
+};
+
+Template.api.template_find = {
+  id: "template_find",
+  name: "<em>this</em>.find(selector)",
+  locus: "Client",
+  descr: ["템플릿 인스턴스에서 `selector`에 매치하는 엘리먼트를 딱 하나 찾는다."],
+  args: [
+    {name: "selector",
+     type: "String",
+     descr: 'CSS 셀렉터. 해당 템플릿 인스턴스에서만 적용된다.'}
+  ]
+};
+
+Template.api.template_firstNode = {
+  id: "template_firstNode",
+  name: "<em>this</em>.firstNode",
+  locus: "Client",
+  descr: ["템플릿 인스턴스의 첫 DOM 노드. 최상위(top-level) 노드임."]
+};
+
+Template.api.template_lastNode = {
+  id: "template_lastNode",
+  name: "<em>this</em>.lastNode",
+  locus: "Client",
+  descr: ["템플릿 인스턴스의 마지막 DOM 노드. 최상위(top-level) 노드임."]
+};
+
+Template.api.template_data = {
+  id: "template_data",
+  name: "<em>this</em>.data",
+  locus: "Client",
+  descr: ["템플릿 인스턴스를 가장 나중에 실행했을 때의 데이터 컨텍스트."]
+};
