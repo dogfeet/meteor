@@ -1,0 +1,37 @@
+<template name="pkg_spiderable">
+{{#better_markdown}}
+## `spiderable`
+
+`spiderable` 패키지는 Meteor 애플리케이션을 웹 검색 엔진이
+검색할 수 있도록 도와주며, 일단은 임시적인 해결책으로 도입되었다.
+Google이 발표한 <a target="_blank"
+href="https://developers.google.com/webmasters/ajax-crawling/">AJAX
+Crawling specification</a>을 사용하여 Google이나 Bing, Yandex등의 검색엔진이
+정보를 수집할 수 있도록 한다.
+
+어떤 페이지에 대한 HTML 정보를 요청하면 Meteor 서버는 <a target="_blank"
+href="http://phantomjs.org/">phantomjs</a>를 통해 클라이언트에서 보일 페이지를
+생성하고 생성된 페이지를 응답으로 반환한다.
+
+{{#warning}}
+검색엔진이 Meteor 애플리케이션을 검색할 수 있도록 하는 이 방법은 
+임시적인 해결책이다. 후에 변경될 것이다.
+{{/warning}}
+
+페이지에서 링크 정보가 검색되도록 하려면 애플리케이션은 어떤 엘리먼트를 클릭 시
+이벤트를 받아서 페이지를 렌더링하는 방식 대신 반드시 
+실제 링크(예, `<a href="/about">`)를 사용해야 한다.
+애플리케이션은 URL에 따라서 각 페이지의 컨텐트를 만들 수 있어야 한다. 
+클라이언트에서는 HTML5의 push-state를 사용하여 URL을 변경해도 페이지를 재-로딩 없이
+페이지의 컨텐트를 변경할 수 있다. <a target="_blank"
+href="http://meteor.com/examples/todos">Todos 예제</a>를 살펴보기 바란다.
+
+{{#warning}}
+`meteor bundle`로 애플리케이션을 deploy 한다면 $PATH를 통해 `phantomjs` 
+(<a target="_blank" href="http://phantomjs.org/">http://phantomjs.org</a>)를
+실행할 수 있는 환경이어야 한다.
+`meteor deploy`로 deploy할 때는 `meteor deploy` 명령이 이를 처리한다.
+{{/warning}}
+
+{{/better_markdown}}
+</template>
