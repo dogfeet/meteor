@@ -1,13 +1,13 @@
-Template.api.is_client = {
-  id: "meteor_is_client",
-  name: "Meteor.is_client",
+Template.api.isClient = {
+  id: "meteor_isClient",
+  name: "Meteor.isClient",
   locus: "Anywhere",
   descr: ["Boolean 변수. 클라이언트 환경이면 true."]
 };
 
-Template.api.is_server = {
-  id: "meteor_is_server",
-  name: "Meteor.is_server",
+Template.api.isServer = {
+  id: "meteor_isServer",
+  name: "Meteor.isServer",
   locus: "Anywhere",
   descr: ["Boolean 변수. 서버 환경이면 true."]
 };
@@ -21,6 +21,32 @@ Template.api.startup = {
     {name: "func",
      type: "Function",
      descr: "시작 시 실행할 코드."}
+  ]
+};
+
+Template.api.absoluteUrl = {
+  id: "meteor_absoluteurl",
+  name: "Meteor.absoluteUrl([path], [options])",
+  locus: "Anywhere",
+  descr: ["앱에서의 절대경로 URL를 만들어낸다. 서버는 환경 변수 `ROOT_URL`을 읽어서 현재 어디에서 작동중인지 알아낸다. `meteor deploy` 할 때에 이 변수는 자동으로 설정된다. 하지만 `meteor bundle` 할 때에는 반드시 설정해주어야 한다."],
+  args: [
+    {name: "path",
+     type: "String",
+     descr: '루트 URL의 뒤에 붙일 경로. "`/`"로 시작하지 않아야 한다.'
+    }
+  ],
+  options: [
+    {name: "secure",
+     type: "Boolean",
+     descr: "HTTPS URL을 만들어낸다."
+    },
+    {name: "replaceLocalhost",
+     type: "Boolean",
+     descr: "localhost를 127.0.0.1로 변환한다. 도메인 이름을 localhost로 인식하면 안될때 유용하다."},
+    {name: "rootUrl",
+     type: "String",
+     descr: "기존의 ROOT_URL 환경 변수를 덮어쓴다. 예: \"`http://foo.example.com`\""
+    }
   ]
 };
 
@@ -164,9 +190,9 @@ Template.api.method_invocation_unblock = {
   descr: ["Meteor 메소드 안에서 호출한다. 다음 실행하는 메소드가 다른 fiber에서 실행되게 한다."]
 };
 
-Template.api.method_invocation_is_simulation = {
-  id: "method_is_simulation",
-  name: "<i>this</i>.is_simulation",
+Template.api.method_invocation_isSimulation = {
+  id: "method_isSimulation",
+  name: "<i>this</i>.isSimulation",
   locus: "Anywhere",
   descr: ["Meteor 메소드 안에서 호출한다. Stub이면 true를 리턴한다."]
 };
@@ -352,7 +378,7 @@ Template.api.cursor_foreach = {
   id: "foreach",
   name: "<em>cursor</em>.forEach(callback)",
   locus: "Anywhere",
-  descr: ["일치하는 도큐먼트마다 콜백 함수를 한 번씩 호출한다."],
+  descr: ["일치하는 도큐먼트마다 'callback' 함수를 동기적, 순차적으로 한 번씩 호출한다."],
   args: [
     {name: "callback",
      type: "Function",
@@ -472,7 +498,7 @@ Template.api.Context = {
   id: "context",
   name: "new Meteor.deps.Context",
   locus: "Client",
-  descr: ["무효화 컨텍스트를 만든다. 무효화 컨텍스트는 특정 코드를 실행하고 의존성을 기록하는 데 쓰인다. 나중에 입력값이 바뀌면 해당 코드가 재실행된다.", "하나의 무효화 컨텍스트는 기본적으로 딱 한 번만 실행되는 콜백 함수의 모음이다. [`on_invalidate`](#on_invalidate) 메소드를 이용해 그 모음에 콜백 함수를 추가한다. [`invalidate`](#invalidate)는 이벤트를 발생시켜 콜백 함수를 실행한다."]
+  descr: ["무효화 컨텍스트를 만든다. 무효화 컨텍스트는 특정 코드를 실행하고 의존성을 기록하는 데 쓰인다. 나중에 입력값이 바뀌면 해당 코드가 재실행된다.", "하나의 무효화 컨텍스트는 기본적으로 딱 한 번만 실행되는 콜백 함수의 모음이다. [`onInvalidate`](#oninvalidate) 메소드를 이용해 그 모음에 콜백 함수를 추가한다. [`invalidate`](#invalidate)는 이벤트를 발생시켜 콜백 함수를 실행한다."]
 };
 
 Template.api.run = {
@@ -488,8 +514,8 @@ Template.api.run = {
 };
 
 Template.api.on_invalidate = {
-  id: "on_invalidate",
-  name: "<em>context</em>.on_invalidate(callback)",
+  id: "oninvalidate",
+  name: "<em>context</em>.onInvalidate(callback)",
   locus: "Client",
   descr: ["해당 컨텍스트가 무효화 됐을 때 호출할 `callback`을 등록한다. `callback`는 정확히 한 번만 실행된다."],
   args: [
@@ -503,7 +529,7 @@ Template.api.invalidate = {
   id: "invalidate",
   name: "<em>context</em>.invalidate()",
   locus: "Client",
-  descr: ["해당 컨텍스트를 무효화 목록에 추가시킨다. 그래서 [`Meteor.flush`](#meteor_flush)가 호출되면 해당 컨텍스트의 `on_invalidate|on_invalidate` 콜백 함수들이 호출된다."]
+  descr: ["해당 컨텍스트를 무효화 목록에 추가시킨다. 그래서 [`Meteor.flush`](#meteor_flush)가 호출되면 해당 컨텍스트의 [`onInvalidate`](#oninvalidate)` 콜백 함수들이 호출된다."]
 };
 
 Template.api.current = {
@@ -696,9 +722,9 @@ Template.api.set = {
   args: [
     {name: "key",
      type: "String",
-     descr: "값을 넣을 세션 변수의 이름. 예를 들자면, `selected_item`"},
+     descr: "값을 넣을 세션 변수의 이름. 예를 들자면, `selectedItem`"},
     {name: "value",
-     type: "Any type",
+     type: "String, Number, Boolean, null, or undefined",
      descr: "`key`의 새로운 값."}
   ]
 };
@@ -919,4 +945,51 @@ Template.api.template_data = {
   name: "<em>this</em>.data",
   locus: "Client",
   descr: ["템플릿 인스턴스를 가장 나중에 실행했을 때의 데이터 컨텍스트."]
+};
+
+
+var rfc = function (descr) {
+  return ('<a href="http://tools.ietf.org/html/rfc5322" target="_blank">RFC5322'
+          + '</a> ' + descr);
+};
+
+Template.api.email_send = {
+  id: "email_send",
+  name: "Email.send(options)",
+  locus: "Server",
+  descr: ["email을 보낸다. 메일 서버로의 접속에 실패하거나 메일 서버가 에러를 리턴하면 `Error`를 던진다."],
+  options: [
+    {name: "from",
+     type: "String",
+     descr: rfc('"From:" 주소 (필수)')
+    },
+    {name: "to",
+     type: "String or Array of strings",
+     descr: rfc('"To:" 주소[들]')
+    },
+    {name: "cc",
+     type: "String or Array of strings",
+     descr: rfc('"Cc:" 주소[들]')
+    },
+    {name: "bcc",
+     type: "String or Array of strings",
+     descr: rfc('"Bcc:" 주소[들]')
+    },
+    {name: "replyTo",
+     type: "String or Array of strings",
+     descr: rfc('"Reply-To:" 주소[들]')
+    },
+    {name: "subject",
+     type: "String",
+     descr: rfc('"Subject:" 줄')
+    },
+    {name: "text",
+     type: "String",
+     descr: rfc('메일 내용 (일반 텍스트)')
+    },
+    {name: "html",
+     type: "String",
+     descr: rfc('메일 내용 (HTML)')
+    }
+  ]
 };

@@ -9,21 +9,23 @@ Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
 
 <h2 id="core"><span>Meteor Core</span></h2>
 
-{{> api_box is_client}}
-{{> api_box is_server}}
+{{> api_box isClient}}
+{{> api_box isServer}}
 {{> api_box startup}}
 
 클라이언트에서는 DOM ready 상태가 되고 `.html` 파일에 정의한 `<body>`
 템플릿이 화면에 다 그려지고 나면 이 함수가 실행된다.
 
     // DB의 내용이 빈 채로 서버가 시작되면 초기 데이터를 생성
-    if (Meteor.is_server) {
+    if (Meteor.isServer) {
       Meteor.startup(function () {
         if (Rooms.find().count() === 0) {
           Rooms.insert({name: "Initial room"});
         }
       });
     }
+
+{{> api_box absoluteUrl}}
 
 <h2 id="publishandsubscribe"><span>Publish and subscribe</span></h2>
 
@@ -39,9 +41,9 @@ Publish 할 레코드 셋 이름과 클라이언트가 Subscribe를 하면 호�
 Meteor에서 커서 Document를 Publish하려면 Publish 함수에서
 [`Collection.Cursor`](#meteor_collection_cursor) 타입 객체를 리턴하면 된다.
 
-    // server: secret_info 컬럼을 제외한 rooms Collection을 Publish한다.
+    // server: secretInfo 컬럼을 제외한 rooms Collection을 Publish한다.
     Meteor.publish("rooms", function () {
-      return Rooms.find({}, {fields: {secret_info: false}});
+      return Rooms.find({}, {fields: {secretInfo: false}});
     });
 
 그리고 Publish 함수에서 레코드 속성을 추가, 삭제할 수 있다.
@@ -62,7 +64,7 @@ DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하�
       var uuid = Meteor.uuid();
       var count = 0;
 
-      var handle = Messages.find({room_id: roomId}).observe({
+      var handle = Messages.find({roomId: roomId}).observe({
         added: function (doc, idx) {
           count++;
           self.set("counts", uuid, {roomId: roomId, count: count});
@@ -178,7 +180,7 @@ Method는 Meteor 클라이언트가 실행하는 원격 함수다.
 
 서버에서 `methods` 함수를 호출해서 클라이언트 클라이언트가 원격에서 실행할 수 있는 함수를 정의한다. 여기서 정의하는 함수는 값을 리턴하고 예외를 던질 수 있다. `this`는 메소드를 실행하는 객채를 가리키고 그 객체에는 다음과 같은 게 들어 있다:
 
-* `is_simulation`: Boolean 값, stub 함수일 때 true
+* `isSimulation`: Boolean 값, stub 함수일 때 true
 * `unblock`: 이 함수를 호출하면 다음 Method는 해당 Method가 
 끝날 때까지 블럭하지 않는다. 다음 Method는 다른 Fiber에서 실행된다.
 
@@ -191,7 +193,7 @@ stub을 정의하면 클라이언트가 서버 Method를 실행할 때 stub 함�
 *흉내(simulate)*내는 것뿐이고 서버를 거치지 않기 때문에 지연도 없다.
 Stub이 예외를 던지면 console에 로그가 출력된다.
 
-{{> api_box method_invocation_is_simulation}}
+{{> api_box method_invocation_isSimulation}}
 
 {{> api_box method_invocation_unblock}}
 
@@ -265,14 +267,14 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
   시도하고 있으면 <code>connecting</code>, 연결에 실패해서 기다리는 상태면
   <code>waiting</code>이다.</dd>
 
-<dt><span class="name">retry_count</span>
+<dt><span class="name">retryCount</span>
   <span class="type">Number</span></dt>
 <dd>연결을 시도한 횟수. 0이면 연결된 거다.</dd>
 
-<dt><span class="name">retry_time</span>
+<dt><span class="name">retryTime</span>
   <span class="type">Number or undefined</span></dt>
 <dd>다음에 다시 연결을 시도하는 시간. 재연결 간격을 알고 싶으면
-  <code>retry_time - (new Date()).getTime()</code>라고 실행한다.
+  <code>retryTime - (new Date()).getTime()</code>라고 실행한다.
   <code>status</code>가 <code>waiting</code>일 때만 이 프로퍼티가 설정된다.</dd>
 
 </dl>
@@ -311,9 +313,9 @@ Meteor는 데이터를 *컬렉션*에 저장한다. `new Meteor.Collection`으�
 
 이 함수는 ORM(Object-Relation Mapper)에서 모델을 정의하는 것과 비슷하게 호출한다.
 사용자, 글, 점수, todo 아이템 같은 정보를 저장하는 *컬렉션*을 만든다.
-사실 아무 데이터나 다 저장할 수 있다. 도큐먼트는 JSON 객체이고 `_id` 프로퍼티가 있어서
+사실 아무 데이터나 다 저장할 수 있다. 도큐먼트는 JSON 객체이고 `Id` 프로퍼티가 있어서
 그 값으로 컬렉션에서 해당 도큐먼트를 식별한다.
-Meteor는 도큐먼트를 만들 때 이 `_id` 값을 생성한다.
+Meteor는 도큐먼트를 만들 때 이 `Id` 값을 생성한다.
 
     // common code on client and server declares livedata-managed mongo
     // collection.
@@ -328,13 +330,13 @@ Meteor는 도큐먼트를 만들 때 이 `_id` 값을 생성한다.
 메소드는 유명한 Mongo API와 비슷하게 동작하며 클라이언트와 서버에서 모두 사용할 수 있다.
 
     // return array of my messages
-    var my_messages = Messages.find({user_id:Session.get('my_user_id')}).fetch();
+    var myMessages = Messages.find({userId:Session.get('myUserId')}).fetch();
 
     // create a new message
     Messages.insert({text: "Hello, world!"});
 
     // mark my first message as "important"
-    Messages.update(my_messages[0].id, {$set: {important: true}});
+    Messages.update(myMessages[0].id, {$set: {important: true}});
 
 `name`을 주고 컬렉션을 만들면 Persistent 컬렉션이 정의된다. 서버에 저장되기 때문에
 모든 사용자가 볼 수 있다. 클라이언트와 서버 코드는 동일한 API로 컬렉션에 접근한다.
@@ -455,15 +457,15 @@ true, false'를 말한다.
 
 예제:
 
-    var groceries_id = Lists.insert({name: "Groceries"});
-    Items.insert({list: groceries_id, name: "Watercress"});
-    Items.insert({list: groceries_id, name: "Persimmons"});
+    var groceriesId = Lists.insert({name: "Groceries"});
+    Items.insert({list: groceriesId, name: "Watercress"});
+    Items.insert({list: groceriesId, name: "Persimmons"});
 
 {{> api_box update}}
 
 `selector` 조건에 일치하는 도큐먼트를 찾아서 `modifier`로 수정한다(<a href="#modifiers">modifier 문서</a>). 기본적으로 일치하는 도큐먼트를 수정하는 것이고 `multi`가 true면 일치하는 도큐먼트를 전부 수정한다.
 
-selector 말고 스트링을 넘길 수도 있는데, 넘긴 스트링은 `_id`의 값으로 간주한다.
+selector 말고 스트링을 넘길 수도 있는데, 넘긴 스트링은 `Id`의 값으로 간주한다.
 
 서버에서는 `update`를 콜백 없이 호출하면 DB가 보낸 ACK를 받거나 예외가 던져질 때까지 블럭된다. 콜백을 주면 `update`는 즉시 리턴하고 작업이 완료되면 아규먼트 없이 콜백이 호출되고 에러가 있으면 `error` 아규먼트가 넘어온다.
 
@@ -485,7 +487,7 @@ Mongo의 `upsert` 기능은 구현하지 않았다.
 {{> api_box remove}}
 
 `selector`에 만족하는 도큐먼트를 모두 찾아서 삭제한다. selector 대신 스트링을 넣으면
-스트링이 `_id`인 도큐먼트를 삭제한다. selector가 undefined이면 위험해서 아무것도
+스트링이 `Id`인 도큐먼트를 삭제한다. selector가 undefined이면 위험해서 아무것도
 하지 않는다. 대신 selector가 `{}`이면 모든 도큐먼트를 삭제한다.
 
 서버에서는 콜백 없이 `remove`를 호출하면 DB가 ACK를 주거나 예외가
@@ -518,9 +520,9 @@ Reactive 컨텍스트에서 `forEach`를 호출하면 해당 도큐먼트의 의
 예제:
 
     // Print the titles of the five top-scoring posts
-    var top_posts = Posts.find({}, {sort: {score: -1}, limit: 5});
+    var topPosts = Posts.find({}, {sort: {score: -1}, limit: 5});
     var count = 0;
-    top_posts.forEach(function (post) {
+    topPosts.forEach(function (post) {
       console.log("Title of post " + count + ": " + post.title);
       count += 1;
     });
@@ -528,6 +530,12 @@ Reactive 컨텍스트에서 `forEach`를 호출하면 해당 도큐먼트의 의
 {{> api_box cursor_map}}
 
 Reactive 컨텍스트에서 `map`를 호출하면 해당 도큐먼트의 의존성을 모두 등록한다.
+
+<!-- The following is not yet implemented, but users shouldn't assume
+sequential execution anyway because that will break. -->
+서버에서 `callback`이 호출 되었을때, 첫 번째 호출이 잠시 멈춰있더라도 다음 
+`callback`은 계속 호출된다. 만약 순차적 실행을 엄격하게 보장받아야 한다면 
+`forEach`를 이용해라. 
 
 {{> api_box cursor_fetch}}
 
@@ -538,8 +546,8 @@ Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의�
     // Display a count of posts matching certain criteria. Automatically
     // keep it updated as the database changes.
     var frag = Meteor.render(function () {
-      var high_scoring = Posts.find({score: {$gt: 10}});
-      return "<p>There are " + high_scoring.count() + " posts with " +
+      var highScoring = Posts.find({score: {$gt: 10}});
+      return "<p>There are " + highScoring.count() + " posts with " +
         "scores greater than 10</p>";
     });
     document.body.appendChild(frag);
@@ -559,26 +567,26 @@ Reactive 컨텍스트에서 `fetch`를 호출하면 해당 도큐먼트의 의�
 `callbacks`의 프로퍼티 함수는 다음과 같다:
 
 <dl class="callbacks">
-{{#dtdd "added(document, before_index)"}}
-도큐먼트가 새로 추가되면 호출된다. 이 도큐먼트는 `before_index` 위치에 있던 도큐먼트
-바로 앞에 삽입된다. 이 도큐먼트가 리스트의 맨 끝에 삽입되면 `before_index`는 삽입하기 전
+{{#dtdd "added(document, beforeIndex)"}}
+도큐먼트가 새로 추가되면 호출된다. 이 도큐먼트는 `beforeIndex` 위치에 있던 도큐먼트
+바로 앞에 삽입된다. 이 도큐먼트가 리스트의 맨 끝에 삽입되면 `beforeIndex`는 삽입하기 전
 리스트의 길이와 같다.
 {{/dtdd}}
 
-{{#dtdd "changed(new_document, at_index, old_document)"}}
-`at_index` 위치에 있는 도큐먼트가 변경될 때 호출된다. 도큐먼트의 내용이 원래는
-old_document이었고 `new_document`로 변경됐다는 의미다.
+{{#dtdd "changed(newDocument, atIndex, oldDocument)"}}
+`atIndex` 위치에 있는 도큐먼트가 변경될 때 호출된다. 도큐먼트의 내용이 원래는
+oldDocument이었고 `newDocument`로 변경됐다는 의미다.
 {{/dtdd}}
 
-{{#dtdd "moved(document, old_index, new_index)"}}
-도큐먼트의 위치가 변경될 때 호출된다. `old_index`에서 `new_index`로 위치가 변경된다.
+{{#dtdd "moved(document, oldIndex, newIndex)"}}
+도큐먼트의 위치가 변경될 때 호출된다. `oldIndex`에서 `newIndex`로 위치가 변경된다.
 그리고 편의상 도큐먼트의 내용도 `document`에 넘어온다. 이 콜백은 `changed`가 호출된
 후에 곧바로 호출된다.
 {{/dtdd}}
 
-{{#dtdd "removed(old_document, at_index)"}}
-`at_index`에 있는 도큐먼트가 삭제될 때 호출된다. 해당 도큐먼트의 내용은
-`old_document`이고 아예 삭제된다.
+{{#dtdd "removed(oldDocument, atIndex)"}}
+`atIndex`에 있는 도큐먼트가 삭제될 때 호출된다. 해당 도큐먼트의 내용은
+`oldDocument`이고 아예 삭제된다.
 {{/dtdd}}
 </dl>
 
@@ -592,7 +600,7 @@ old_document이었고 `new_document`로 변경됐다는 의미다.
 
     // Keep track of how many administrators are online.
     var count = 0;
-    var query = Users.find({admin: true, online_now: true});
+    var query = Users.find({admin: true, onlineNow: true});
     var handle = query.observe({
       added: function (user) {
         count++;
@@ -651,7 +659,7 @@ modifier는 어떻게 도큐먼트를 업데이트해야 하는지를 명시하�
 그래서 DB에 원래 있던 도큐먼트를 통째로 바꿔버린다.
 
     // Find the document with id "123", and completely replace it.
-    Users.update({_id: "123"}, {name: "Alice", friends: ["Bob"]});
+    Users.update({Id: "123"}, {name: "Alice", friends: ["Bob"]});
 
 나머지 <a href="http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations" target="_blank">modifier에
 대해서는 mongo 문서</a>를 봐라.
@@ -697,8 +705,8 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 `Session`은 리스트에서 현재 선택한 아이템 같은 것을 저장해둔다거나 하는데 사용한다.
 
 `Session`도 Reactive라는 것이 중요하다. 템플릿에
-[`Session.get`](#session_get)`("current_list")`라고 호출하는 코드가 있으면
-[`Session.set`](#session_set)이 호출될 때마다 템플릿을 다시 렌더링한다.
+[`Session.get`](#session_get)`("currentList")`라고 호출하는 코드가 있으면
+[`Session.set`](#session_set) `("currentList", x)`이 호출될 때마다 템플릿을 다시 렌더링한다.
 
 {{> api_box set}}
 
@@ -741,33 +749,33 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 예제:
 
-    <template name="posts_view">
+    <template name="postsView">
     {{dstache}}! Show a dynamically updating list of items. Let the user click on an
         item to select it. The selected item is given a CSS class so it
         can be rendered differently. }}
 
     {{dstache}}#each posts}}
-      {{dstache}}> post_item }}
+      {{dstache}}> postItem }}
     {{dstache}}/each}}
     </{{! }}template>
 
-    <template name="post_item">
-      <div class="{{dstache}}post_class}}">{{dstache}}title}}</div>
+    <template name="postItem">
+      <div class="{{dstache}}postClass}}">{{dstache}}title}}</div>
     </{{! }}template>
 
     ///// in JS file
-    Template.posts_view.posts = function() {
+    Template.postsView.posts = function() {
       return Posts.find();
     };
 
-    Template.post_item.post_class = function() {
-      return Session.equals("selected_post", this._id) ?
+    Template.postItem.postClass = function() {
+      return Session.equals("selectedPost", this._id) ?
         "selected" : "";
     };
 
-    Template.post_item.events({
+    Template.postItem.events({
       'click': function() {
-        Session.set("selected_post", this._id);
+        Session.set("selectedPost", this._id);
       }
     });
 
@@ -845,6 +853,10 @@ Handlebars에서 이 헬퍼는 `{{dstache}}foo}}` 처럼 호출할 수 있다.
 {{> api_box template_preserve}}
 
 DOM 엘리먼트가 다시 렌더링돼도 그대로 유지할(preserve) 수 있다. 감싼 HTML이 교체돼도 해당 DOM 엘리먼트는 그대로 유지한다. 그래서 템플릿이 다시 렌더링돼도 텍스트 필드, iframe 같은 엘리먼트의 상태를 유지할 수 있다. Meteor는 Preserve 엘리먼트 주변을 패치하기 때문에 Preserve 엘리먼트는 다시 렌더링된 후에도 유지된다. 
+
+{{#note}}
+기본적으로 새로운 Meteor 앱은 `preserve-inputs` 패키지를 포함한다.  이 패키지는 `input`과 `textarea`, `button`, `select`, `option`타입의 모든 엘리먼트를 유지한다. 이 모든 엘리먼트는 유니크한 `id` 속성이나 유니크한 `id` 속성을 가진 엘리먼트안에 있는 `name` 속성을 가지는 엘리먼트 이다. 이 기능을 끄려면 그냥 `preserve-inputs` 패키지를 지운다.
+{{/note}}
 
 DOM 엘리먼트를 같지만 새로운 엘리먼트로 교체하는 것은 원래 엘리먼트를 그대로 유지하는 것과 다르다. 그래서 Preseve는 다음 같은 경우에 매우 유용하다:
 
@@ -948,7 +960,7 @@ DB 도큐먼트를 여러 개 렌더링할 때에는 `renderList`가 `Meteor.ren
     var frag = Meteor.renderList(
       Posts.find({tags: "frontpage"}),
       function(post) {
-        var style = Session.equals("selectedId", post._id) ? "selected" : "";
+        var style = Session.equals("selectedId", post.Id) ? "selected" : "";
         // A real app would need to quote/sanitize post.name
         return '<div class="' + style + '">' + post.name + '</div>';
       });
@@ -957,7 +969,7 @@ DB 도큐먼트를 여러 개 렌더링할 때에는 `renderList`가 `Meteor.ren
     // Select a post.  This will cause only the selected item and the
     // previously selected item to update.
     var somePost = Posts.findOne({tags: "frontpage"});
-    Session.set("selectedId", somePost._id);
+    Session.set("selectedId", somePost.Id);
 
 {{#api_box_inline eventmaps}}
 
@@ -1015,20 +1027,20 @@ DB 도큐먼트를 여러 개 렌더링할 때에는 `renderList`가 `Meteor.ren
 핸들러에 넘어오는 이벤트 객체에 있는 프로퍼티와 메소드는 다음과 같다:
 
 <dl class="objdesc">
-{{#dtdd "type" "String"}}
+{{#dtdd name="type" type="String"}}
 "click", "blur", "keypress" 같은 이벤트 타입
 {{/dtdd}}
 
-{{#dtdd "target" "DOM Element"}}
+{{#dtdd name="target" type="DOM Element"}}
 이벤트가 최초 발생한 DOM 엘리먼트
 {{/dtdd}}
 
-{{#dtdd "currentTarget" "DOM Element"}}
+{{#dtdd name="currentTarget" type="DOM Element"}}
 지금 이 이벤트를 핸들하는 엘리먼트. 이 엘리먼트가 이벤트 맵의
 Selector와 일치하는 엘리먼트다. 이벤트가 전파하는 엘리먼트는 `target`과 그 조상이다.
 {{/dtdd}}
 
-{{#dtdd "which" "Number"}}
+{{#dtdd name="which" type="Number"}}
 마우스 이벤트일 때는 어떤 마우스 버튼이 눌린 것인지를 나타낸다(1=left, 2=middle, 3=right).
 키 이벤트일 때는 캐릭터나 키 코드를 의미한다.
 {{/dtdd}}
@@ -1166,14 +1178,14 @@ Reactive 업데이트를 지원하는 함수를 호출할 때 자동으로 "무�
 {{> api_box Context }}
 
 이 생성자로 무효화 컨텍스트를 만들고 [`run`](#run) 함수로 무효화 컨텍스트
-안에서 코드를 실행한다. 그리고 [`on_invalidate`](#on_invalidate)로 콜백을
+안에서 코드를 실행한다. 그리고 [`onInvalidate`](#onInvalidate)로 콜백을
 등록하면 다시 실행돼야 할 때 그 콜백이 실행된다.
 
 전역 변수 [`Meteor.deps.Context.current`](#current)을 확인하면 무효화 컨텍스트
 안에서 실행하는 건지 아닌지 알 수 있다. 컨텍스트 밖에서 그 변수의 값은 `null`이
 된다. Reactivity 시스템을 만들 때는 컨텍스트를 저장하게 하여야 한다.
 그래야 나중에 뭔가 변경이 생겨서 [`invalidate`](#invalidate)를 호출할 때 그
-컨텍스트를 다시 실행할 수 있다. 이렇게 하면 [`on_invalidate`](#on_invalidate)으로
+컨텍스트를 다시 실행할 수 있다. 이렇게 하면 [`onInvalidate`](#onInvalidate)으로
 cleanup 함수를 설정해서 추적을 언제 멈추는지 알 수 있다.
 
 무효화 컨텍스트에는 양의 정수인 id가 부여된다. 편한 대로 아무 데나
@@ -1188,7 +1200,7 @@ cleanup 함수를 설정해서 추적을 언제 멈추는지 알 수 있다.
 
 run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 컨텍스트를 가리킨다.
 
-{{> api_box on_invalidate }}
+{{> api_box onInvalidate }}
 
 이 컨텍스트가 아직 무효화되지 않았으면 `callback`을 [`invalidate`](#invalidate)가
 호출될 때 호출되는 함수 목록에 추가한다.
@@ -1196,23 +1208,23 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
 다음과 같은 유형의 Caller가 이 함수를 호출한다:
 
-* 무효화 컨텍스트를 만드는 함수는 `on_invalidate` 콜백을 사용해서 컨텍스트에서
+* 무효화 컨텍스트를 만드는 함수는 `onInvalidate` 콜백을 사용해서 컨텍스트에서
   코드를 재실행하도록 신호를 준다. 코드를 재실행하려면 무효화 컨텍스트를 새로
-  만들고 `on_invalidate` 콜백을 다시 등록해야 한다.
+  만들고 `onInvalidate` 콜백을 다시 등록해야 한다.
   컨텍스트가 무효화될 때마다 이 과정이 반복된다.
 
 * Reactive 데이터 소스인 함수는 [`Meteor.deps.Context.current`](#current)를
-  일종의 리스너 목록에 저장한다. 그리고 그 함수는 `on_invalidate` 콜백을
+  일종의 리스너 목록에 저장한다. 그리고 그 함수는 `onInvalidate` 콜백을
   사용해서 리스트 목록에서 컨텍스트를 제거한다.
 
 예제:
 
     // Print the current username to the console.  Will re-run every time
     // the username changes.
-    var log_current_username = function () {
+    var logCurrentUsername = function () {
       var update = function () {
         var ctx = new Meteor.deps.Context();  // invalidation context
-        ctx.on_invalidate(update);         // rerun update() on invalidation
+        ctx.onInvalidate(update);         // rerun update() on invalidation
         ctx.run(function () {
           var username = Session.get("username");
           console.log("The current username is now", username);
@@ -1222,10 +1234,10 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
     };
 
     // Example use. Since Session is reactive (meaning that it knows how
-    // to use Meteor.deps to record its dependencies), log_current_username
+    // to use Meteor.deps to record its dependencies), logCurrentUsername
     // will be re-run whenever Session.set is called for "username".
     Session.set("username", "matt");
-    log_current_username(); // prints matt
+    logCurrentUsername(); // prints matt
     Session.set("username", "geoff"); // immediately prints geoff
     Session.set("username", "geoff"); // won't print: Session won't trigger
                                       // invalidation if the value is the same.
@@ -1234,9 +1246,9 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
 무효화 상태에서는 `invalidate` 함수를 호출한들 아무 일도 일어나지 않는다
 (수학적으로 "멱등(idempotent)"이라고 부른다). 무효화 상태가 아니면 
-해당 컨텍스트에 [`on_invalidate`](#on_invalidate)로 등록한 함수를 모두 실행한다.
+해당 컨텍스트에 [`onInvalidate`](#onInvalidate)로 등록한 함수를 모두 실행한다.
 
-`invalidate` 함수가 호출되자마자 [`on_invalidate`](#on_invalidate) 함수가
+`invalidate` 함수가 호출되자마자 [`onInvalidate`](#onInvalidate) 함수가
 바로 실행되는 것이 아니라 [`Meteor.flush`](#meteor_flush)가 실행할 때 호출된다.
 `invalidate` 함수는 컨텍스트를 flush 목록에 추가하고 그 외에 별로 하는 게 없다.
 
@@ -1255,7 +1267,7 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
     // Function to get the temperature (and, if called in a reactive
     // context, start listening for changes to the temperature.)
-    Weather.prototype.get_temp = function () {
+    Weather.prototype.getTemp = function () {
       var context = Meteor.deps.Context.current;
 
       // If we're inside a context, and it's not yet listening to
@@ -1266,7 +1278,7 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
         // .. and remember to take it off our list when it goes away.
         var self = this;
-        context.on_invalidate(function () {
+        context.onInvalidate(function () {
           delete self.listeners[context.id];
         });
       }
@@ -1277,20 +1289,20 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 
     // Function to set the temperature, and notify anyone that might be
     // listening for temperature updates.
-    Weather.prototype.set_temp = function (new_temp) {
-      if (this.temperature === new_temp)
+    Weather.prototype.setTemp = function (newTemp) {
+      if (this.temperature === newTemp)
         return; // don't want to trigger invalidation if there's no change.
 
       // Set the temperature
-      this.temperature = new_temp;
+      this.temperature = newTemp;
 
       // Notify any contexts that care about temperature changes
-      for (var context_id in this.listeners)
-        // This will trigger the on_invalidate function above, but not
+      for (var contextId in this.listeners)
+        // This will trigger the onInvalidate function above, but not
         // immediately -- only when Meteor.flush() is called, or at the end
         // of the event loop. So we know that this.listeners will be
         // emptied, but it won't change while we're trying to loop over it.
-        this.listeners[context_id].invalidate();
+        this.listeners[contextId].invalidate();
     };
 
 {{> api_box current }}
@@ -1320,9 +1332,9 @@ Garbage Collector는 그 엘리먼트를 제거해버린다. 수동으로 `flush
 DOM 트리에 모두 넣어졌는지 꼭 확인해야 한다.
 
 구체적으로 말해서, `flush`는 무효화된 [Reactive 컨텍스트](#context)의
-[무효화 콜백](#on_invalidate)을 모두 호출한다. 모든
+[무효화 콜백](#onInvalidate)을 모두 호출한다. 모든
 [Reactive 컨텍스트](#context)에 대해 호출하는 것은 아니고 아직
-[무효화 콜백](#on_invalidate)이 호출되지 않은 컨텍스트만 해당된다.
+[무효화 콜백](#onInvalidate)이 호출되지 않은 컨텍스트만 해당된다.
 flush는 실행해야 할 무효화 콜백이 전부 실행할 때까지 계속 실행 된다.
 무효화시 [`Meteor.ui.render`](#meteor_ui_render)는 DOM 엘리먼트를 제거한다.
 
@@ -1387,10 +1399,10 @@ result 객체의 내용:
 
 서버 Method의 예:
 
-    Meteor.methods({check_twitter: function (user_id) {
+    Meteor.methods({checkTwitter: function (userId) {
       this.unblock();
       var result = Meteor.http.call("GET", "http://api.twitter.com/xxx",
-                                    {params: {user: user_id}});
+                                    {params: {user: userId}});
       if (result.statusCode === 200)
          return true
       return false;
@@ -1410,6 +1422,26 @@ result 객체의 내용:
 {{> api_box http_post}}
 {{> api_box http_put}}
 {{> api_box http_del}}
+
+<h2 id="email"><span>Email</span></h2>
+
+`email` 패키지는 Meteor 앱에서 이메일을 보내는데에 사용한다. 이를 사용하려면,
+`$ meteor add email` 를 입력해 email 패키지를 프로젝트에 추가한다.
+
+서버는 메일을 보낼때 `MAIL_URL`환경 변수를 사용한다. 현재 Meteor는 SMTP만을 
+지원한다. 따라서 환경 변수 `MAIL_URL`은 `smtp://USERNAME:PASSWORD@HOST:PORT/`의 
+포멧이어야 한다. `meteor deploy`를 이용해서 디플로이 할 땐 `MAIL_URL`의 기본값이
+현재 계정이 된다.(<a href="http://www.mailgun.com/" target="_blank">Mailgun</a>
+를 이용함) 이 계정으로 하루에 200개의 메일을 보낼 수 있다. `process.env.MAIL_URL
+`에 원하는 값을 할당해서 원하는 URL을 이용할 수 있다. 할당은 `Email.send`전에 해
+야한다.
+
+`MAIL_URL`이 설정되어 있지 않으면(예를 들어 앱이 자기 컴퓨터에서 돌아가고 있다거나) `Email.send`를 호출했을 때 이메일이 전달되는 대신 메세지가 표준 출력으로 출력된다.
+
+{{> api_box email_send }}
+
+`from`은 반드시 채워넣어야 하며, `to`와 `cc`, `bcc` 중 적어도 하나 이상은 채워넣
+어야 한다. 다른 옵션은 필요하면 설정한다.
 
 {{/better_markdown}}
 </template>

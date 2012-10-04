@@ -41,7 +41,7 @@ Meteor 앱은 브라우저가 실행하는 클라이언트 JavaScript와 Node.js
 
 `client`와 `server` 디렉토리 밖에 있는 파일들은 클라이언트와 서버 모두에서
 사용한다. 모델 파일이나 공통 파일에 적합한 장소다. Meteor는
-[`is_client`와 `is_server`](#meteor_is_client) 프로퍼티를 제공하기 때문에
+[`isClient`와 `isServer`](#meteor_isClient) 프로퍼티를 제공하기 때문에
 해당 코드가 클라이언트에서 실행할 코드인지 서버에서 실행할 코드인지
 구분할 수 있다.
 
@@ -101,8 +101,8 @@ href="http://www.mongodb.org/display/DOCS/Manual"> MongoDB API</a>를
 
     // 서버: 모든 채팅방 정보, 채팅방의 메시지를 Publish
     Meteor.publish("chatrooms");
-    Meteor.publish("messages", function (room_id) {
-      return Messages.find({room: room_id});
+    Meteor.publish("messages", function (roomId) {
+      return Messages.find({room: roomId});
     });
 
     // 클라이언트: 모든 채팅방 정보, 첫 번째 채팅방의 메시지를 Subscribe
@@ -130,6 +130,12 @@ Subscribe하는 클라이언트는 자동으로 그 문서를 받아서 업데�
 MongoDB 대신 다른 데이터베이스를 사용하고 싶다면 서버 데이터베이스
 드라이버와 클라이언트 캐시를 만들어야 한다. `mongo-livedata` 패키지를
 참고하여 만드는 것이 좋다.
+
+{{#note}}
+Meteor의 pre-release 버전은 사용자 로그인 시스템과 로그인된 사용자들이 안전하게 
+데이터를 읽고 쓸수 있도록 하는 도구들이 포함되어있다. 더 알고 싶다면 위키 페이지<a target="_blank"
+href="https://github.com/meteor/meteor/wiki/Getting-Started-with-Auth">Getting +Started with Auth</a>를 참고하라.
+{{/note}}
 
 {{/better_markdown}}
 </template>
@@ -301,15 +307,15 @@ helper 함수를 정의하는 것이다. `Template.[template name] 객체에
 helper 함수를 바로 추가한다. 다음과 같은 템플릿이 있다고 하고:
 
     <template name="players">
-      {{dstache}}#each top_scorers}}
+      {{dstache}}#each topScorers}}
         <div>{{dstache}}name}}</div>
       {{dstache}}/each}}
     </{{! }}template>
 
-템플릿 함수를 호출할 때 `top_scorers`를 파라미터처럼 전달하지
+템플릿 함수를 호출할 때 `topScorers`를 파라미터처럼 전달하지
 않고 `Template.players`의 함수로 정의한다:
 
-    Template.players.top_scorers = function () {
+    Template.players.topScorers = function () {
       return Users.find({score: {$gt: 100}}, {sort: {score: -1}});
     };
 
@@ -321,25 +327,25 @@ helper 함수를 바로 추가한다. 다음과 같은 템플릿이 있다고 �
 Helper 함수에서 `this`는 템플릿 데이터를 가리킨다:
 
     // JavaScript 파일
-    Template.players.league_is = function (league) {
+    Template.players.leagueIs = function (league) {
       return this.league === league;
     };
 
     <!-- HTML 파일 -->
     <template name="players">
-      {{dstache}}#each top_scorers}}
-        {{dstache}}#if league_is "junior"}}
+      {{dstache}}#each topScorers}}
+        {{dstache}}#if leagueIs "junior"}}
           <div>Junior: {{dstache}}name}}</div>
         {{dstache}}/if}}
-        {{dstache}}#if league_is "senior"}}
+        {{dstache}}#if leagueIs "senior"}}
           <div>Senior: {{dstache}}name}}</div>
         {{dstache}}/if}}
       {{dstache}}/each}}
     </{{! }}template>
 
 {{#note}}
-`if`와 `league_is`는 기술적으로 헬퍼이고 기존의 Handlebar 로는
-`league_is`를 실행하지 못한다. `{{dstache}}#if league_is "junior"}}`란
+`if`와 `leagueIs`는 기술적으로 헬퍼이고 기존의 Handlebar 로는
+`leagueIs`를 실행하지 못한다. `{{dstache}}#if leagueIs "junior"}}`란
 표현은 Meteor에서 Hanldebar를 확장한 것이다.
 그 결과로 helper 블럭 안에서 helper를 사용할 수 있다.
 {{/note}}
@@ -356,19 +362,19 @@ Helper 함수로 상수를 넘길 수 있다:
     <!-- myapp.html -->
     <template name="scores">
       {{dstache}}#each player}}
-        {{dstache}}> player_score}}
+        {{dstache}}> playerScore}}
       {{dstache}}/each}}
     </{{! }}template>
 
-    <template name="player_score">
+    <template name="playerScore">
       <div>{{dstache}}name}}: {{dstache}}score}}
-        <span class="give_points">Give points</span>
+        <span class="givePoints">Give points</span>
       </div>
     </{{! }}template>
 
     <!-- myapp.js -->
-    Template.player_score.events({
-      'click .give_points': function () {
+    Template.playerScore.events({
+      'click .givePoints': function () {
         Users.update({_id: this._id}, {$inc: {score: 2}});
       }
     });
@@ -482,6 +488,9 @@ Heroku 같은 호스팅 업체 같은 곳에도 자유롭게 배포할 수 있�
 가진 MongoDB가 잆으면 [MongoHQ](http://mongohq.com)를 사용하면 좋다.
 
     $ PORT=3000 MONGO_URL=mongodb://localhost:27017/myapp node bundle/main.js
+
+다른 패키지는 또 다른 환경 변수가 필요할 수도 있다(예를 들어 `email`은 환경 변수
+`MAIL_URL`을 필요로 한다)
 
 {{#warning}}
 지금까지 번들은 해당 번들을 만든 플랫폼에서만 실행했다. 다른 플랫폼에서
