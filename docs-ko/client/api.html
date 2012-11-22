@@ -3,8 +3,8 @@
 
 <h1 id="api">The Meteor API</h1>
 
-Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
-클라이언트는 브라우저이고 서버는 Node.js 컨테이너이다.
+Javascript 코드는 *서버*와 *클라이언트* 모두에서 실행된다.
+클라이언트는 브라우저이고 서버는 [Node.js](http://nodejs.org/)컨테이너이다.
 이 API 레퍼런스에서는 함수를 설명할 때 그 함수가 클라이언트용인지 서버용인지 명시한다.
 
 <h2 id="core"><span>Meteor Core</span></h2>
@@ -27,7 +27,7 @@ Javascript 코드는 서버와 클라이언트 모두에서 실행된다.
 
 {{> api_box absoluteUrl}}
 
-<h2 id="publishandsubscribe"><span>Publish and subscribe</span></h2>
+<h2 id="publishandsubscribe"><span>Publish와 subscribe</span></h2>
 
 Meteor 서버가 어떻게 레코드를 Publish하고 또 어떻게 그 레코드를 Subscribe해야
 하는지 설명한다. 여기서 설명하는 함수로 Publish와 Subscribe를 제어한다.
@@ -35,7 +35,7 @@ Meteor 서버가 어떻게 레코드를 Publish하고 또 어떻게 그 레코�
 {{> api_box publish}}
 
 서버에서 `Meteor.publish`를 호출하면 클라이언트에 Publish할 수 있다.
-Publish 할 레코드 셋 이름과 클라이언트가 Subscribe를 하면 호출될
+Publish 할 레코드 셋 이름과 클라이언트가 Subscribe를 할 때마다 호출될
 *Publish 함수*, 이렇게 아규먼트를 두 개 주고 호출한다.
 
 Meteor에서 커서 Document를 Publish하려면 Publish 함수에서
@@ -43,15 +43,22 @@ Meteor에서 커서 Document를 Publish하려면 Publish 함수에서
 
     // server: secretInfo 컬럼을 제외한 rooms Collection을 Publish한다.
     Meteor.publish("rooms", function () {
-      return Rooms.find({}, {fields: {secretInfo: false}});
+      return Rooms.find({}, {fields: {secretInfo: 0}});
     });
 
-그리고 Publish 함수에서 레코드 속성을 추가, 삭제할 수 있다.
-Publish 함수에서 `this`의 <i>set</i>, <i>unset</i> 메소드를 호출해서 추가, 삭제한다.
+    // ... 그리고 아래 코드는 로그인 된 유저가 admin이면 secret info를
+    // publish한다. 만약 클라이언트가 두 스트림을 subscribe하고 있다면 
+    // Room 컬렉션의 같은 도큐먼트로 머지된다.
+    Meteor.publish("adminSecretInfo", function () {
+      return Rooms.find({admin: this.userId}, {fields: {secretInfo: 1}});
+    });
+
+그리 Publish 함수에서 레코드의 어트리뷰트를 추가, 삭제할 수 있다.
+Publish 함수에서 `this`의 [`set`](#publish_set), [`unset`](#publish_unset) 메소드를 호출해서 추가, 삭제한다.
 
 <!-- discuss complete -->
 
-observe()를 사용해서 DB가 변경되는 것을 지켜보려면
+[`observe`](#observe)를 사용해서 DB가 변경되는 것을 지켜보려면
 observe 콜백 안에서 `this.flush`를 호출해 줘야 한다.
 DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하면
 업데이트 작업이 완료됐다고 간주한다.
@@ -102,6 +109,12 @@ DB를 업데이트하는 메소드는 observe에 넘긴 콜백에서 리턴하�
 현재 Publish 중이라는 경고 메시지를 보여주지만, Publish는 정상적으로 동작한다.
 {{/warning}}
 
+
+{{> api_box subscription_userId}}
+
+이것은 상수이다. 하지만 로그인 유저가 바뀐다면 publish 함수는 새로운 값을 
+리턴해준다.
+
 {{> api_box subscription_set}}
 {{> api_box subscription_unset}}
 {{> api_box subscription_complete}}
@@ -115,8 +128,8 @@ Publish 핸들러에서 [`observe`](#observe)를 호출했으면 그 핸들러 �
 
 {{> api_box subscribe}}
 
-Subscribe하는 것은 레코드를 클라이언트로 보내라고 서버에 알리는 것이다.
-클라이언트는 이 레코드를 로컬에 있는 Minimongo 컬렉션에 저장한다. 이 때
+Subscribe하는 것은 레코드를 클라이언트로 보내달라고 서버에 알리는 것이다.
+클라이언트는 이 레코드를 로컬에 있는 Minimongo의 컬렉션에 저장한다. 이 때
 컬렉션 이름이 같아야 한다. Meteor는 해당 이름으로 된 `Meteor.Collection`이
 만들어질 때까지 들어오는 데이터를 큐에 넣는다.
 
@@ -134,7 +147,7 @@ Subscribe하는 것은 레코드를 클라이언트로 보내라고 서버에 �
 Document의 속성이 모두 삭제되면 Document도 삭제된다.
 빈 Document를 Publish하고 싶으면 아무 속성이나 하나 넣어야 한다.
 
-    // Clicks.insert({exists: true});
+    Clicks.insert({exists: true});
 
 {{> api_box autosubscribe}}
 
@@ -183,6 +196,8 @@ Method는 Meteor 클라이언트가 실행하는 원격 함수다.
 * `isSimulation`: Boolean 값, stub 함수일 때 true
 * `unblock`: 이 함수를 호출하면 다음 Method는 해당 Method가 
 끝날 때까지 블럭하지 않는다. 다음 Method는 다른 Fiber에서 실행된다.
+* `userId`: 현재 유저의 아이디.
+* `setUserId`: 현재 클라이언트를 해당 유저와 연결시키는 함수.
 
 클라이언트에서 `methods`를 호출하면 서버의 메소드와 이름이 같은 *stub* 함수가 정의된다.
 stub 함수는 필요할 때만 정의해서 사용할 수 있다. stub 함수가 있을 때 원격 메소드를 
@@ -192,6 +207,26 @@ stub을 정의하면 클라이언트가 서버 Method를 실행할 때 stub 함�
 클라이언트에서는 stub이 리턴하는 값은 무시된다. stub은 서버 메소드의 결과를
 *흉내(simulate)*내는 것뿐이고 서버를 거치지 않기 때문에 지연도 없다.
 Stub이 예외를 던지면 console에 로그가 출력된다.
+
+{{> api_box method_invocation_userId}}
+
+유저의 id는 임의의 스트링으로 보통 데이터베이스에 있는 유저 레코드의 아이디를 사용한다.
+`setUserId` 함수를 이용해 이를 설정할 수 있다. 
+[Meteor accounts system](#accounts_api)를 이용해서 쉽게 관리할 수 있다.
+
+{{> api_box method_invocation_setUserId}}
+
+이 메서드로 현재 접속해 있는 사람이 로그인 한 유저를 다른 유저로 바꿀 수 있다.
+현재 커넥션에서 앞으로 호출하는 메서드들은 `userId`의 값을 사용하는데, 이 
+메서드는 단순히 그 값을 재할당하는 함수이다. `null`을 넘기는 것으로 로그아웃한다.
+
+[내장된 Meteor accounts system](#accounts_api)을 사용한다면 이 시스템은 
+[`Meteor.users`](#meteor_users)콜렉션에 있는 한 도큐먼트의 `_id`필드와 
+userId를 같게 취급할 것이다.
+
+`setUserId`는 기존 시스템에 소급적용되지 않는다. 다시 말해 이 메서드는 지금부터 
+호출될 메서드들에만 적용된다. 현재 커넥션에서 `setUserId`호출 이전의 메서드들은
+그 메서드 호출을 시작했을 당시의 `userId`를 가지고 실행된다.
 
 {{> api_box method_invocation_isSimulation}}
 
@@ -246,6 +281,7 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 {{> api_box meteor_apply}}
 
 `Meteor.apply`는 `Meteor.call`과 비슷하지만 아규먼트를 배열에 담아서 넘길 수 있다.
+그리고 클라이언트의 메서드를 호출 방식을 옵션으로 지정할 수도 있다.
 
 <h2 id="connections"><span>Server connections</span></h2>
 
@@ -263,9 +299,9 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 
 <dt><span class="name">status</span>
   <span class="type">String</span></dt>
-<dd>연결을 시도하는 상태를 나타낸다. 연결이 확립된 상태면 <code>connected</code>, 연결을
-  시도하고 있으면 <code>connecting</code>, 연결에 실패해서 기다리는 상태면
-  <code>waiting</code>이다.</dd>
+<dd>연결을 시도하는 상태를 나타낸다. 연결이 확립된 상태면 `connected`, 연결을
+  시도하고 있으면 `connecting`, 연결에 실패해서 기다리는 상태면
+  `waiting`이다.</dd>
 
 <dt><span class="name">retryCount</span>
   <span class="type">Number</span></dt>
@@ -274,13 +310,13 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 <dt><span class="name">retryTime</span>
   <span class="type">Number or undefined</span></dt>
 <dd>다음에 다시 연결을 시도하는 시간. 재연결 간격을 알고 싶으면
-  <code>retryTime - (new Date()).getTime()</code>라고 실행한다.
-  <code>status</code>가 <code>waiting</code>일 때만 이 프로퍼티가 설정된다.</dd>
+  `retryTime - (new Date()).getTime()`라고 실행한다.
+  `status`가 `waiting`일 때만 이 프로퍼티가 설정된다.</dd>
 
 </dl>
 
-이것은 <a href="#reactivity">Reactive</a> 데이터 소스이기 때문에 콜백을 사용할 필요가 없다.
-<a href="#templates">템플릿</a>이나 <a href="#meteor_deps">무효화 컨텍스트</a>에서
+이것은 [Reactive](#reactivity) 데이터 소스이기 때문에 콜백을 사용할 필요가 없다.
+[템플릿](#templates)이나 [invalidation](#meteor_deps)에서
 사용하면 업데이트가 실시간으로 잘 된다.
 
 {{> api_box reconnect}}
@@ -290,13 +326,24 @@ DB 수정 함수는(`insert`, `update`, `remove`) Method로 구현했기 때문�
 다른 Meteor 앱의 Method를 호출하거나 데이터를 Subscribe하려면 그 앱의 URL을 주고
 `Meteor.connect`를 호출한다. `Meteor.connect`는 다음과 같은 메소드가 있는 객체를 리턴한다:
 
-* `subscribe`
-* `methods` (Stub을 정의하는 데 사용함)
-* `call`
-* `apply`
-* `status`
-* `reconnect`
+* `subscribe` -
+  레코드 셋을 subscribe한다. [Meteor.subscribe](#meteor_subscribe)를 참고하라.
+* `call` -
+  메서드를 호출한다. [Meteor.call](#meteor_call)를 참고하라.
+* `apply` -
+  아규먼트를 배열로 받아 메서드를 호출한다. [Meteor.apply](#meteor_apply)를 참고하라.
+* `methods` -
+  리모트 서버에 정의된 메서드와 매핑되는 클라이언트 만의 stub를 정의한다.
+  [Meteor.methods](#meteor_methods)를 참고하라.
+* `status` -
+  현재 커넥션의 상태를 가져온다. [Meteor.status](#meteor_status)를 참고하라.
+* `reconnect` -
+  [Meteor.reconnect](#meteor_reconnect)를 참고하라.
+* `onReconnect` - 재접속을 시작할 때 가장 처음으로 불릴 함수를 설정한다. 이 함수는 
+  다른 어떤 함수보다도 먼저 실행된다. 예를 들어 다시 연결을 맺을때 새 연결에 적합한
+  인증 컨텍스트를 사용하도록 할 수 있다.
 
+기본적으로 클라이언트 로드가 완료되면 커넥션을 시작한다.
 `Meteor.subscribe`, `Meteor.status`, `Meteor.call`, `Meteor.apply`를 직접 호출하면
 기본 서버에 연결된다.
 
@@ -344,17 +391,18 @@ Meteor는 도큐먼트를 만들 때 이 `Id` 값을 생성한다.
 정확히 말해서 `name`을 주고 컬렉션을 만들면 다음과 같은 일들이 일어난다:
 
 * 서버에서는 백엔드 Mongo 서버에 주어진 이름으로 컬렉션이 만들어진다.
-서버 컬렉션의 메소드를 호출하면 Mongo 오퍼레이션으로 바로 변환된다.
+  서버 컬렉션의 메소드를 호출하면 (사용자의 [접근 제어 규칙](#allow)를 체크한 후에)
+  Mongo 오퍼레이션으로 바로 변환된다. 
 
 * 클라이언트에서는 Minimongo 인스턴스가 만들어진다. Minimongo는 in-memory이고,
-non-persistent 이면서, 순수하게 JavaScript로 만들어진 Mongo 구현체이다. Minimongo는
-DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하는 로컬 캐시로 사용한다.
-클라이언트에서 실행하는 [`find`](#find) 쿼리는 서버와 통신하지 않고 캐시에서만 찾는다.
+  non-persistent 이면서, 순수하게 JavaScript로 만들어진 Mongo 구현체이다. Minimongo는
+  DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하는 로컬 캐시로 사용한다.
+  클라이언트에서 실행하는 [`find`](#find) 쿼리는 서버와 통신하지 않고 캐시에서만 찾는다.
 
 * 클라이언트에서 DB 쓰기 명령을 실행하면 
-([`insert`](#insert), [`update`](#update), [`remove`](#remove)) 클라이언트에서는 바로
-적용되고 서버에도 전송돼서 DB에 써진다.
-이 쓰기 명령이 실행되면 `livedata` 패키지에 할 일이 생긴다.
+  ([`insert`](#insert), [`update`](#update), [`remove`](#remove)) 클라이언트에서는 바로
+  적용되고 서버에도 전송돼서 DB에 써진다.
+  이 쓰기 명령이 실행되면 `livedata` 패키지에 할 일이 생긴다.
 
 컬렉션 이름을 `null`로 주면 로컬 컬렉션을 생성한 것이고 서버와 동기화하지 않는다.
 이 컬렉션은 일종의 연습장이라서 Mongo 스타일의 [`find`](#find), [`insert`](#insert),
@@ -362,15 +410,12 @@ DB에 있는 데이터 중에서 클라이언트에 필요한 것만 저장하�
 Minimongo가 제공하는 이 연습장은 클라이언트에서도 사용할 수 있지만, 서버에서도 사용할 수 있다.
 
 Meteor는 자동으로 컬렉션에 있는 모든 도큐먼트를 모든 클라이언트에 Publish한다.
-이 기능을 끄려면 다음과 같이 `autopublish` 패키지를 제거해준다:
+이 기능을 끄려면 다음과 같이 `autopublish` 패키지를 제거한다.
 
     $ meteor remove autopublish
 
-{{#warning}}
-현재 클라이언트는 모든 쓰기 권한을 가지고 있다. 그래서 클라이언트에서 멋대로 Mongo 쓰기
-명령을 실행할 수 있다. 우리는 인증 패키지를 만들어 클라이언트에서 insert, update, remove
-명령을 맘대로 실행하지 못하도록 Validator나 ORM의 것과 비슷한 것을 구현하려고 마음먹고 있다.
-{{/warning}}
+그리고 그 대신 특정한 유저를 지정해서 특정 콜렉션을 [`Meteor.publish`](#meteor_publish)로
+publish한다.
 
     // Create a collection called Posts and put a document in it. The
     // document will be immediately visible in the local copy of the
@@ -427,8 +472,8 @@ Minimongo는 현재 index가 없다. 하지만, 곧 구현할 것이다. 클라�
 데이터를 가져오는 사이에 DB가 변하면 변한대로 가져온다.
 {{/warning}}
 
-커서는 Reactive 데이터 소스다. Reactive 컨텍스트에서(eg,
-[`Meteor.render`](#meteor_render), [`Meteor.autosubscribe`](#meteor_autosubscribe)
+커서는 Reactive 데이터 소스다. Reactive 컨텍스트에서(eg, 
+[`Meteor.render`](#meteor_render)또는 [`Meteor.autosubscribe`](#meteor_autosubscribe))
 커서의 `fetch`, `map`, `forEach` 메소드로 도큐먼트를 가져오면 Meteor는 데이터 의존성을
 등록한다. 커서에 있는 도큐먼트가 수정되면 무효화 돼서 다시 렌더링된다.
 find에 `{reactive: false}` 옵션을 주고 이 동작을 끌 수 있다.
@@ -463,7 +508,7 @@ true, false'를 말한다.
 
 {{> api_box update}}
 
-`selector` 조건에 일치하는 도큐먼트를 찾아서 `modifier`로 수정한다(<a href="#modifiers">modifier 문서</a>). 기본적으로 일치하는 도큐먼트를 수정하는 것이고 `multi`가 true면 일치하는 도큐먼트를 전부 수정한다.
+`selector` 조건에 일치하는 도큐먼트를 찾아서 `modifier`로 수정한다([modifier documentation](#modifiers)). 기본적으로 일치하는 도큐먼트를 수정하는 것이고 `multi`가 true면 일치하는 도큐먼트를 전부 수정한다.
 
 selector 말고 스트링을 넘길 수도 있는데, 넘긴 스트링은 `Id`의 값으로 간주한다.
 
@@ -507,6 +552,137 @@ remove메소드가 서버에서 실패하면 Meteor는 console에 로그를 남�
 
     // Delete all the log entries
     Logs.remove({});
+
+{{> api_box allow}}
+
+클라이언트가 collection의 `insert`나 `update`, `remove`메서드를 호출했을 때
+콜렉션의 `allow`와 [`deny`](#deny) 콜백이 서버에서 호출된다. 이 콜백은 쓰기 행위가
+허용되었는지 확인하는 작업을 한다. 만약 적어도 하나의 `allow`라도 쓰기를 허용하고
+`deny`들 중 아무런 콜백도 쓰기를 금지하지 않으면 최종적으로 쓰기가 허락된다.
+
+이벤트 핸들러에서 `update`를 호출할 때처럼 클라이언트에서 데이터베이스에 
+직접적으로 쓰기 연산을 할 때에만 이런 체크를 수행한다. 서버의 코드는 신뢰성있다.
+따라서 `allow`나 `deny` 제한에 종속적이지 않다. 그러한 메서드에는 `Meteor.call`도 
+포함된다. 이 메서드는 `allow`나 `deny`가 아닌 스스로 접근 권한을 체크하는 것을 권장한다.
+
+`allow`는 원하는 만큼 여러번 호출할 수 있으며 호출 할 때 마다 
+`insert`, `update`, `remove` 메서드의 다양한 조합을 사용할 수 있다. 
+연산이 허용된다면 `true`를 리턴해야 한다. 그렇지 않다면 `false`나 
+아무것도 아닌 값(`undefined`)을 리턴한다. 이런 경우 Meteor는 콜렉션에 걸려있는
+다른 `allow`함수를 찾아 수행한다.
+
+사용 가능한 콜백은 다음과 같다.
+
+<dl class="callbacks">
+{{#dtdd "insert(userId, doc)"}}
+`userId`의 유저가 도큐먼트 `doc`을 콜렉션에 추가하려한다.
+허용한다면 `true`를 리턴한다.
+{{/dtdd}}
+
+{{#dtdd "update(userId, docs, fields, modifier)"}}
+The user `userId` wants to update some documents. Meteor has fetched the
+`userId`의 유저가 여러개의 도큐먼트를 업데이트 하려한다. Meteor는 데이터베이스에서
+도큐먼트를 가져와서 `docs`변수에 넣는다. 이 도큐먼트의 수정을 허용한다면 `true`를
+리턴한다.
+
+수정할 사항에 대한 추가 정보는 `fields`와 `modifiers`에 들어있다. 
+`fields`는 클라이언트가 수정하고자 하는 도큐먼트의 최상위 레벨 필드들이다.
+예를 들자면 `['name', 'score']`같은 것들이다.
+`modifier`는 클라이언트에서 실행하려는 raw Mongo modifier이다. 예를 들자면
+`{$set: {'name.first': "Alice"}, $inc: {score: 1}}`같은 것들이다.
+
+`$set`이나 `$push`연산 같은 Mongo modifier만 지원한다. 사용자가 
+$-modifier를 사용하지 않고 도큐먼트를 수정하려 한다면 `allow`로 체크할 
+필요도 없이 수정은 취소된다.
+
+{{/dtdd}}
+
+{{#dtdd "remove(userId, docs)"}}
+`userId`를 가진 유저는 어떤 도큐먼트를 지우려한다. Meteor는 
+데이터베이스에서 도큐먼트를 가져와서 `docs`에 배열 형태로 넘겨준다. 
+해당 유저가 아규먼트로 들어온 도큐먼트를 지우는것을 허락하려면 `true`를 리턴한다.
+{{/dtdd}}
+
+</dl>
+
+아무것도 명시하지 않으면 Meteor가 `docs` 배열을 만들 목적으로 데이터베이스에서 
+도큐먼트를 가져올 때, 기본적으로 그 도큐먼트의 모든 필드를 검색한다. 효율성을 위해서 함수를 이용해 딱 
+필요한 필드 만을 검색할수도 있다. `fetch`옵션을 이용하면 된다. 필요한 필드 이름을 배열로 만들면 된다.
+
+예제:
+
+    // Create a collection where users can only modify documents that
+    // they own. Ownership is tracked by an 'owner' field on each
+    // document. All documents must be owned by the user that created
+    // them and ownership can't be changed. Only a document's owner
+    // is allowed to delete it, and the 'locked' attribute can be
+    // set on a document to prevent its accidental deletion.
+
+    Posts = new Meteor.Collection("posts");
+
+    Posts.allow({
+      insert: function (userId, doc) {
+        // 유저는 반드시 로그인되어 있어야 하고 수정하려는 도큐먼트는 그 유저의 것이어야 한다.
+        return (userId && doc.owner === userId);
+      },
+      update: function (userId, docs, fields, modifier) {
+        // 자신의 도큐먼트만 수정할 수 있다.
+        return _.all(docs, function(doc) {
+          return doc.owner === userId;
+        });
+      },
+      remove: function (userId, docs) {
+        // 자신의 도큐먼트만 삭제할 수 있다.
+        return _.all(docs, function(doc) {
+          return doc.owner === userId;
+        });
+      },
+      fetch: ['owner']
+    });
+
+    Posts.deny({
+      update: function (userId, docs, fields, modifier) {
+        // 다른 이의 것은 변경할 수 없다.
+        return _.contains(fields, 'owner');
+      },
+      remove: function (userId, docs) {
+        // 잠겨있는(locked) 도큐먼트는 삭제할 수 없다.
+        return _.any(docs, function (doc) {
+          return doc.locked;
+        });
+      },
+      fetch: ['locked'] // no need to fetch 'owner'
+    });
+
+만약 컬렉션에 `allow`룰을 하나도 만들지 않았다면 그 콜렉션에는 클라이언트에서는 아무것도 쓸수
+없고 서버에서만 쓰기 연산이 가능하다. 이런 경우 클라이언트가 사용할 수 있는 쓰기 메서드를 
+만들어줘야 한다. 이런 메서드는 콜렉션의 메서드인 `insert`나 `update`, `remove`를 직접 
+부르는게 아니라 `Meteor.call`을 이용해서 호출할 수 있다.
+
+Meteor에서는 빠른 프로토타이핑을 위해 "비보안 모드"라는 것도 제공한다. 비보안 모드에서는 
+컬렉션에 아무런 `allow`나 `deny`룰을 적용하지 않아도 사용자가 컬렉션에 쓰기 연산을 할 
+수 있다. 비보안 모드는 그게 다다. 만약 한 콜렉션에 `allow`나 `deny`를 호출한다면 
+(`Post.allow({})`라고 호출하기만 해도) 일반 콜렉션처럼 접근 권한을 체크한다. __새로운 
+Meteor 프로젝트는 기본적으로 비보안 모드에서 시작한다.__ 이 모드에서 빠져나가려면 
+`meteor remove insecure`만 실행하면 된다.
+
+{{#note}}
+`update`나 `remove`에서 도큐먼트는 `allow`와 `deny`룰을 실행하기 위해 도큐먼트를 
+가져올 때와 실제로 메서드가 실행될 때 셀렉터와 일치하는 도큐먼트들만 영향을 받는다. 다음과 
+같이 셀렉터를 재작성해서 만들었다.
+`{$and: [(셀렉터 원본), {$in: {_id: [(가져오거나 allow, deny룰로 체크한 도큐먼트들의 id)]}}]}`
+{{/note}}
+
+{{> api_box deny}}
+
+`allow`룰에서 쓰기 연산을 허가했더라도 여기에서 거부를 하면 거부된다는 것만 빼면
+[`allow`](#allow)와 똑같이 동작한다.
+
+클라이언트에서 컬렉션에 쓰기연산을 하려할때 Meteor 서버는 컬렉션의 `deny`룰을 먼저 
+검사한다. 만약 true를 리턴한 룰이 없다면 다음에는 `allow`룰을 검사한다. 모든 
+`deny`룰이 `true`를 리턴하지 않고 적어도 하나 이상의 `allow`룰이 `true`를 
+리턴해야 비로소 쓰기 연산이 가능하다.
+
 
 <h2 id="meteor_collection_cursor"><span>Cursors</span></h2>
 
@@ -594,7 +770,7 @@ oldDocument이었고 `newDocument`로 변경됐다는 의미다.
 
 `observe`는 라이브 쿼리의 핸들을 리턴하고 그 핸들에는 `stop` 메소드가 있다.
 아규먼트 없이 stop 메소드를 호출하면 더는 콜백이 호출되지 않고 쿼리 객체도 해제된다.
-**라이브 쿼리는 `stop` 함수가 호출될 때까지 영원하다.**
+**라이브 쿼리는 `stop` 함수가 호출될 때까지 영원히 유지된다.**
 
 예제:
 
@@ -639,7 +815,7 @@ oldDocument이었고 `newDocument`로 변경됐다는 의미다.
     // Matches documents where fruit is one of three possibilities
     {fruit: {$in: ["peach", "plum", "pear"]}}
 
-자세한 내용은  <a href="http://www.mongodb.org/display/DOCS/Advanced+Queries" target="_blank">mongo 문서</a>를 봐라.
+자세한 내용은 [mongo 문서](http://www.mongodb.org/display/DOCS/Advanced+Queries)를 봐라.
 
 {{/api_box_inline}}
 
@@ -656,13 +832,13 @@ modifier는 어떻게 도큐먼트를 업데이트해야 하는지를 명시하�
     {$inc: {votes: 2}, $push: {supporters: "Traz"}}
 
 만약 modifier에서 $-오퍼레이터를 빼먹으면 일반 도큐먼트로 해석된다.
-그래서 DB에 원래 있던 도큐먼트를 통째로 바꿔버린다.
+그래서 DB에 원래 있던 도큐먼트를 통째로 바꿔버린다. (일반 도큐먼트 modifire는 현재 [버전](#allow)에서 지원하지 않는다.)
 
     // Find the document with id "123", and completely replace it.
     Users.update({Id: "123"}, {name: "Alice", friends: ["Bob"]});
 
-나머지 <a href="http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations" target="_blank">modifier에
-대해서는 mongo 문서</a>를 봐라.
+나머지 [modifier에
+대해서는 mongo 문서](http://www.mongodb.org/display/DOCS/Updating#Updating-ModifierOperations)를 봐라.
 
 {{/api_box_inline}}
 
@@ -740,7 +916,7 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
 
 {{> api_box equals}}
 
-다음 두 코드는 같은 목적으로 사용한 것이다:
+만약 value가 스칼라라면 다음 두 코드는 똑같이 동작한다.
 
     (1) Session.get("key") === value
     (2) Session.equals("key", value)
@@ -785,6 +961,354 @@ Javascript에서는 키의 순서가 마지막 방법에서만 동작한다.
     //
     // If Session.get had been used instead of Session.equals, then
     // when the selection changed, all the items would be re-rendered.
+
+객체와 배열 세션 값에 대해서는 `Session.equals`를 사용할 수 없다. 대신 
+`underscore` 패키지를 추가한 다음에 `_.isEqual(Session.get(key), value)`
+를 이용해서 비교할 수 있다.
+
+
+<h2 id="accounts_api"><span>Accounts</span></h2>
+
+Meteor의 계정 시스템은 [`publish`](#publish_userId)와 [`methods`](#method_userId)에서
+`userId`를 지원하는 것에서 시작한다. 유저 도큐먼트를 데이터베이스에 저장한다는 개념이 
+코어 패키지에 추가되었고, [secure password authentication](#accounts_passwords)과 
+[서드 파티 로그인 시스템과 결합](#meteor_loginwithexternalservice), 
+[미리 만들어진 UI](#accountsui)와 같은 패키지가 추가되었다.
+
+기본 계정 시스템을 사용하려면 `accounts-base` 패키지를 사용하면 된다. 그런데 보통 
+앱에 로그인 프로바이더 패키지인 `accounts-password`나 `accounts-facebook`, 
+`accounts-github`, `accounts-google`, `accounts-twitter`, `accounts-weibo` 
+중 하나라도 추가해서 사용한다면 이 패키지는 자동으로 추가된다. 
+ 
+{{> api_box user}} 
+
+[`Meteor.users`](#meteor_users) 컬렉션에서 현재 유저의 
+유저 레코드를 받아온다.
+
+클라이언트에서 받는 값은 그 도큐먼트에 있는 일부 필드뿐이다. 오직 서버에서 그 
+클라이언트에게 허락한(publish) 값만 사용가능하다. 기본값으로 서버는 `username`과 
+`emails`, `profile`필드를 publish한다. 유저 도큐먼트의 필드에 대한 자세한 
+정보는 [`Meteor.users`](#meteor_users)를 참고하라.
+
+만약 유저가 로그인 상태이면서 데이터베이스로부터 유저의 레코드를 다 받아오지 않은 
+상태라면 이 메서드는 `_id`필드만 세팅된 객체를 리턴한다. 이 구간에서는 
+[`userLoaded`](#meteor_userloaded)가 false를 리턴한다.
+ 
+{{> api_box userId}} 
+ 
+{{> api_box users}} 
+ 
+이 컬렉션은 등록된 유저당 하나의 도큐먼트를 저장하는 컬렉션이다. 아래에 
+유저 도큐먼트가 어떻게 생겼는지에 대한 예제가 있다.
+ 
+    { 
+      _id: "bbca5d6a-2156-41c4-89da-0329e8c99a4f",  // Meteor.userId() 
+      username: "cool_kid_13", // 유니크한 이름
+      emails: [ 
+        // 각 이메일은 한 유저에게 연관된다.
+        { address: "cool@example.com", verified: true }, 
+        { address: "another@different.com", verified: false } 
+      ], 
+      createdAt: 1349761684042, 
+      profile: { 
+        // 기본적으로 유저가 프로필을 작성할 수 있다.
+        name: "Joe Schmoe" 
+      }, 
+      services: { 
+        facebook: { 
+          id: "709050", // facebook id 
+          accessToken: "AAACCgdX7G2...AbV9AZDZD" 
+        }, 
+        resume: { 
+          loginTokens: [ 
+            { token: "97e8c205-c7e4-47c9-9bea-8e2ccc0694cd", 
+              when: 1349761684048 } 
+          ] 
+        } 
+      } 
+    } 
+ 
+하나의 유저 도큐먼트는 유저에 대한 것이라면 어떠한 데이터든 담을 수 있다. 단, 아래의 
+필드들은 특별한 필드들이다.
+ 
+- `username`: 유저의 ID. 시스템 내에서 유일해야한다.
+- `emails`: `address`와 `verified`를 키로 가지는 객체의 배열. 하나의 이메일 
+  주소는 반드시 단 하나의 유저에게 소속되어야 한다. `verified`는 이메일로 보낸 토큰을 
+  이용해 [확인된 이메일](#accounts_verifyemail)인지 나타내는 불리언 값이다.
+- `createdAt`: 유저 도큐먼트가 생성된 시각의 타임스탬프 (1970년 1월 1일부터 흐른 
+  시간의 밀리초 값)
+- `profile`: 해당 유저가 조작할 수 있는 오브젝트. 어떠한 데이터라도 들어갈 수 있다.
+- `services`: 특정 로그인 서비스에서 사용하는 데이터를 담은 객체. 예를 들어서 
+  `reset` 필드는 [forgot password](#accounts_forgotpassword) 링크에서 
+  사용할 토큰을 담고 있고, `resume` 필드는 세션을 넘나들며 로그인을 유지하기 위한 
+  토큰을 가지고 있다.
+
+다른 모든 [Meteor.Collection](#collections)들과 같이 서버의 모든 도큐먼트에 
+접근이 가능하지만 그중에서도 특별히 서버가 publish한 것에만 접근이 가능하다.
+
+현재 유저의 `username`과 `emails`, `profile`필드만 publish되는 것이 기본 설정이다.
+아래와 같은 코드를 이용해 더 많은 필드를 클라이언트로 보낼 수 있다.
+ 
+    Meteor.publish("userData", function () { 
+      return Meteor.users.find({_id: this.userId}, 
+                               {fields: {'other': 1, 'things': 1}}); 
+    }); 
+
+만약 `autopublish` 패키지가 추가되어잇다면 모든 유저의 `username`과 `profile`
+필드는 접속해있는 모든 클라이언트로 publish된다. 모든 유저의 특정 필드만 publish하려면 
+다음과 같이 쓴다.
+ 
+    Meteor.publish("allUserData", function () { 
+      return Meteor.users.find({}, {fields: {'nested.things': 1}}); 
+    }); 
+
+기본적으로 유저는 [`Accounts.createUser`](#accounts_createuser)가 호출될 때 
+자신의 `profile`필드를 채워넣을 수 있다. 그리고 `Meteor.users.update`로 그 값을 
+수정할 수 있다. 다른 필드에 까지 수정 권한을 주려면 [`Meteor.users.allow`](#allow)를 
+이용해야 한다. 유저에게서 자신의 정보에 대한 수정 권한을 전부 빼앗으려면 아래와 같이 쓴다.
+ 
+    Meteor.users.deny({update: function () { return true; }}); 
+
+{{> api_box userLoaded}} 
+
+클라이언트가 로그인한 유저의 아이디는 아는데 유저의 데이터를 아직 다 받지는 못하는 경우가 
+왕왕있다. 예를 들어 유저가 로그인을 하고 나서 페이지를 새로고침 하면 유저 데이터는 페이지를 
+초기화 하는 동안은 사용할 수가 없다.
+ 
+이 동안은 `userLoaded`는 false르 리턴하고 [`user`](#meteor_user)는 유저의 `_id`만 
+들어있는 객체를 리턴한다.
+ 
+{{#note}}
+우리는 이런 방식이 불편하다는것을 안다. 이건 임시적인 해결책이다. 나중에는 이 메서드가 필요없도록 
+만들면서 다른 일반적인 매커니즘으로 해결할 예정이다.
+{{/note}} 
+ 
+{{> api_box logout}} 
+ 
+{{> api_box loginWithPassword}} 
+
+이 함수는 `accounts-password` 패키지에서 제공한다. 아래의 [Passwords](#accounts_passwords) 
+섹션을 참고하길 바란다.
+
+ 
+{{> api_box loginWithExternalService}} 
+
+이 함수들을 이용해 OAuth를 이용한 외부 서비스들(예: Facebook, Google등)를 이용해 로그인한다.
+이 함수들을 호출하면 팝업 윈도우를 열어 프로바이더의 로그인 페이지로 연결해준다. 프로바이더 페이지에서
+유저가 로그인하면 팝업 윈도우는 닫히고 Meteor 클라이언트는 외부 서버에서 전해준 정보들을 기반으로
+Meteor 서버로 로그인한다.
+ 
+<a id="requestpermissions" name="requestpermissions" /> 
+
+또 어떤 서비스는 유저에게서 정보를 얻어낼 수 있는 API를 제공한다. 
+유저에게 특정 권한을 요구할 때 로그인 함수에 `requestPermissions` 옵션을 넘긴다. 
+그러면 유저는 팝업 다이얼로그에서 자신의 데이터 접근을 요구하는 화면을 보게 된다. 유저의 
+`accessToken`을 유저 도큐먼트의 `services`필드에 저장하고 이 `accessToken`을 
+이용해 프로바이더 서비스의 API를 사용할 수 있다. `requestPermissions`에서 사용할 
+수 있는 값들은 로그인 서비스마다 다르다. 그에 대한 문서는 각 서비스의 개발자 사이트에 있다.
+ 
+- Facebook: <http://developers.facebook.com/docs/authentication/permissions/> 
+- GitHub: <http://developer.github.com/v3/oauth/#scopes> 
+- Google: <https://developers.google.com/accounts/docs/OAuth2Login#scopeparameter> 
+- Twitter, Weibo: 현재 `requestPermissions`를 지원하지 않는다. 
+
+보통 외부 로그인 서비스를 사용하기 전에는 해당 서비스에 등록 후 설정과정을 거쳐야 한다. 
+가장 쉬운 방법은 서비스를 설정하기 위한 단계별 가이드를 제공하는 [`accounts-ui` 패키지](#accountsui)를 
+사용하는 것이다. 그러지 않고 데이터를 직접 `Accounts.loginServiceConfiguration` 
+콜렉션에 하나하나 집어넣어도 된다. 예를 들자면 아래와 같다.
+ 
+    Accounts.loginServiceConfiguration.insert({ 
+      service: "weibo", 
+      clientId: "1292962797", 
+      secret: "75a730b58f5691de5522789070c319bc" 
+    }); 
+ 
+
+Meteor에는 각 외부 서비스를 지원하는 로그인 프로바이더 패키지와 로그인 함수가 있다. 
+GitHub를 예로 들어보자. 로그인 기능을 넣으려면 `$ meteor add accounts-github`를 
+실행하고 `Meteor.loginWithGithub` 함수를 사용한다.
+ 
+    Meteor.loginWithGithub({ 
+      requestPermissions: ['user', 'public_repo'] 
+    }, function (err) { 
+      if (err) 
+        Session.set('errorMessage', err.reason || 'Unknown error'); 
+    }); 
+ 
+ 
+ 
+{{> api_box accounts_config}} 
+{{> api_box accounts_ui_config}} 
+ 
+예제: 
+ 
+    Accounts.ui.config({ 
+      requestPermissions: { 
+        facebook: ['user_likes'], 
+        github: ['user', 'repo'] 
+      }, 
+      passwordSignupFields: 'USERNAME_AND_OPTIONAL_EMAIL' 
+    }); 
+ 
+{{> api_box accounts_validateNewUser}} 
+ 
+이 함수는 여러번 호출할 수 있다. 만약 어떤 함수가 `false`를 리턴하거나 에러를 던지면 
+새로운 유저는 생성되지 않는다. 에러 메세지가 필요하다면 [`Meteor.Error`](#meteor_error)를 
+만들어서 던지면 된다. 이 메세지는 [`accounts-ui`](#accountsui)를 이용해서 출력할 수 있다.
+ 
+예제: 
+ 
+    // Validate username, sending a specific error message on failure. 
+    Accounts.validateNewUser(function (user) { 
+      if (user.username && user.username.length >= 3) 
+        return true; 
+      throw new Meteor.Error(403, "Username must have at least 3 characters"); 
+    }); 
+    // Validate username, without a specific error message. 
+    Accounts.validateNewUser(function (user) { 
+      return user.username !== "root"; 
+    }); 
+ 
+{{> api_box accounts_onCreateUser}} 
+ 
+새로운 유저를 생성할 때, 단순히 허가/거부와 같은 결정보다 더 많은 일을 하려면 바로 
+이 함수를 사용하면 된다. 이 함수를 이용해 새로운 유저 도큐먼트의 내용을 풍부하게 채울 수 있다.
+
+이 함수엔 `options`와 `user` 아규먼트가 필요하다. `options`는 패스워드 기반 유저를 위한 
+[`Accounts.createUser`](#accounts_createuser)나 외부 서비스 로그인 과정에서 나오는 
+값이다. `options`값은 인증되지 않은 클라이언트에서 날아온다. 따라서 이 값은 믿을 수가 없으므로 
+`options`는 모든 값을 확인해봐야한다. `user` 아규먼트는 서버에서 만들어진다. 이 아규먼트는 
+로그인하는데에 필요한 모든 정보가 자동으로 채워진 유저 객체이다.
+ 
+어떤 수정사항이 있던간에 함수는 유저 도큐먼트를 리턴해야한다.(새로 만들어진 사용자든, 한번 
+로그인했던 사용자든 관계없이) 리턴한 도큐먼트는 곧바로 [`Meteor.users`](#meteor_users) 
+컬렉션으로 들어간다.
+
+기본적인 유저 생성 함수는 단순히 `options.profile`를 새로운 유저 도큐먼트로 복사하는 일을 한다. 
+`onCreateUser`를 이용해서 기본 동작을 덮어쓴다. 이 함수는 한 번 만 호출할 수 있다.
+ 
+예제: 
+ 
+<!-- XXX replace d6 with _.random once we have underscore 1.4.2 --> 
+ 
+    // Support for playing D&D: Roll 3d6 for dexterity 
+    Accounts.onCreateUser(function(options, user) { 
+      var d6 = function () { return Math.floor(Math.random() * 6) + 1; }; 
+      user.dexterity = d6() + d6() + d6(); 
+      // We still want the default hook's 'profile' behavior. 
+      if (options.profile) 
+        user.profile = options.profile; 
+      return user; 
+    }); 
+ 
+ 
+<h2 id="accounts_passwords"><span>Passwords</span></h2> 
+ 
+`accounts-password` 패키지는 패스워드 기반 인증을 하기 위한 모든 기능을 담고 있다. 
+게다가 이름/패스워드 기반 로그인 과정과 이메일 기반 로그인(메일 주소 확인까지), 이메일을 
+이용한 패스워드 복구 기능까지 포함한다.
+ 
+다른 수많은 웹 앱과는 다르게, Meteor 클라이언트는 서버로 사용자의 패스워드를 그냥 보내지 않는다.
+서버가 절대로 유저의 패스워드를 날 것으로 보지 못하도록 Meteor는 
+[Secure Remote Password protocol](http://en.wikipedia.org/wiki/Secure_Remote_Password_protocol)를 
+사용한다. 이 프로토콜을 이용하면 서버에서 패스워드가 유출되더라도 상관이 없다.
+
+앱에서 패스워드 기능을 지원하려면 `$ meteor add accounts-password`를 실행한다.
+UI를 개발자가 만들어 아래의 함수들을 붙여서 사용할 수도 있고 [`accounts-ui` 패키지](#accountsui)를 이용할 수도 있다. `accounts-ui` 패키지에는 패스워드 기반의 로그인 UI가 다 만들어져 있어 그냥 쓰면 된다.
+
+ 
+{{> api_box accounts_createUser}} 
+ 
+클라이언트에서는 이 함수를 이용해 방금 가입한 유저들을 로그인시킨다. 서버에서는 새로 가입한 
+유저의 아이디를 리턴한다.
+ 
+클라이언트에서는 반드시 `password`과 `username`/`email`중 하나를 아규먼트로 넘겨야 한다.
+이 때 넘긴 값으로 다음에 로그인 해야한다. 서버에서는 이 옵션들의 서브셋을 넘길 수 있다. 하지만
+유저는 아이디와 패스워드를 넘기기전까진 로그인 할 수 없다.
+
+서버에서 패스워드 없이 계정을 만들려면 `createUser`를 `email`옵션을 줘서 호출한 다음
+[`Accounts.sendEnrollmentEmail`](#accounts_sendenrollmentemail)를 호출한다.
+이 함수는 유저에게 패스워드 초기화 링크를 담은 이메일을 보낸다.
+
+`profile`옵션이 새로운 유저 도큐먼트에 들어가는게 기본 동작인데 이를 바꾸려면 
+[`Accounts.onCreateUser`](#accounts_createuser)를 이용하면 된다.
+ 
+이 함수는 유저를 생성할 때 반드시 패스워드가 있어야한다. 외부 서비스로 하는 로그인 과정에서는 
+이 함수를 사용하지 않는다.
+ 
+ 
+{{> api_box accounts_changePassword}} 
+ 
+{{> api_box accounts_forgotPassword}} 
+
+이 함수는 서버에서 실행되며 [`Accounts.sendResetPasswordEmail`](#accounts_sendresetpasswordemail)를 
+호출한다. 이 함수를 실행하면 유저가 이메일을 받는다. 그 이메일에서 나온 토큰을 
+[`Accounts.resetPassword`](#accounts_resetpassword)에 넘기는 걸로 패스워드 리셋이 끝난다.
+ 
+[`accounts-ui` 패키지](#pkg_accounts_ui)를 사용하면 이 과정이 자동으로 이루어진다. 
+이 패키지를 사용하지 않느다면 사용자로부터 새로운 패스워드를 입력받아 `resetPassword`를 호출해주어야 한다.
+ 
+{{> api_box accounts_resetPassword}} 
+
+이 함수는 [`Accounts.sendResetPasswordEmail`](#accounts_sendresetpasswordemail) 
+와 [`Accounts.sendEnrollmentEmail`](#accounts_sendenrollmentemail)에서 만들어진 토큰을 아규먼트로 받는다.
+ 
+{{> api_box accounts_setPassword}} 
+ 
+{{> api_box accounts_verifyEmail}} 
+
+이 함수는 [`Accounts.sendVerificationEmail`](#accounts_sendverificationemail)에서
+만들어진 토큰을 아규먼트로 받는다. 그리고 유저 레코드의 `emails.verified` 필드를 true로 세팅한다.
+ 
+{{> api_box accounts_sendResetPasswordEmail}} 
+
+이 이메일에 포함된 토큰이 [`Accounts.resetPassword`](#accounts_resetpassword)에서 사용된다.
+ 
+이메일의 내용을 바꾸려면 [`Accounts.emailTemplates`](#accounts_emailtemplates)를 보면 된다.
+ 
+{{> api_box accounts_sendEnrollmentEmail}} 
+
+이 이메일의 토큰은 [`Accounts.resetPassword`](#accounts_resetpassword)에서 사용된다.
+ 
+이메일의 내용을 바꾸려면 [`Accounts.emailTemplates`](#accounts_emailtemplates)를 보면 된다.
+
+{{> api_box accounts_sendVerificationEmail}} 
+ 
+이 이메일의 토큰은 [`Accounts.verifyEmail`](#accounts_verifyemail)에서 사용된다.
+ 
+이메일의 내용을 바꾸려면 [`Accounts.emailTemplates`](#accounts_emailtemplates)를 보면 된다.
+
+{{> api_box accounts_emailTemplates}} 
+ 
+이것은 `sendResetPasswordEmail`이나 `sendEnrollmentEmail`, `sendVerificationEmail`에서 
+보낼 이메일에 넣을 텍스트를 만들어내기 위한 몇가지 필드가 들어있는 `객체`이다.
+ 
+이 객체의 필드에 대한 설명이 아래에 있다. 이 필드들은 사용자가 수정할 수 있다.
+ 
+- `from`: [RFC5322](http://tools.ietf.org/html/rfc5322)에 명시된 From 주소 형식의 
+   `String`이다. 기본값은 `no-reply@meteor.com`이다. 만약 유저에게서 답장을 받고싶다면 답장을 
+   받을 수 있는 이메일 주소로 바꿔야 한다.
+- `siteName`: 유저들에게 보여줄 앱의 이름이다. 앱의 DNS 이름이 기본값이 된다.(예: `awesome.meteor.com`)
+- `resetPassword`: 필드가 두 개인 객체이다.
+ - `resetPassword.subject`: 유저 `객체`를 받고 패스워드 초기화 이메일의 제목을 `문자열`로 리턴하는 `함수`이다.
+ - `resetPassword.text`: 유저 객체와 url을 받아서 패스워드 초기화 이메일의 본문을 리턴하는 `함수`이다.
+- `enrollAccount`: `resetPassword`와 같지만 새로운 계정의 패스워드 초기화를 할 때 사용하는 객체이다.
+- `verifyEmail`: `resetPassword`와 같지만 유저의 email을 확인할 때 사용하는 객체이다.
+ 
+예제: 
+ 
+    Accounts.emailTemplates.siteName = "엄청난 사이트"; 
+    Accounts.emailTemplates.from = "엄청난 사이트 관리자 <accounts@example.com>"; 
+    Accounts.emailTemplates.enrollAccount.subject = function (user) { 
+        return user.profile.name + "님, 엄청난 타운에 오신걸 환영합니다. ";
+    }; 
+    Accounts.emailTemplates.enrollAccount.text = function (user, url) { 
+       return "당신은 더 나은 건설사업에 초대되었습니다.!
+         + " 계정을 활성화하려면 다음 링크를 눌러주세요 :\n\n" 
+         + url; 
+    }; 
+ 
+
 
 <h2 id="templates_api"><span>Templates</span></h2>
 
@@ -1313,6 +1837,33 @@ run을 Recursive하게 호출해도 되며 `current`는 항상 가장 안쪽의 
 변수라고 생각하면 된다. [`run`](#run)이 할당하고, 사용자 코드를
 실행하고 나서 다시 이전 값으로 복원된다.
 
+{{> api_box autorun }} 
+
+`Meteor.autorun`은 개발자가 의존성 변화가 일어났을 때, 임의의 함수를 실행하는 자신만의 
+reactive context를 만들 때 사용한다. 예를 들어 커서(reactive data source)를 
+모니터링하거나 세션 변수와 같이 사용할 수도 있다.
+ 
+    Meteor.autorun(function() { 
+      var oldest = _.max(Monkeys.find().fetch(), function (monkey) { 
+        return monkey.age; 
+      }); 
+      if (oldest) 
+        Session.set("oldest", oldest.name); 
+    }); 
+
+아니면 세션 변수가 특정한 값을 얻을때까지 기다리는데에도 사용할 수 있다. 특정 값을 얻으면 
+다음에 다시 실행하지 못하도록 핸들러의 `stop`메서드를 호출하는 예제가 아래에 있다.
+ 
+    Meteor.autorun(function(handle) { 
+      if (!Session.equals("shouldAlert", true)) return; 
+      handle.stop(); 
+      alert("Oh no!"); 
+    }); 
+
+아규먼트로 들어가는 이 함수는 다른 reactive source들 처럼 즉시 실행되고 그 뒤엔 
+[`Meteor.flush`](#meteor_flush)가 실행될 때 마다 재 실행된다.
+
+
 {{> api_box flush }}
 
 일반적으로 데이터를 변경하고 DOM이 업데이트되려면 시스템이 idle이 될 때까지
@@ -1341,7 +1892,7 @@ flush는 실행해야 할 무효화 콜백이 전부 실행할 때까지 계속 
 <h2 id="meteor_http"><span>Meteor.http</span></h2>
 
 `Meteor.http`는 클라이언트와 서버에 둘 다 있는 HTTP API이다.
-`meteor add http` 명령으로 프로젝트에 HTTP 패키지를 추가하면 사용할 수 있다.
+`$ meteor add http` 명령으로 프로젝트에 HTTP 패키지를 추가하면 사용할 수 있다.
 
 {{> api_box httpcall}}
 
@@ -1401,7 +1952,7 @@ result 객체의 내용:
 
     Meteor.methods({checkTwitter: function (userId) {
       this.unblock();
-      var result = Meteor.http.call("GET", "http://api.twitter.com/xxx",
+      var result = Meteor.http.call("GET", "http://api.twitter.com/xyz",
                                     {params: {user: userId}});
       if (result.statusCode === 200)
          return true
@@ -1410,7 +1961,7 @@ result 객체의 내용:
 
 비동기 HTTP 호출의 예:
 
-    Meteor.http.call("POST", "http://api.twitter.com/xxx",
+    Meteor.http.call("POST", "http://api.twitter.com/xyz",
                      {data: {some: "json", stuff: 1}},
                      function (error, result) {
                        if (result.statusCode === 200) {
@@ -1431,7 +1982,7 @@ result 객체의 내용:
 서버는 메일을 보낼때 `MAIL_URL`환경 변수를 사용한다. 현재 Meteor는 SMTP만을 
 지원한다. 따라서 환경 변수 `MAIL_URL`은 `smtp://USERNAME:PASSWORD@HOST:PORT/`의 
 포멧이어야 한다. `meteor deploy`를 이용해서 디플로이 할 땐 `MAIL_URL`의 기본값이
-현재 계정이 된다.(<a href="http://www.mailgun.com/" target="_blank">Mailgun</a>
+현재 계정이 된다.([Mailgun](http://www.mailgun.com/)
 를 이용함) 이 계정으로 하루에 200개의 메일을 보낼 수 있다. `process.env.MAIL_URL
 `에 원하는 값을 할당해서 원하는 URL을 이용할 수 있다. 할당은 `Email.send`전에 해
 야한다.

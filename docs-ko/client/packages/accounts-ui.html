@@ -1,0 +1,31 @@
+<template name="pkg_accounts_ui">
+{{#better_markdown}}
+## `accounts-ui`
+
+Meteor Account에서 사용하는 사용자 인터페이스.
+
+Accounts를 추가한 뒤에 앱에 로그인 창을 넣으려면 `accounts-ui` 패키지와 
+로그인 프로바이더 패키지중 적어도 한가지를 추가한다. 기본으로 제공되는 로그인 
+프로바이더 패키지는 `accounts-password`와 `accounts-facebook`, `accounts-github`,
+`accounts-google`, `accounts-twitter`, `accounts-weibo`이 있다.
+
+그런 다음 그냥 `{{dstache}}loginButtons}}` 헬퍼를 HTML에 추가한다. 
+이 헬퍼가 페이지에서 로그인 위젯으로 치환된다. 만약 외부 서비스 로그인 프로바이더가 
+하나만 설정했으면 로그인/로그아웃 버튼도 추가해준다. 그렇지않고 `accounts-password` 
+하나만 설정했거나 여러개의 외부 로그인 서비스를 설정해놨다면 로그인 옵션을 고를 수 있는 
+"Sign in" 링크 하나만 보일 것이다. 로그인 드롭다운 버튼을 오른쪽으로 정렬하려면(이는 
+로그인 버튼이 화면의 오른쪽 끝에 위치했을 때 이쁘게 보인다.) `{{dstache}}loginButtons align=right}}`라고 쓴다.
+
+`{{dstache}}loginButtons}}`의 동작 방식을 바꾸고 싶다면 [`Accounts.ui.config`](#accounts_ui_config)를 이용하면 된다.
+
+`accounts-ui`는 [`sendResetPasswordEmail`](#accounts_sendresetpasswordemail)과 [
+`sendVerificationEmail`](#accounts_sendverificationemail), 
+[`sendEnrollmentEmail`](#accounts_sendenrollmentemail)에서 넘어온 링크를 
+처리하기 위한 모달 팝업 다이얼로그도 포함되어있다. 이 다이얼로그는 HTML내에서 우리가 수동으로 
+화면에 띄울 수 없다. URL이 로드되면 자동으로 생긴다.
+
+
+
+
+{{/better_markdown}}
+</template>
