@@ -145,7 +145,7 @@ Template.api.subscription_userId = {
   id: "publish_userId",
   name: "<i>this</i>.userId",
   locus: "Server",
-  descr: ["로그인된 유저의 아이디. 로그인한 유저가 없으면 `null`"]
+  descr: ["로그인한 유저의 아이디. 로그인한 유저가 없으면 `null`"]
 };
 
 Template.api.subscribe = {
@@ -194,7 +194,7 @@ Template.api.method_invocation_userId = {
   id: "method_userId",  
   name: "<i>this</i>.userId",  
   locus: "Anywhere",  
-  descr: ["현재 메서드를 호출한 유저의 아이디. 로그인된 유저가 없으면 `null`."]  
+  descr: ["현재 메서드를 호출한 유저의 아이디. 로그인한 유저가 없으면 `null`."]  
 };  
   
 Template.api.method_invocation_setUserId = {  
@@ -681,7 +681,7 @@ Template.api.user = {
   id: "meteor_user",
   name: "Meteor.user()",
   locus: "Anywhere but publish functions",
-  descr: ["현재 유저의 레코드를 가져온다. 만약 로그인된 유저가 없으면 `null`을 리턴한다. reactive 데이터소스이다."]
+  descr: ["현재 유저의 레코드를 가져온다. 만약 로그인한 유저가 없으면 `null`을 리턴한다. reactive 데이터 소스이다."]
 };
 
 
@@ -689,7 +689,7 @@ Template.api.userId = {
   id: "meteor_userid",
   name: "Meteor.userId()",
   locus: "Anywhere but publish functions",
-  descr: ["현재 유저의 아이디를 가져온다. 로그인된 유저가 없으면 `null`을 리턴한다. reactive 데이터소스이다."]
+  descr: ["현재 유저의 아이디를 가져온다. 로그인한 유저가 없으면 `null`을 리턴한다. reactive 데이터 소스이다."]
 };
 
 
@@ -704,7 +704,7 @@ Template.api.userLoaded = {
   id: "meteor_userloaded",
   name: "Meteor.userLoaded()",
   locus: "Client",
-  descr: ["현재 유저 도큐먼트가 [`Meteor.users`](#meteor_users)에 완전히 로드되었는지 확인하는데 사용한다. reactive 데이터소스이다."]
+  descr: ["현재 유저 도큐먼트가 [`Meteor.users`](#meteor_users)에 완전히 로드되었는지 확인하는데 사용한다. reactive 데이터 소스이다."]
 };
 
 
@@ -805,7 +805,7 @@ Template.api.accounts_ui_config = {
     {
       name: "passwordSignupFields",
       type: "String",
-      descr: "유저 생성 폼에서 보여줄 필드. 하나여야 한다. '`USERNAME_AND_EMAIL`'나 '`USERNAME_AND_OPTIONAL_EMAIL`', '`USERNAME_ONLY`', '`EMAIL_ONLY`'(기본값) 중 하나여야 한다."
+      descr: "유저 생성 폼에서 보여줄 필드. '`USERNAME_AND_EMAIL`'나 '`USERNAME_AND_OPTIONAL_EMAIL`', '`USERNAME_ONLY`', '`EMAIL_ONLY`'(기본값) 중 하나다."
     }
   ]
 };
